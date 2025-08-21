@@ -1,0 +1,9 @@
+{
+  "name": "UTAMA CERIA (Cerdas, Efektif, Responsif, Inovatif, Akurat)",
+  "description": "An AI-powered system providing smart, effective, responsive, innovative, and accurate decision support for the Holistic Integrative Early Childhood Development (PAUD HI) program in Indonesia. This dashboard provides risk analysis, predictions, and smart intervention recommendations.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ],
+  "prompt": ""
+}

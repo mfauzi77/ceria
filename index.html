@@ -1,0 +1,108 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CERIA (Cerdas, Efektif, Responsif, Inovatif, Akurat)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+          }
+        },
+        plugins: [],
+      }
+    </script>
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+      @media print {
+        body * {
+          visibility: hidden;
+        }
+        #report-content, #report-content * {
+          visibility: visible;
+        }
+        #report-content {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+        }
+        main {
+           padding: 0 !important;
+        }
+      }
+      /* Basic styles to replace @tailwindcss/typography */
+      .prose {
+        color: #374151; /* text-gray-700 */
+        max-width: 65ch;
+      }
+      .prose-sm {
+        font-size: 0.875rem;
+        line-height: 1.65;
+      }
+      .prose h1, .prose h2, .prose h3, .prose h4, .prose strong {
+        font-weight: 700;
+        color: #1f2937; /* text-gray-800 */
+      }
+      .prose h2 {
+        font-size: 1.5rem; /* text-2xl */
+        line-height: 2rem;
+        margin-top: 2em;
+        margin-bottom: 1em;
+      }
+      .prose h3 {
+        font-size: 1.25rem; /* text-xl */
+        line-height: 1.75rem;
+        margin-top: 1.6em;
+        margin-bottom: 0.8em;
+      }
+       .prose h4 {
+        font-size: 1.125rem; /* text-lg */
+        line-height: 1.75rem;
+        margin-top: 1.4em;
+        margin-bottom: 0.6em;
+      }
+      .prose p {
+        margin-top: 1.25em;
+        margin-bottom: 1.25em;
+      }
+      .prose ul {
+        list-style-type: disc;
+        padding-left: 1.5em;
+        margin-top: 1.25em;
+        margin-bottom: 1.25em;
+      }
+      .prose li {
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "react": "https://esm.sh/react@^19.1.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.10.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-slate-100">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
