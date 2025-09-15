@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { ForecastDataPoint } from '../../types';
 
@@ -40,7 +41,7 @@ const PredictionChart: React.FC<PredictionChartProps> = ({ data, domain, horizon
                 </div>
             </div>
             <div className="w-full overflow-x-auto">
-                <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} className="w-full h-auto" preserveAspectRatio="xMidYMid meet" aria-labelledby="chart-title">
+                <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} className="min-w-[500px] h-auto" preserveAspectRatio="xMidYMid meet" aria-labelledby="chart-title">
                     <title id="chart-title">Grafik Prediksi Risiko untuk {domain} selama {horizon}</title>
                     {/* Y-Axis lines and labels */}
                     {[0, 25, 50, 75, 100].map(val => (

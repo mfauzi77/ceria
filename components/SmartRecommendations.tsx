@@ -175,7 +175,7 @@ Jawaban Anda harus:
                         disabled={isLoading}
                         rows={1}
                         placeholder="Ketik pesan Anda di sini atau ajukan pertanyaan..."
-                        className="w-full p-3 pr-12 text-sm text-slate-800 border-slate-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 resize-none"
+                        className="w-full p-3 pr-12 text-sm text-slate-800 border-slate-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 resize-none bg-white"
                     />
                     <button
                         type="submit"

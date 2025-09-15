@@ -3,6 +3,7 @@ import DataSources from './dataprocessing/DataSources';
 import ProcessingLogs from './dataprocessing/ProcessingLogs';
 import DataQuality from './dataprocessing/DataQuality';
 import ManualJobs from './dataprocessing/ManualJobs';
+import ApiKeyManager from './dataprocessing/ApiKeyManager';
 
 const DataProcessing: React.FC = () => {
     return (
@@ -19,6 +20,7 @@ const DataProcessing: React.FC = () => {
                
                 <div className="lg:col-span-1 space-y-6">
                     <DataSources />
+                    <ApiKeyManager />
                     <ManualJobs />
                 </div>
                 

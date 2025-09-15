@@ -1,7 +1,8 @@
 
 
-import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
-import { ActiveAlertData, KeyIndicatorData, RegionalForecastData, DomainFilter, RegionDetailData, ResourceData, ScenarioParams, ChildProfile, GrowthRecord, GroundingSource, MonthlySummaryData, DomainComparisonData } from "../types";
+
+import { GoogleGenAI, GenerateContentResponse, Type } from "@google/genai";
+import { ActiveAlertData, KeyIndicatorData, RegionalForecastData, DomainFilter, RegionDetailData, ResourceData, ScenarioParams, ChildProfile, GrowthRecord, GroundingSource, MonthlySummaryData, DomainComparisonData, SmartRecommendationResponse } from "../types";
 
 // Use the real Gemini API, which will be picked up by the functions below.
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
@@ -50,32 +51,69 @@ export const getExecutiveBriefing = async (
 };
 
 
-export const getSmartRecommendations = async (alert: ActiveAlertData): Promise<string> => {
+export const getSmartRecommendations = async (alert: ActiveAlertData): Promise<SmartRecommendationResponse> => {
   const prompt = `
     You are an expert in public health policy for early childhood development in Indonesia.
-    Based on the following health alert, provide a strategic justification and then three specific, actionable, and efficient intervention recommendations.
-    Format the response as a well-structured markdown with a title, a justification section, and a numbered list of recommendations.
+    Based on the following health alert, provide a strategic justification, three specific/actionable/efficient intervention recommendations, and a projected risk score after successful implementation.
 
     Alert Details:
     - Issue: ${alert.title}
     - Region: ${alert.region}
     - Domain: ${alert.domain}
-    - Risk Score: ${alert.riskScore}
+    - Current Risk Score: ${alert.riskScore}
     ${alert.target ? `- Target: >${alert.target}%` : ''}
     ${alert.trend ? `- Trend: +${alert.trend}%` : ''}
 
-    Provide recommendations that are contextual to Indonesia and consider resource constraints. The entire response must be in Bahasa Indonesia.
+    Instructions:
+    1.  **justification**: Write a brief (1-2 sentences) strategic justification for why this intervention is critical.
+    2.  **recommendations**: Provide three concrete intervention recommendations in a markdown numbered list.
+    3.  **projectedRiskScore**: Estimate the new risk score for the region if these recommendations are successfully implemented. It must be a number lower than the current risk score of ${alert.riskScore}.
+    
+    The entire response must be in Bahasa Indonesia.
   `;
 
   try {
     const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
         contents: prompt,
+        config: {
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              justification: {
+                type: Type.STRING,
+                description: 'Strategic justification for the intervention in Bahasa Indonesia.',
+              },
+              recommendations: {
+                type: Type.STRING,
+                description: 'Three actionable recommendations in markdown format, in Bahasa Indonesia.',
+              },
+              projectedRiskScore: {
+                type: Type.NUMBER,
+                description: 'The projected risk score after successful intervention.',
+              },
+            },
+            required: ["justification", "recommendations", "projectedRiskScore"],
+          },
+        },
     });
-    return response.text;
+
+    const jsonText = response.text.trim();
+    if (jsonText.startsWith('{') && jsonText.endsWith('}')) {
+        return JSON.parse(jsonText) as SmartRecommendationResponse;
+    } else {
+        console.error("Gemini response is not a valid JSON:", jsonText);
+        throw new Error("Received invalid format from AI.");
+    }
+    
   } catch (e) {
     console.error("Gemini API call failed in getSmartRecommendations", e);
-    return `### Rekomendasi AI Tidak Tersedia\n\nTerjadi kesalahan saat menghubungi layanan AI. Harap coba lagi.`;
+    return {
+        justification: "Analisis AI tidak tersedia saat ini.",
+        recommendations: "Terjadi kesalahan saat menghubungi layanan AI. Harap coba lagi. Sebagai tindakan awal, koordinasikan dengan dinas terkait di wilayah tersebut untuk validasi data dan perencanaan awal.",
+        projectedRiskScore: alert.riskScore,
+    };
   }
 };
 

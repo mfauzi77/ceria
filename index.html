@@ -5,6 +5,7 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#4f46e5" />
     <title>CERIA (Cerdas, Efektif, Responsif, Inovatif, Akurat)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,6 +18,15 @@
             fontFamily: {
               sans: ['Inter', 'sans-serif'],
             },
+            keyframes: {
+              'toast-in': {
+                'from': { transform: 'translateX(100%)', opacity: '0' },
+                'to': { transform: 'translateX(0)', opacity: '1' },
+              },
+            },
+            animation: {
+              'toast-in': 'toast-in 0.5s ease-out forwards',
+            }
           }
         },
         plugins: [],

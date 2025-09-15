@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { RegionalForecastData, SortKey, SortDirection } from '../../types';
 import { TrendingUpIcon, TrendingDownIcon, ChevronUpIcon, ChevronDownIcon, SwitchVerticalIcon, DocumentPlusIcon } from '../icons/Icons';
@@ -58,7 +59,7 @@ const RegionalRiskTable: React.FC<RegionalRiskTableProps> = ({ data, onCreatePla
     };
     
     const ThSortable: React.FC<{ sortKey: SortKey, children: React.ReactNode, className?: string }> = ({ sortKey, children, className }) => (
-        <th scope="col" className={`px-6 py-3 ${className}`}>
+        <th scope="col" className={`px-2 sm:px-6 py-3 ${className}`}>
             <button onClick={() => requestSort(sortKey)} className="flex items-center space-x-1 group">
                 <span>{children}</span>
                 <span className="opacity-50 group-hover:opacity-100 transition-opacity">{getSortIcon(sortKey)}</span>
@@ -76,29 +77,29 @@ const RegionalRiskTable: React.FC<RegionalRiskTableProps> = ({ data, onCreatePla
                             <ThSortable sortKey="region" className="rounded-l-lg">Wilayah</ThSortable>
                             <ThSortable sortKey="domain">Domain</ThSortable>
                             <ThSortable sortKey="currentRisk" className="text-center">Risiko Saat Ini</ThSortable>
-                            <th scope="col" className="px-6 py-3 text-center">Level Risiko (Saat Ini)</th>
+                            <th scope="col" className="px-2 sm:px-6 py-3 text-center">Level Risiko (Saat Ini)</th>
                             <ThSortable sortKey="predictedRisk" className="text-center">Prediksi Risiko</ThSortable>
-                             <th scope="col" className="px-6 py-3 text-center">Level Risiko (Prediksi)</th>
+                             <th scope="col" className="px-2 sm:px-6 py-3 text-center">Level Risiko (Prediksi)</th>
                             <ThSortable sortKey="change" className="text-center">Perubahan</ThSortable>
-                            <th scope="col" className="px-6 py-3 rounded-r-lg text-center">Aksi</th>
+                            <th scope="col" className="px-2 sm:px-6 py-3 rounded-r-lg text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         {sortedData.map((item) => (
                             <tr key={item.id} className="bg-white border-b hover:bg-slate-50">
-                                <th scope="row" className="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">{item.region}</th>
-                                <td className="px-6 py-4">{item.domain}</td>
-                                <td className="px-6 py-4 text-center font-semibold text-slate-600">{item.currentRisk}</td>
-                                <td className="px-6 py-4 text-center"><span className={`px-2 py-1 text-xs font-bold rounded-full ${getRiskLevelStyles(item.currentRiskLevel)}`}>{item.currentRiskLevel}</span></td>
-                                <td className="px-6 py-4 text-center font-bold text-indigo-700">{item.predictedRisk}</td>
-                                <td className="px-6 py-4 text-center"><span className={`px-2 py-1 text-xs font-bold rounded-full ${getRiskLevelStyles(item.predictedRiskLevel)}`}>{item.predictedRiskLevel}</span></td>
-                                <td className="px-6 py-4">
+                                <th scope="row" className="px-2 sm:px-6 py-4 font-medium text-slate-900 whitespace-nowrap">{item.region}</th>
+                                <td className="px-2 sm:px-6 py-4">{item.domain}</td>
+                                <td className="px-2 sm:px-6 py-4 text-center font-semibold text-slate-600">{item.currentRisk}</td>
+                                <td className="px-2 sm:px-6 py-4 text-center"><span className={`px-2 py-1 text-xs font-bold rounded-full ${getRiskLevelStyles(item.currentRiskLevel)}`}>{item.currentRiskLevel}</span></td>
+                                <td className="px-2 sm:px-6 py-4 text-center font-bold text-indigo-700">{item.predictedRisk}</td>
+                                <td className="px-2 sm:px-6 py-4 text-center"><span className={`px-2 py-1 text-xs font-bold rounded-full ${getRiskLevelStyles(item.predictedRiskLevel)}`}>{item.predictedRiskLevel}</span></td>
+                                <td className="px-2 sm:px-6 py-4">
                                     <div className={`flex items-center justify-center font-bold ${item.change >= 0 ? 'text-red-500' : 'text-emerald-500'}`}>
                                         {item.change >= 0 ? <TrendingUpIcon className="w-4 h-4 mr-1" /> : <TrendingDownIcon className="w-4 h-4 mr-1" />}
                                         <span>{item.change > 0 ? `+${item.change}` : item.change}</span>
                                     </div>
                                 </td>
-                                <td className="px-6 py-4 text-center">
+                                <td className="px-2 sm:px-6 py-4 text-center">
                                     <button 
                                         onClick={() => onCreatePlan(item)}
                                         className="text-indigo-600 hover:text-indigo-800 font-semibold" 

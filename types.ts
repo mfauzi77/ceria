@@ -10,6 +10,7 @@ export enum View {
     EWSPerBidang = "Analisis per Bidang",
     SmartRecommendations = "Rekomendasi CERIA",
     DataProcessing = "Manajemen Integrasi",
+    InputData = "Input Data",
     Intervensi = "Manajemen Intervensi", // Updated Label
     ResourceAllocation = "Resource Allocation",
     Reports = "Reports & Analytics",
@@ -50,7 +51,7 @@ export enum AlertLevel {
     Critical = "CRITICAL"
 }
 
-export type Domain = 'Kesehatan' | 'Gizi' | 'Pengasuhan' | 'Perlindungan' | 'Kesejahteraan' | 'Lingkungan';
+export type Domain = 'Kesehatan' | 'Gizi' | 'Pendidikan' | 'Pengasuhan' | 'Perlindungan' | 'Kesejahteraan' | 'Lingkungan';
 export type DomainFilter = Domain | 'Semua';
 
 
@@ -111,6 +112,7 @@ export interface RegionDetailData {
     domains: {
         Kesehatan: DomainMetrics;
         Gizi: DomainMetrics;
+        Pendidikan: DomainMetrics;
         Pengasuhan: DomainMetrics;
         Perlindungan: DomainMetrics;
         Kesejahteraan: DomainMetrics;
@@ -130,6 +132,7 @@ export interface KabupatenKotaDetailData {
     domains: {
         Kesehatan: DomainMetrics;
         Gizi: DomainMetrics;
+        Pendidikan: DomainMetrics;
         Pengasuhan: DomainMetrics;
         Perlindungan: DomainMetrics;
         Kesejahteraan: DomainMetrics;
@@ -166,7 +169,7 @@ export interface DomainIndicatorData {
 }
 
 export interface DomainData {
-    id: 'Kesehatan' | 'Gizi' | 'Pengasuhan' | 'Perlindungan' | 'Kesejahteraan' | 'Lingkungan';
+    id: 'Kesehatan' | 'Gizi' | 'Pendidikan' | 'Pengasuhan' | 'Perlindungan' | 'Kesejahteraan' | 'Lingkungan';
     name: string;
     averageRisk: number;
     criticalRegionsCount: number;
@@ -209,6 +212,7 @@ export interface ActionItem {
     id: string;
     text: string;
     completed: boolean;
+    dueDate?: string; // YYYY-MM-DD
 }
 
 export interface InterventionPlan {
@@ -235,6 +239,12 @@ export interface RecommendationParams {
     region: string;
     riskLevel: RiskLevelSelection;
     customPrompt: string;
+}
+
+export interface SmartRecommendationResponse {
+    justification: string;
+    recommendations: string;
+    projectedRiskScore: number;
 }
 
 

@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { DomainComparisonData, MonthlySummaryData, RegionPerformance, ReportData } from '../../types';
 import { DocumentChartBarIcon, DocumentArrowDownIcon, CalendarIcon, ChevronUpIcon, ChevronDownIcon, MinusIcon, TrendingUpIcon, TrendingDownIcon, TrophyIcon, ExclamationTriangleIcon } from '../icons/Icons';
@@ -100,11 +101,11 @@ const DomainComparisonContent: React.FC<{ data: DomainComparisonData }> = ({ dat
                  <table className="w-full text-sm text-left text-slate-500">
                     <thead className="text-xs text-slate-700 uppercase bg-slate-100">
                         <tr>
-                            <th scope="col" className="px-6 py-3 rounded-l-lg">Domain Layanan</th>
-                            <th scope="col" className="px-6 py-3 text-center">Rata-rata Risiko</th>
-                            <th scope="col" className="px-6 py-3 text-center">Wilayah Kritis</th>
-                            <th scope="col" className="px-6 py-3">Performa Terbaik</th>
-                            <th scope="col" className="px-6 py-3 rounded-r-lg">Performa Terendah</th>
+                            <th scope="col" className="px-2 sm:px-6 py-3 rounded-l-lg">Domain Layanan</th>
+                            <th scope="col" className="px-2 sm:px-6 py-3 text-center">Rata-rata Risiko</th>
+                            <th scope="col" className="px-2 sm:px-6 py-3 text-center">Wilayah Kritis</th>
+                            <th scope="col" className="px-2 sm:px-6 py-3">Performa Terbaik</th>
+                            <th scope="col" className="px-2 sm:px-6 py-3 rounded-r-lg">Performa Terendah</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -112,13 +113,13 @@ const DomainComparisonContent: React.FC<{ data: DomainComparisonData }> = ({ dat
                             const domainInfo = DOMAIN_ITEMS.find(d => d.id === stat.domain);
                             return(
                                 <tr key={stat.domain} className="bg-white border-b hover:bg-slate-50">
-                                    <th scope="row" className="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">
+                                    <th scope="row" className="px-2 sm:px-6 py-4 font-medium text-slate-900 whitespace-nowrap">
                                         <div className="flex items-center">
                                             {domainInfo?.icon}
                                             <span className="ml-2">{stat.domain}</span>
                                         </div>
                                     </th>
-                                    <td className="px-6 py-4 text-center">
+                                    <td className="px-2 sm:px-6 py-4 text-center">
                                         <div className="flex flex-col items-center">
                                             <span className="font-bold text-lg">{stat.averageRisk.toFixed(1)}</span>
                                             <div className="w-20 bg-slate-200 rounded-full h-2 mt-1">
@@ -126,8 +127,8 @@ const DomainComparisonContent: React.FC<{ data: DomainComparisonData }> = ({ dat
                                             </div>
                                         </div>
                                     </td>
-                                     <td className="px-6 py-4 text-center font-bold text-lg text-red-600">{stat.criticalRegionsCount}</td>
-                                    <td className="px-6 py-4">
+                                     <td className="px-2 sm:px-6 py-4 text-center font-bold text-lg text-red-600">{stat.criticalRegionsCount}</td>
+                                    <td className="px-2 sm:px-6 py-4">
                                         <div className="flex items-center text-xs">
                                             <TrophyIcon className="w-4 h-4 mr-2 text-amber-500 flex-shrink-0" />
                                             <div className="truncate">
@@ -136,7 +137,7 @@ const DomainComparisonContent: React.FC<{ data: DomainComparisonData }> = ({ dat
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4">
+                                    <td className="px-2 sm:px-6 py-4">
                                         <div className="flex items-center text-xs">
                                             <ExclamationTriangleIcon className="w-4 h-4 mr-2 text-red-500 flex-shrink-0" />
                                             <div className="truncate">

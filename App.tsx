@@ -1,4 +1,7 @@
 
+
+
+
 import React, { useState, useEffect, useMemo } from 'react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
@@ -10,14 +13,16 @@ import SmartRecommendations from './components/SmartRecommendations';
 import DataProcessing from './components/DataProcessing';
 import InterventionManagement from './components/InterventionManagement';
 import Placeholder from './components/Placeholder';
-import { View, InterventionPlan } from './types';
+import { View, InterventionPlan, ActiveAlertData, AlertLevel, ActionItem } from './types';
 import ResourceAllocation from './components/ResourceAllocation';
 import InterventionFormModal from './components/interventions/InterventionFormModal';
-import { mockInterventionPlans, regionsDetails, kabupatenKotaDetails } from './services/mockData';
+import { mockInterventionPlans, regionsDetails, kabupatenKotaDetails, allActiveAlerts } from './services/mockData';
 import LandingPage from './components/LandingPage';
 import WelcomeScreen from './components/WelcomeScreen';
 import Reports from './components/Reports';
 import ParentDashboard from './components/ParentDashboard';
+import InputData from './components/InputData';
+import ToastNotification from './components/shared/ToastNotification';
 
 const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -29,6 +34,7 @@ const App: React.FC = () => {
   const [isInterventionModalOpen, setIsInterventionModalOpen] = useState(false);
   const [interventionInitialData, setInterventionInitialData] = useState<Partial<InterventionPlan> | null>(null);
   const [navigationContext, setNavigationContext] = useState<{ regionId: string; kabupatenKotaId?: string } | null>(null);
+  const [toastAlert, setToastAlert] = useState<ActiveAlertData | null>(null);
 
   useEffect(() => {
     // This check runs only once on component mount
@@ -38,6 +44,19 @@ const App: React.FC = () => {
       setShowWelcome(true);
     }
     setIsLoading(false);
+
+    // Simulate receiving a high-priority alert after a delay
+    const timer = setTimeout(() => {
+        const highPriorityAlerts = allActiveAlerts.filter(
+            a => a.level === AlertLevel.Critical || a.level === AlertLevel.High
+        );
+        if (highPriorityAlerts.length > 0) {
+            const randomAlert = highPriorityAlerts[Math.floor(Math.random() * highPriorityAlerts.length)];
+            setToastAlert(randomAlert);
+        }
+    }, 7000); // 7-second delay after app loads
+
+    return () => clearTimeout(timer);
   }, []);
 
   const handleWelcomeComplete = () => {
@@ -96,15 +115,35 @@ const App: React.FC = () => {
     }
   };
 
-  const handleSaveIntervention = (planData: Omit<InterventionPlan, 'id' | 'actionItems'>) => {
-    // This is a simplified save function. In a real app, you'd handle create vs. update.
-    const newPlan: InterventionPlan = {
-      ...planData,
-      id: `plan-${Date.now()}`,
-      actionItems: [], // Start with empty action items for new plans
-    };
-    setInterventionPlans(prevPlans => [newPlan, ...prevPlans]);
+  const handleSaveIntervention = (planData: Omit<InterventionPlan, 'id'> & { id?: string; actionItems: ActionItem[] }) => {
+    setInterventionPlans(prevPlans => {
+        // Check if it's an update by looking for an existing ID
+        if (planData.id && prevPlans.some(p => p.id === planData.id)) {
+            return prevPlans.map(p => 
+                p.id === planData.id 
+                ? { ...p, ...planData, id: p.id } // Merge data, ensure ID remains constant
+                : p
+            );
+        } else {
+            // It's a new plan, create it
+            const newPlan: InterventionPlan = {
+                ...planData,
+                id: `plan-${Date.now()}`,
+                actionItems: planData.actionItems || [],
+            };
+            return [newPlan, ...prevPlans];
+        }
+    });
     handleCloseInterventionModal();
+};
+
+  const handleCloseToast = () => {
+    setToastAlert(null);
+  };
+
+  const handleToastNavigate = (regionName: string) => {
+      handleNavigateToRegion(regionName);
+      handleCloseToast();
   };
 
   const renderContent = () => {
@@ -129,6 +168,8 @@ const App: React.FC = () => {
         return <InterventionManagement plans={interventionPlans} onOpenModal={handleOpenInterventionModal} />;
       case View.DataProcessing:
         return <DataProcessing />;
+      case View.InputData:
+        return <InputData />;
       case View.ResourceAllocation:
         return <ResourceAllocation />;
       case View.Reports:
@@ -151,29 +192,36 @@ const App: React.FC = () => {
 
   return (
     <div className={`relative flex h-screen bg-slate-100 font-sans transition-opacity duration-500 ease-in-out opacity-100`}>
-    <Sidebar 
-        activeView={activeView} 
-        setActiveView={setActiveView} 
-        isOpen={isSidebarOpen} 
-        setIsOpen={setIsSidebarOpen} 
-    />
-    <div className="flex-1 flex flex-col overflow-hidden">
-        <Header 
-            setIsSidebarOpen={setIsSidebarOpen} 
-            onLogout={handleLogout} 
-            setActiveView={setActiveView}
-            onNavigateToRegion={handleNavigateToRegion}
-        />
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 p-6 print:bg-white print:p-0">
-        {renderContent()}
-        </main>
-    </div>
-    <InterventionFormModal
-        isOpen={isInterventionModalOpen}
-        onClose={handleCloseInterventionModal}
-        onSave={handleSaveIntervention}
-        initialData={interventionInitialData}
-        />
+      <Sidebar 
+          activeView={activeView} 
+          setActiveView={setActiveView} 
+          isOpen={isSidebarOpen} 
+          setIsOpen={setIsSidebarOpen} 
+      />
+      <div className="flex-1 flex flex-col overflow-hidden">
+          <Header 
+              setIsSidebarOpen={setIsSidebarOpen} 
+              onLogout={handleLogout} 
+              setActiveView={setActiveView}
+              onNavigateToRegion={handleNavigateToRegion}
+          />
+          <main className="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 p-4 sm:p-6 print:bg-white print:p-0">
+          {renderContent()}
+          </main>
+      </div>
+      <InterventionFormModal
+          isOpen={isInterventionModalOpen}
+          onClose={handleCloseInterventionModal}
+          onSave={handleSaveIntervention}
+          initialData={interventionInitialData}
+      />
+      {toastAlert && (
+          <ToastNotification
+              alert={toastAlert}
+              onClose={handleCloseToast}
+              onNavigate={handleToastNavigate}
+          />
+      )}
     </div>
   );
 };

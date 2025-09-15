@@ -32,7 +32,7 @@ const RecommendationGenerator: React.FC<RecommendationGeneratorProps> = ({ onGen
                             id="domain"
                             value={domain}
                             onChange={(e) => setDomain(e.target.value)}
-                            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-slate-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-slate-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md bg-white text-slate-900"
                         >
                             {Object.keys(domainsData).map(d => <option key={d}>{d}</option>)}
                         </select>
@@ -43,7 +43,7 @@ const RecommendationGenerator: React.FC<RecommendationGeneratorProps> = ({ onGen
                             id="region"
                             value={region}
                             onChange={(e) => setRegion(e.target.value)}
-                            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-slate-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-slate-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md bg-white text-slate-900"
                         >
                             <option>All Regions</option>
                              {getAvailableRegions().map(r => <option key={r.id}>{r.name}</option>)}
@@ -79,7 +79,7 @@ const RecommendationGenerator: React.FC<RecommendationGeneratorProps> = ({ onGen
                             rows={4}
                             value={customPrompt}
                             onChange={(e) => setCustomPrompt(e.target.value)}
-                            className="mt-1 block w-full shadow-sm sm:text-sm border-slate-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                            className="mt-1 block w-full shadow-sm sm:text-sm border-slate-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 bg-white text-slate-900"
                             placeholder="e.g., How to improve stunting prevention in mountainous areas?"
                         />
                     </div>

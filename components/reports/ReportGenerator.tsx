@@ -63,7 +63,7 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ onGenerate, isLoading
                     name="type"
                     value={params.type}
                     onChange={handleParamChange}
-                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-slate-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-slate-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md bg-white text-slate-900"
                 >
                     {reportTypes.map(rt => (
                         <option key={rt.id} value={rt.id}>
@@ -81,7 +81,7 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ onGenerate, isLoading
                         name="regionId"
                         value={params.regionId}
                         onChange={handleParamChange}
-                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-slate-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-slate-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md bg-white text-slate-900"
                     >
                         {availableRegions.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
                     </select>
@@ -97,7 +97,7 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ onGenerate, isLoading
                         name="month"
                         value={params.month}
                         onChange={handleParamChange}
-                        className="mt-1 block w-full pl-3 pr-2 py-2 text-base border-slate-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                        className="mt-1 block w-full pl-3 pr-2 py-2 text-base border-slate-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md bg-white text-slate-900"
                     />
                 </div>
             )}
@@ -111,7 +111,7 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ onGenerate, isLoading
                         name="year"
                         value={params.year}
                         onChange={handleParamChange}
-                        className="mt-1 block w-full pl-3 pr-2 py-2 text-base border-slate-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                        className="mt-1 block w-full pl-3 pr-2 py-2 text-base border-slate-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md bg-white text-slate-900"
                         min="2023"
                         max={new Date().getFullYear()}
                     />

@@ -79,7 +79,7 @@ const InsightContainer: React.FC<InsightContainerProps> = ({
 
     return (
         <div className="bg-white p-6 rounded-lg shadow-sm">
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-4 gap-3">
                 <h3 className="text-lg font-bold text-slate-800 flex items-center">
                     {icon}
                     {title}
@@ -87,7 +87,7 @@ const InsightContainer: React.FC<InsightContainerProps> = ({
                 <button 
                     onClick={() => onRegenerate()}
                     disabled={isLoading}
-                    className="flex items-center px-3 py-1.5 text-xs font-semibold text-indigo-700 bg-indigo-100 rounded-lg hover:bg-indigo-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-shrink-0 self-start sm:self-center flex items-center px-3 py-1.5 text-xs font-semibold text-indigo-700 bg-indigo-100 rounded-lg hover:bg-indigo-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     aria-label="Regenerate insight"
                 >
                     <ArrowPathIcon className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />

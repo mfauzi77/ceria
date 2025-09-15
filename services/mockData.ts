@@ -1,6 +1,5 @@
 
 
-
 import { RiskAssessmentData, KeyIndicatorData, ActiveAlertData, RiskCategory, AlertLevel, ForecastDataPoint, RegionalForecastData, RegionDetailData, DomainData, DataSource, LogEntry, InterventionPlan, InterventionStatus, InterventionPriority, RegionalRiskScore, DomainFilter, ResourceData, Domain, RegionPerformance, DomainIndicatorData, DomainMetric, ParentData, KabupatenKotaDetailData, DomainMetrics } from '../types';
 
 export const riskAssessmentData: RiskAssessmentData[] = [
@@ -14,7 +13,7 @@ export const keyIndicatorsByDomain: Record<DomainFilter, KeyIndicatorData[]> = {
     'Semua': [
         { value: '78.5%', label: 'Cakupan Imunisasi Dasar', change: 2.3, changeType: 'increase', domain: 'Semua' },
         { value: '21.6%', label: 'Prevalensi Stunting', change: -1.2, changeType: 'decrease', domain: 'Semua' },
-        { value: '72.3', label: 'Indeks Pembangunan Manusia (IPM)', change: 0.2, changeType: 'increase', domain: 'Kesejahteraan' },
+        { value: '65.2%', label: 'Angka Partisipasi Murni (APM) PAUD', change: 2.1, changeType: 'increase', domain: 'Pendidikan' },
         { value: '90.3%', label: 'Pemeriksaan Antenatal (K4)', change: 1.5, changeType: 'increase', domain: 'Semua' },
     ],
     'Kesehatan': [
@@ -32,6 +31,12 @@ export const keyIndicatorsByDomain: Record<DomainFilter, KeyIndicatorData[]> = {
         { value: '88.3%', label: 'Pemberian ASI Eksklusif', change: 3.1, changeType: 'increase', domain: 'Gizi' },
         { value: '7.1%', label: 'Gizi Buruk (Wasting)', change: -0.5, changeType: 'decrease', domain: 'Gizi' },
         { value: '28.4%', label: 'Anemia pada Ibu Hamil', change: 0.3, changeType: 'increase', domain: 'Gizi'},
+    ],
+    'Pendidikan': [
+       { value: '65.2%', label: 'Angka Partisipasi Murni (APM) PAUD', change: 2.1, changeType: 'increase', domain: 'Pendidikan' },
+       { value: '1:18', label: 'Rasio Guru-Siswa PAUD', change: -0.5, changeType: 'decrease', domain: 'Pendidikan' },
+       { value: '82.0%', label: 'Kualifikasi Guru (Minimal S1)', change: 3.5, changeType: 'increase', domain: 'Pendidikan' },
+       { value: '55.7%', label: 'Satuan PAUD Terakreditasi (Minimal B)', change: 4.2, changeType: 'increase', domain: 'Pendidikan'},
     ],
     'Pengasuhan': [
        { value: '85.2%', label: 'Partisipasi PAUD', change: 1.8, changeType: 'increase', domain: 'Pengasuhan' },
@@ -80,6 +85,8 @@ export const allActiveAlerts: ActiveAlertData[] = [
     { id: 'alert-18', level: AlertLevel.Critical, title: 'Risiko Gempa & Tsunami', region: 'Kota Palu', domain: 'Lingkungan', riskScore: 89, trend: 2 },
     { id: 'alert-19', level: AlertLevel.High, title: 'Tingkat Stunting Tinggi', region: 'Kab. Brebes', domain: 'Gizi', riskScore: 79, trend: 3 },
     { id: 'alert-20', level: AlertLevel.Critical, title: 'Akses Kesehatan Sangat Terbatas', region: 'Kab. Nias Utara', domain: 'Kesehatan', riskScore: 94, trend: 6 },
+    { id: 'alert-21', level: AlertLevel.High, title: 'APM PAUD Rendah', region: 'Papua Pegunungan', domain: 'Pendidikan', riskScore: 82, trend: 2 },
+    { id: 'alert-22', level: AlertLevel.Medium, title: 'Kekurangan Guru PAUD Berkualitas', region: 'Maluku', domain: 'Pendidikan', riskScore: 68, trend: 1 },
 ];
 
 export const forecastChartData: ForecastDataPoint[] = [
@@ -125,6 +132,11 @@ const generateDomainMetrics = (baseRisk: number, domain: Domain): DomainMetrics 
             metrics = [
                 { label: 'Prevalensi Stunting', value: Math.max(10, Math.min(50, score/2 + rand(-5, 5))), unit: '%', nationalAverage: 28, higherIsBetter: false },
                 { label: 'Gizi Buruk', value: Math.max(2, Math.min(25, score/4 + rand(-3, 3))), unit: '%', nationalAverage: 7, higherIsBetter: false }
+            ]; break;
+        case 'Pendidikan':
+            metrics = [
+                { label: 'APM PAUD', value: Math.max(25, Math.min(90, 90 - score + rand(-10, 5))), unit: '%', nationalAverage: 65, higherIsBetter: true },
+                { label: 'Kualifikasi Guru S1', value: Math.max(40, Math.min(100, 100 - score + rand(-15, 10))), unit: '%', nationalAverage: 80, higherIsBetter: true }
             ]; break;
         case 'Pengasuhan':
             metrics = [
@@ -218,6 +230,7 @@ Object.entries(indonesiaData).forEach(([provinceName, cities]) => {
         domains: {
             Kesehatan: generateDomainMetrics(baseProvinceRisk, 'Kesehatan'),
             Gizi: generateDomainMetrics(baseProvinceRisk + rand(-5, 5), 'Gizi'),
+            Pendidikan: generateDomainMetrics(baseProvinceRisk + rand(-8, 8), 'Pendidikan'),
             Pengasuhan: generateDomainMetrics(baseProvinceRisk + rand(-10, 2), 'Pengasuhan'),
             Perlindungan: generateDomainMetrics(baseProvinceRisk + rand(-10, 5), 'Perlindungan'),
             Kesejahteraan: generateDomainMetrics(baseProvinceRisk + rand(-5, 5), 'Kesejahteraan'),
@@ -240,6 +253,7 @@ Object.entries(indonesiaData).forEach(([provinceName, cities]) => {
             domains: {
                 Kesehatan: generateDomainMetrics(baseCityRisk, 'Kesehatan'),
                 Gizi: generateDomainMetrics(baseCityRisk + rand(-5, 5), 'Gizi'),
+                Pendidikan: generateDomainMetrics(baseCityRisk + rand(-8, 8), 'Pendidikan'),
                 Pengasuhan: generateDomainMetrics(baseCityRisk + rand(-10, 2), 'Pengasuhan'),
                 Perlindungan: generateDomainMetrics(baseCityRisk + rand(-10, 5), 'Perlindungan'),
                 Kesejahteraan: generateDomainMetrics(baseCityRisk + rand(-5, 5), 'Kesejahteraan'),
@@ -284,6 +298,7 @@ const generateRegionalForecastData = (): RegionalForecastData[] => {
             const domainVolatility: Record<Domain, number> = {
                 'Kesehatan': 6,
                 'Gizi': 8,
+                'Pendidikan': 5,
                 'Pengasuhan': 4,
                 'Perlindungan': 3,
                 'Kesejahteraan': 5,
@@ -405,6 +420,7 @@ const generateDomainData = (domain: Domain): DomainData => {
 export const domainsData: Record<string, DomainData> = {
     'Kesehatan': generateDomainData('Kesehatan'),
     'Gizi': generateDomainData('Gizi'),
+    'Pendidikan': generateDomainData('Pendidikan'),
     'Pengasuhan': generateDomainData('Pengasuhan'),
     'Perlindungan': generateDomainData('Perlindungan'),
     'Kesejahteraan': generateDomainData('Kesejahteraan'),
@@ -456,10 +472,10 @@ export const mockInterventionPlans: InterventionPlan[] = [
         budget: 500000000,
         kpi: 'Meningkatkan cakupan imunisasi dasar lengkap (IDL) dari 65% menjadi 80%',
         actionItems: [
-            { id: 'ai-1-1', text: 'Pengadaan 2 unit mobil operasional', completed: true },
-            { id: 'ai-1-2', text: 'Rekrutmen 4 tenaga kesehatan lapangan', completed: true },
-            { id: 'ai-1-3', text: 'Sosialisasi program dengan kepala suku', completed: false },
-            { id: 'ai-1-4', text: 'Pelaksanaan imunisasi gelombang pertama', completed: false },
+            { id: 'ai-1-1', text: 'Pengadaan 2 unit mobil operasional', completed: true, dueDate: '2024-07-10' },
+            { id: 'ai-1-2', text: 'Rekrutmen 4 tenaga kesehatan lapangan', completed: true, dueDate: '2024-07-20' },
+            { id: 'ai-1-3', text: 'Sosialisasi program dengan kepala suku', completed: false, dueDate: '2024-08-05' },
+            { id: 'ai-1-4', text: 'Pelaksanaan imunisasi gelombang pertama', completed: false, dueDate: '2024-08-20' },
         ],
         relatedAlertId: 'alert-1'
     },
@@ -476,9 +492,9 @@ export const mockInterventionPlans: InterventionPlan[] = [
         budget: 1200000000,
         kpi: 'Menurunkan prevalensi stunting sebesar 5% di 3 kabupaten prioritas',
         actionItems: [
-            { id: 'ai-2-1', text: 'Distribusi 10,000 paket PMT', completed: true },
-            { id: 'ai-2-2', text: 'Pelatihan 500 kader Posyandu tentang PM-TBA', completed: true },
-            { id: 'ai-2-3', text: 'Kampanye media tentang 1000 HPK', completed: false },
+            { id: 'ai-2-1', text: 'Distribusi 10,000 paket PMT', completed: true, dueDate: '2024-06-25' },
+            { id: 'ai-2-2', text: 'Pelatihan 500 kader Posyandu tentang PM-TBA', completed: true, dueDate: '2024-07-05' },
+            { id: 'ai-2-3', text: 'Kampanye media tentang 1000 HPK', completed: false, dueDate: '2024-09-01' },
         ],
         relatedAlertId: 'alert-3'
     },
@@ -495,9 +511,9 @@ export const mockInterventionPlans: InterventionPlan[] = [
         budget: 450000000,
         kpi: 'Menurunkan prevalensi anemia pada ibu hamil sebesar 10%',
         actionItems: [
-            { id: 'ai-5-1', text: 'Koordinasi dengan Dinas Kesehatan Provinsi', completed: false },
-            { id: 'ai-5-2', text: 'Pengadaan 50,000 strip TTD', completed: false },
-            { id: 'ai-5-3', text: 'Pelatihan Bidan dan Kader', completed: false },
+            { id: 'ai-5-1', text: 'Koordinasi dengan Dinas Kesehatan Provinsi', completed: false, dueDate: '2024-08-15' },
+            { id: 'ai-5-2', text: 'Pengadaan 50,000 strip TTD', completed: false, dueDate: '2024-09-01' },
+            { id: 'ai-5-3', text: 'Pelatihan Bidan dan Kader', completed: false, dueDate: '2024-09-20' },
         ],
         relatedAlertId: 'alert-10'
     },
@@ -512,99 +528,78 @@ export const mockInterventionPlans: InterventionPlan[] = [
         startDate: '2024-09-01',
         endDate: '2025-03-01',
         budget: 350000000,
-        kpi: 'Meningkatkan akses sanitasi layak sebesar 10% di wilayah target',
-        actionItems: [
-            { id: 'ai-3-1', text: 'Pemetaan wilayah dengan sanitasi buruk', completed: false },
-            { id: 'ai-3-2', text: 'Rapat koordinasi dengan dinas PUPR', completed: false },
-        ],
+        kpi: 'Meningkatkan akses sanitasi layak dari 65% menjadi 75%',
+        actionItems: [],
         relatedAlertId: 'alert-6'
     },
      {
         id: 'plan-004',
-        title: 'Gerakan Rumah Bebas Asap',
-        description: 'Kampanye dan edukasi untuk mengurangi paparan asap rokok pada anak.',
-        region: 'Jawa Barat',
-        domain: 'Kesehatan',
+        title: 'Gerakan Kembali ke PAUD',
+        description: 'Kampanye dan bantuan operasional untuk meningkatkan partisipasi PAUD di Kalimantan Timur.',
+        region: 'Kalimantan Timur',
+        domain: 'Pengasuhan',
         status: InterventionStatus.Completed,
         priority: InterventionPriority.Medium,
         startDate: '2024-01-10',
-        endDate: '2024-06-10',
-        budget: 150000000,
-        kpi: 'Mencapai 50 RT/RW percontohan bebas asap rokok di dalam rumah',
+        endDate: '2024-05-10',
+        budget: 200000000,
+        kpi: 'Meningkatkan partisipasi PAUD sebesar 5% di 2 kota prioritas',
         actionItems: [
-            { id: 'ai-4-1', text: 'Workshop dengan tokoh masyarakat', completed: true },
-            { id: 'ai-4-2', text: 'Distribusi materi edukasi', completed: true },
-            { id: 'ai-4-3', text: 'Monitoring dan evaluasi akhir', completed: true },
+             { id: 'ai-4-1', text: 'Rapat koordinasi awal', completed: true, dueDate: '2024-01-15' },
+             { id: 'ai-4-2', text: 'Peluncuran kampanye media', completed: true, dueDate: '2024-02-01' },
+             { id: 'ai-4-3', text: 'Distribusi BOP', completed: true, dueDate: '2024-03-15' },
+             { id: 'ai-4-4', text: 'Evaluasi akhir', completed: true, dueDate: '2024-05-05' },
         ],
-        relatedAlertId: 'alert-2'
-    },
-     {
-        id: 'plan-006',
-        title: 'Mitigasi Banjir Rob di Pesisir Jakarta',
-        description: 'Program mitigasi dampak banjir rob pada kesehatan anak, termasuk penyediaan MCK darurat dan layanan kesehatan mobile.',
-        region: 'DKI Jakarta',
-        domain: 'Lingkungan',
-        status: InterventionStatus.Planning,
-        priority: InterventionPriority.High,
-        startDate: '2024-08-15',
-        endDate: '2024-11-15',
-        budget: 750000000,
-        kpi: 'Mengurangi insiden penyakit berbasis air sebesar 20% di area terdampak',
-        actionItems: [],
-        relatedAlertId: 'alert-15'
+        relatedAlertId: 'alert-8'
     },
 ];
-
-export const regionalRiskScores: RegionalRiskScore[] = Object.values(regionsDetails).map(r => ({ name: r.name, score: r.overallRisk }));
 
 // --- Mock Data for Resource Allocation ---
 export const mockResourceData: ResourceData = {
     sdm: [
-        { name: 'Tenaga Kesehatan', unit: 'orang', current: 2500, forecast: 3000, needed: 500, color: 'text-blue-500' },
-        { name: 'Kader Posyandu', unit: 'orang', current: 15000, forecast: 18000, needed: 3000, color: 'text-blue-500' },
-        { name: 'Guru PAUD', unit: 'orang', current: 8000, forecast: 9000, needed: 1000, color: 'text-blue-500' },
-        { name: 'Ahli Gizi', unit: 'orang', current: 850, forecast: 1200, needed: 350, color: 'text-blue-500' },
+        { name: 'Tenaga Kesehatan', unit: 'orang', current: 15200, forecast: 16000, needed: 800, color: 'text-blue-500' },
+        { name: 'Kader Posyandu', unit: 'orang', current: 45000, forecast: 48000, needed: 3000, color: 'text-blue-500' },
+        { name: 'Guru PAUD', unit: 'orang', current: 25000, forecast: 26500, needed: 1500, color: 'text-blue-500' },
     ],
     anggaran: [
-        { name: 'Operasional', unit: 'Miliar IDR', current: 150, forecast: 180, needed: 30, color: 'text-emerald-500' },
-        { name: 'Program Gizi', unit: 'Miliar IDR', current: 240, forecast: 300, needed: 60, color: 'text-emerald-500' },
-        { name: 'Program Kesehatan', unit: 'Miliar IDR', current: 220, forecast: 260, needed: 40, color: 'text-emerald-500' },
-        { name: 'Edukasi & Sosialisasi', unit: 'Miliar IDR', current: 80, forecast: 100, needed: 20, color: 'text-emerald-500' },
+        { name: 'Intervensi Gizi', unit: 'miliar IDR', current: 850, forecast: 900, needed: 50, color: 'text-emerald-500' },
+        { name: 'BOP PAUD', unit: 'miliar IDR', current: 1200, forecast: 1250, needed: 50, color: 'text-emerald-500' },
+        { name: 'Operasional Posyandu', unit: 'miliar IDR', current: 300, forecast: 350, needed: 50, color: 'text-emerald-500' },
     ],
     material: [
-        { name: 'Paket PMT', unit: 'paket', current: 500000, forecast: 600000, needed: 100000, color: 'text-amber-500' },
-        { name: 'Vaksin Lengkap', unit: 'dosis', current: 2500000, forecast: 3000000, needed: 500000, color: 'text-amber-500' },
-        { name: 'APE Kit', unit: 'kit', current: 30000, forecast: 36000, needed: 6000, color: 'text-amber-500' },
-        { name: 'Buku KIA', unit: 'buku', current: 1000000, forecast: 1200000, needed: 200000, color: 'text-amber-500' },
-    ]
+        { name: 'Paket PMT', unit: 'paket', current: 2500000, forecast: 2800000, needed: 300000, color: 'text-amber-500' },
+        { name: 'Vaksin Dasar', unit: 'dosis', current: 5000000, forecast: 5500000, needed: 500000, color: 'text-amber-500' },
+        { name: 'APE PAUD', unit: 'set', current: 75000, forecast: 80000, needed: 5000, color: 'text-amber-500' },
+    ],
 };
+
+export const regionalRiskScores: RegionalRiskScore[] = Object.values(regionsDetails).map(r => ({ name: r.name, score: r.overallRisk }));
 
 // --- Mock Data for Parent Dashboard ---
 export const mockParentData: ParentData = {
     childProfile: {
-        name: 'Budi',
+        name: 'Budi Hartono',
         age: '2 tahun 3 bulan',
         avatarUrl: 'https://i.pravatar.cc/150?u=budi',
         lastWeight: 12.5,
         lastHeight: 88,
     },
     upcomingEvents: [
-        { id: 'ev1', title: 'Imunisasi DPT-HB-Hib 4', dueDate: '2024-08-15', type: 'immunization' },
-        { id: 'ev2', title: 'Penimbangan Posyandu Melati', dueDate: '2024-08-25', type: 'posyandu' },
+        { id: 'ev1', title: 'Imunisasi Campak Lanjutan', dueDate: '2024-07-28', type: 'immunization' },
+        { id: 'ev2', title: 'Jadwal Posyandu Bulanan', dueDate: '2024-08-05', type: 'posyandu' },
     ],
     growthHistory: [
         { ageInMonths: 18, weight: 10.9, height: 82 },
         { ageInMonths: 21, weight: 11.8, height: 85 },
-        { ageInMonths: 24, weight: 12.1, height: 87 },
+        { ageInMonths: 24, weight: 12.2, height: 87 },
         { ageInMonths: 27, weight: 12.5, height: 88 },
     ],
     stimulationChecklist: [
-        { id: 'stim1', text: 'Berlari tanpa sering jatuh', completed: true, ageGroup: '24-36 bulan', category: 'Motorik Kasar' },
-        { id: 'stim2', text: 'Menendang bola', completed: true, ageGroup: '24-36 bulan', category: 'Motorik Kasar' },
-        { id: 'stim3', text: 'Menyusun menara 4-6 balok', completed: true, ageGroup: '24-36 bulan', category: 'Motorik Halus' },
-        { id: 'stim4', text: 'Mencoret-coret dengan pensil/krayon', completed: false, ageGroup: '24-36 bulan', category: 'Motorik Halus' },
-        { id: 'stim5', text: 'Menggunakan 2-3 kata dalam kalimat', completed: true, ageGroup: '24-36 bulan', category: 'Bahasa' },
-        { id: 'stim6', text: 'Menyebut nama sendiri', completed: false, ageGroup: '24-36 bulan', category: 'Bahasa' },
-        { id: 'stim7', text: 'Meniru pekerjaan rumah tangga', completed: true, ageGroup: '24-36 bulan', category: 'Sosial & Emosional' },
-    ],
+        { id: 'sc1', text: 'Menyebut 2-3 kata', completed: true, ageGroup: '18-24 bulan', category: 'Bahasa' },
+        { id: 'sc2', text: 'Berlari tanpa jatuh', completed: true, ageGroup: '18-24 bulan', category: 'Motorik Kasar' },
+        { id: 'sc3', text: 'Menyusun 4 balok', completed: false, ageGroup: '18-24 bulan', category: 'Motorik Halus' },
+        { id: 'sc4', text: 'Menunjuk bagian tubuh', completed: true, ageGroup: '18-24 bulan', category: 'Bahasa' },
+        { id: 'sc5', text: 'Mencoret-coret dengan pensil', completed: true, ageGroup: '18-24 bulan', category: 'Motorik Halus' },
+        { id: 'sc6', text: 'Makan sendiri dengan sendok', completed: false, ageGroup: '18-24 bulan', category: 'Sosial & Emosional' },
+    ]
 };

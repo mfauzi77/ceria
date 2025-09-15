@@ -47,7 +47,7 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({ isOpen, onClose, onSubmit
               rows={4}
               value={feedback}
               onChange={(e) => setFeedback(e.target.value)}
-              className="w-full p-2 text-sm text-slate-800 border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full p-2 text-sm text-slate-800 border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 bg-white"
               placeholder="Contoh: Analisis tidak mempertimbangkan adanya program bantuan pangan lokal yang baru dimulai bulan lalu."
               required
             />

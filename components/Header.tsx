@@ -56,8 +56,8 @@ const Header: React.FC<HeaderProps> = ({ setIsSidebarOpen, onLogout, setActiveVi
           </svg>
         </button>
         <div>
-          <h1 className="text-lg md:text-xl font-bold text-slate-800">CERIA (Cerdas, Efektif, Responsif, Inovatif, Akurat)</h1>
-          <p className="text-xs sm:text-sm text-slate-500">Sistem Pendukung Keputusan Cerdas untuk Pemerataan Layanan PAUD HI</p>
+          <h1 className="text-lg sm:text-xl font-bold text-slate-800">CERIA (Cerdas, Efektif, Responsif, Inovatif, Akurat)</h1>
+          <p className="text-xs text-slate-500">Sistem Pendukung Keputusan Cerdas untuk Pemerataan Layanan PAUD HI</p>
           <div className="flex items-center text-xs text-slate-500 font-medium mt-1.5">
             <CalendarIcon className="w-4 h-4 mr-1.5 text-slate-400" />
             <span>Data diproses per 30 Juni 2024</span>
@@ -67,13 +67,13 @@ const Header: React.FC<HeaderProps> = ({ setIsSidebarOpen, onLogout, setActiveVi
       <div className="flex items-center space-x-2 md:space-x-4">
         <div className="relative" ref={notificationsRef}>
             <button 
-                className="relative" 
+                className="relative p-1" 
                 aria-label="Notifications"
                 onClick={() => setIsNotificationsOpen(prev => !prev)}
                 aria-expanded={isNotificationsOpen}
             >
                 {highPriorityAlerts.length > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 block h-2.5 w-2.5 rounded-full bg-red-500 border-2 border-white"></span>
+                  <span className="absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-red-500 border-2 border-white"></span>
                 )}
                 <BellAlertIcon className="h-6 w-6 text-slate-500 hover:text-slate-700" />
             </button>
