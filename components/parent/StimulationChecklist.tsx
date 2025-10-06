@@ -40,7 +40,8 @@ const StimulationChecklist: React.FC<StimulationChecklistProps> = ({ initialItem
                     <div key={category}>
                         <h4 className="font-semibold text-slate-600 text-sm mb-2">{category}</h4>
                         <ul className="space-y-2">
-                            {catItems.map(item => (
+                            {/* Fix: Cast catItems to StimulationChecklistItem[] to resolve typing issue with Object.entries */}
+                            {(catItems as StimulationChecklistItem[]).map(item => (
                                 <li key={item.id}>
                                     <label className="flex items-center p-3 bg-slate-50 rounded-md hover:bg-slate-100 cursor-pointer transition-colors">
                                         <input

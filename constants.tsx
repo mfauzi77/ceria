@@ -12,7 +12,7 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     { id: View.EWSPerBidang, label: 'Analisis per Bidang', icon: <BellAlertIcon /> },
     { id: View.SmartRecommendations, label: 'Rekomendasi CERIA', icon: <LightBulbIcon /> },
     { id: View.Intervensi, label: 'Manajemen Intervensi', icon: <BeakerIcon /> },
-    { id: View.DataProcessing, label: 'Manajemen Integrasi', icon: <CircleStackIcon /> },
+    { id: View.DataProcessing, label: 'Manajemen Integrasi', icon: <WrenchScrewdriverIcon /> },
 ];
 
 export const SUB_NAVIGATION_ITEMS: NavItem[] = [
@@ -22,6 +22,25 @@ export const SUB_NAVIGATION_ITEMS: NavItem[] = [
 
 export const PERSONAL_NAVIGATION_ITEMS: NavItem[] = [
     // { id: View.ParentDashboard, label: 'Dashboard Orang Tua', icon: <UserCircleIcon /> },
+];
+
+export const DATA_INTEGRATION_NAV: NavItem[] = [
+    { id: View.Import_Kemenkes_Imunisasi, label: 'Kemenkes - Imunisasi', icon: <DocumentPlusIcon /> },
+    { id: View.Import_Kemenkes_Gizi, label: 'Kemenkes - Gizi', icon: <DocumentPlusIcon /> },
+    { id: View.Import_Kemenkes_KIA, label: 'Kemenkes - KIA', icon: <DocumentPlusIcon /> },
+    { id: View.Import_Kemenkes_Penyakit, label: 'Kemenkes - Penyakit', icon: <DocumentPlusIcon /> },
+    { id: View.Import_Dapodik_APM_APK, label: 'Dapodik - APM & APK', icon: <DocumentPlusIcon /> },
+    { id: View.Import_Dapodik_SatuanPAUD, label: 'Dapodik - Satuan PAUD', icon: <DocumentPlusIcon /> },
+    { id: View.Import_Dapodik_KualitasGuru, label: 'Dapodik - Kualitas Guru', icon: <DocumentPlusIcon /> },
+    { id: View.Import_Dukcapil_IdentitasAnak, label: 'Dukcapil - Identitas Anak', icon: <DocumentPlusIcon /> },
+    { id: View.Import_KemenPPPA_Kekerasan, label: 'KemenPPPA - Kekerasan Anak', icon: <DocumentPlusIcon /> },
+    { id: View.Import_KemenPPPA_PerkawinanAnak, label: 'KemenPPPA - Perkawinan Anak', icon: <DocumentPlusIcon /> },
+    { id: View.Import_BPS_SosialEkonomi, label: 'BPS - Sosial Ekonomi', icon: <DocumentPlusIcon /> },
+    { id: View.Import_BPS_PerkawinanAnak, label: 'BPS - Perkawinan Anak', icon: <DocumentPlusIcon /> },
+    { id: View.Import_Kemensos_Bansos, label: 'Kemensos - Bansos', icon: <DocumentPlusIcon /> },
+    { id: View.Import_PUPR_Infrastruktur, label: 'PUPR/BPS - Infrastruktur Dasar', icon: <DocumentPlusIcon /> },
+    { id: View.Import_BNPB_RisikoBencana, label: 'BNPB - Risiko Bencana', icon: <DocumentPlusIcon /> },
+    { id: View.Import_BMKG_KualitasLingkungan, label: 'BMKG - Kualitas Lingkungan', icon: <DocumentPlusIcon /> },
 ];
 
 export const DOMAIN_FILTER_ITEMS = [

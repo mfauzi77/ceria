@@ -66,7 +66,7 @@ export const getSmartRecommendations = async (alert: ActiveAlertData): Promise<S
 
     Instructions:
     1.  **justification**: Write a brief (1-2 sentences) strategic justification for why this intervention is critical.
-    2.  **recommendations**: Provide three concrete intervention recommendations in a markdown numbered list.
+    2.  **recommendations**: Provide three concrete intervention recommendations in a markdown numbered list. Each numbered item must be on a new line.
     3.  **projectedRiskScore**: Estimate the new risk score for the region if these recommendations are successfully implemented. It must be a number lower than the current risk score of ${alert.riskScore}.
     
     The entire response must be in Bahasa Indonesia.
@@ -87,7 +87,7 @@ export const getSmartRecommendations = async (alert: ActiveAlertData): Promise<S
               },
               recommendations: {
                 type: Type.STRING,
-                description: 'Three actionable recommendations in markdown format, in Bahasa Indonesia.',
+                description: 'Three actionable recommendations in markdown format, in Bahasa Indonesia, with each item on a new line.',
               },
               projectedRiskScore: {
                 type: Type.NUMBER,

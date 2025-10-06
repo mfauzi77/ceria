@@ -1,7 +1,5 @@
-
-
 import React from 'react';
-import { DomainComparisonData, MonthlySummaryData, RegionPerformance, ReportData } from '../../types';
+import { DomainComparisonData, MonthlySummaryData, RegionPerformance, ReportData, RegionDetailData } from '../../types';
 import { DocumentChartBarIcon, DocumentArrowDownIcon, CalendarIcon, ChevronUpIcon, ChevronDownIcon, MinusIcon, TrendingUpIcon, TrendingDownIcon, TrophyIcon, ExclamationTriangleIcon } from '../icons/Icons';
 import RegionSummary from '../dataperwilayah/RegionSummary';
 import DomainBreakdown from '../dataperwilayah/DomainBreakdown';
@@ -132,8 +130,9 @@ const DomainComparisonContent: React.FC<{ data: DomainComparisonData }> = ({ dat
                                         <div className="flex items-center text-xs">
                                             <TrophyIcon className="w-4 h-4 mr-2 text-amber-500 flex-shrink-0" />
                                             <div className="truncate">
-                                                <span className="font-semibold">{stat.bestPerformer.name}</span>
-                                                <span className="text-slate-500"> ({stat.bestPerformer.riskScore})</span>
+                                                <span className="font-semibold">{stat.bestPerformer?.name}</span>
+                                                {/* Fix: Cast performer to RegionPerformance to access its properties safely. */}
+                                                <span className="text-slate-500"> ({stat.bestPerformer?.riskScore})</span>
                                             </div>
                                         </div>
                                     </td>
@@ -141,8 +140,9 @@ const DomainComparisonContent: React.FC<{ data: DomainComparisonData }> = ({ dat
                                         <div className="flex items-center text-xs">
                                             <ExclamationTriangleIcon className="w-4 h-4 mr-2 text-red-500 flex-shrink-0" />
                                             <div className="truncate">
-                                                <span className="font-semibold">{stat.worstPerformer.name}</span>
-                                                <span className="text-slate-500"> ({stat.worstPerformer.riskScore})</span>
+                                                {/* FIX: Removed redundant and potentially problematic type assertion. Used optional chaining for safety. */}
+                                                <span className="font-semibold">{stat.worstPerformer?.name}</span>
+                                                <span className="text-slate-500"> ({stat.worstPerformer?.riskScore})</span>
                                             </div>
                                         </div>
                                     </td>
@@ -158,6 +158,13 @@ const DomainComparisonContent: React.FC<{ data: DomainComparisonData }> = ({ dat
 
 
 const ReportDisplay: React.FC<ReportDisplayProps> = ({ reportData, isLoading, error }) => {
+    const { regionalProfile, nationalProfile } = React.useMemo(() => {
+        const regionData = reportData?.regionData;
+        if (!regionData) return { regionalProfile: [], nationalProfile: [] };
+        const regional = Object.entries(regionData.domains).map(([key, value]) => ({ axis: key as any, value: value.riskScore }));
+        const national = Object.entries(domainsData).map(([key, value]) => ({ axis: key as any, value: value.averageRisk }));
+        return { regionalProfile: regional, nationalProfile: national };
+    }, [reportData?.regionData]);
 
     const handlePrint = () => {
         window.print();
@@ -193,14 +200,6 @@ const ReportDisplay: React.FC<ReportDisplayProps> = ({ reportData, isLoading, er
     }
 
     const { params, title, generatedAt, regionData, monthlySummary, domainComparisonData, aiSummary } = reportData;
-
-    const { regionalProfile, nationalProfile } = React.useMemo(() => {
-        if (!regionData) return { regionalProfile: [], nationalProfile: [] };
-        const regional = Object.entries(regionData.domains).map(([key, value]) => ({ axis: key as any, value: value.riskScore }));
-        const national = Object.entries(domainsData).map(([key, value]) => ({ axis: key as any, value: value.averageRisk }));
-        return { regionalProfile: regional, nationalProfile: national };
-    }, [regionData]);
-
 
     return (
         <div id="report-content" className="prose-sm max-w-none">

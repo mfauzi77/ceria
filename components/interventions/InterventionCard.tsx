@@ -5,9 +5,11 @@ import { FlagIcon, MapIcon, ChartBarIcon } from '../icons/Icons';
 interface InterventionCardProps {
     plan: InterventionPlan;
     onOpenModal: (plan: InterventionPlan) => void;
+    onDragStart: (e: React.DragEvent<HTMLDivElement>) => void;
+    isDragging: boolean;
 }
 
-const InterventionCard: React.FC<InterventionCardProps> = ({ plan, onOpenModal }) => {
+const InterventionCard: React.FC<InterventionCardProps> = ({ plan, onOpenModal, onDragStart, isDragging }) => {
     
     const getPriorityStyles = (priority: InterventionPriority) => {
         switch (priority) {
@@ -22,7 +24,16 @@ const InterventionCard: React.FC<InterventionCardProps> = ({ plan, onOpenModal }
         : 0;
 
     return (
-        <div onClick={() => onOpenModal(plan)} className="bg-white rounded-lg shadow-sm p-4 border border-slate-200 hover:shadow-md hover:border-indigo-300 transition-all cursor-pointer">
+        <div 
+            draggable="true"
+            onDragStart={onDragStart}
+            onClick={() => onOpenModal(plan)} 
+            className={`rounded-lg shadow-sm p-4 border border-slate-200 transition-all duration-200 ${
+                isDragging 
+                ? 'opacity-50 ring-2 ring-indigo-500 shadow-xl cursor-grabbing' 
+                : 'bg-white hover:shadow-md hover:border-indigo-300 cursor-grab'
+            }`}
+        >
             <div className="flex justify-between items-start">
                 <h4 className="font-bold text-sm text-slate-800 pr-2">{plan.title}</h4>
                 <span className={`px-2 py-0.5 text-xs font-bold rounded-full whitespace-nowrap ${getPriorityStyles(plan.priority)}`}>

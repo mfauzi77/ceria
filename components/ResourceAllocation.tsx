@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { mockResourceData, regionalRiskScores } from '../services/mockData';
+import { useTheme } from './ThemeContext';
 import { ResourceData, ResourceItem, ResourceType, ScenarioParams, GroundingSource } from '../types';
 import { RESOURCE_TYPES } from '../constants';
 import { BriefcaseIcon, CubeIcon, LightBulbIcon, ScaleIcon, UsersIcon, WrenchScrewdriverIcon, ArrowPathIcon, LinkIcon } from './icons/Icons';
@@ -213,11 +214,36 @@ const ScenarioPlanner: React.FC = () => {
 
 
 const ResourceAllocation: React.FC = () => {
+    const { useIntegration } = useTheme();
     const [resourceData] = useState<ResourceData>(mockResourceData);
     const highestRiskRegions = regionalRiskScores
         .sort((a, b) => b.score - a.score)
         .slice(0, 3)
         .map(r => r.name);
+
+    // Handle empty state for data integration
+    if (useIntegration) {
+        return (
+            <div className="space-y-6">
+                <div className="bg-white p-4 rounded-lg shadow-sm">
+                    <h2 className="text-xl font-bold text-slate-800 flex items-center">
+                        <BriefcaseIcon className="w-6 h-6 mr-3" />
+                        Resource Allocation Optimization
+                    </h2>
+                    <p className="text-sm text-slate-500 mt-1">Fitur alokasi sumber daya belum tersedia untuk data integration.</p>
+                </div>
+                <div className="bg-white p-8 rounded-lg shadow-sm">
+                    <div className="flex items-center justify-center h-64">
+                        <div className="text-center">
+                            <div className="text-slate-400 text-4xl mb-4">💼</div>
+                            <p className="text-slate-600 font-medium mb-2">Data tidak tersedia</p>
+                            <p className="text-slate-500 text-sm">Fitur alokasi sumber daya belum tersedia untuk data integration</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6">

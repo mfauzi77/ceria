@@ -47,7 +47,7 @@ const ToastNotification: React.FC<ToastNotificationProps> = ({ alert, onClose, o
     const styles = getLevelStyles(alert.level);
 
     return (
-        <div className="fixed top-6 right-6 w-full max-w-sm z-50">
+        <div className="fixed top-20 right-6 w-full max-w-sm z-40">
             <div
                 className={`w-full ${styles.bg} rounded-lg shadow-2xl ring-1 ring-black ring-opacity-5 border-l-4 ${styles.border} animate-toast-in`}
                 role="alert"

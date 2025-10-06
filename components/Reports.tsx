@@ -1,16 +1,23 @@
 import React, { useState } from 'react';
 import ReportGenerator from './reports/ReportGenerator';
 import ReportDisplay from './reports/ReportDisplay';
+import { useTheme } from './ThemeContext';
 import { ReportParams, ReportData, RegionDetailData, MonthlySummaryData, DomainComparisonData, Domain, DomainData } from '../types';
 import { getRegionDetails, keyIndicatorsByDomain, domainsData, regionalForecastData } from '../services/mockData';
 import { getRegionalAnalysisInsight, getMonthlyPerformanceInsight, getDomainComparisonInsight } from '../services/geminiService';
 
 const Reports: React.FC = () => {
+    const { useIntegration } = useTheme();
     const [reportData, setReportData] = useState<ReportData | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const handleGenerateReport = async (params: ReportParams) => {
+        if (useIntegration) {
+            setError('Fitur laporan belum tersedia untuk data integration.');
+            return;
+        }
+
         setIsLoading(true);
         setError(null);
         setReportData(null);
@@ -92,6 +99,27 @@ const Reports: React.FC = () => {
             setIsLoading(false);
         }
     };
+
+    // Handle empty state for data integration
+    if (useIntegration) {
+        return (
+            <div className="space-y-6">
+                <div className="bg-white p-4 rounded-lg shadow-sm">
+                    <h2 className="text-xl font-bold text-slate-800">Reports & Analytics</h2>
+                    <p className="text-sm text-slate-500 mt-1">Fitur laporan belum tersedia untuk data integration.</p>
+                </div>
+                <div className="bg-white p-8 rounded-lg shadow-sm">
+                    <div className="flex items-center justify-center h-64">
+                        <div className="text-center">
+                            <div className="text-slate-400 text-4xl mb-4">📄</div>
+                            <p className="text-slate-600 font-medium mb-2">Data tidak tersedia</p>
+                            <p className="text-slate-500 text-sm">Fitur laporan belum tersedia untuk data integration</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="flex flex-col lg:flex-row gap-6 h-full print:block">

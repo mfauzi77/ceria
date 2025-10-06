@@ -1,5 +1,5 @@
 import React from 'react';
-import { RegionDetailData } from '../../types';
+import { RegionDetailData, DomainMetrics } from '../../types';
 import { DOMAIN_ITEMS } from '../../constants';
 
 interface DomainBreakdownProps {
@@ -26,7 +26,9 @@ const DomainBreakdown: React.FC<DomainBreakdownProps> = ({ domains }) => {
         <div className="bg-white p-6 rounded-lg shadow-sm">
             <h3 className="text-lg font-bold text-slate-800 mb-4">Rincian per Bidang Layanan</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-                {Object.entries(domains).map(([domainName, domainData]) => {
+                {Object.entries(domains).map(([domainName, domainDataObject]) => {
+                    // Fix: Cast domainDataObject to DomainMetrics to resolve typing issue with Object.entries
+                    const domainData = domainDataObject as DomainMetrics;
                     const domainInfo = DOMAIN_ITEMS.find(d => d.name === domainName);
                     return (
                         <div key={domainName} className="bg-slate-50 p-4 rounded-lg border border-slate-200">

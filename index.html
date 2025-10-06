@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/png" href="/images/logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#4f46e5" />
     <title>CERIA (Cerdas, Efektif, Responsif, Inovatif, Akurat)</title>
@@ -13,6 +13,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
+        darkMode: 'class',
         theme: {
           extend: {
             fontFamily: {
@@ -58,6 +59,9 @@
         color: #374151; /* text-gray-700 */
         max-width: 65ch;
       }
+      .dark .prose {
+        color: #d1d5db; /* dark:text-gray-300 */
+      }
       .prose-sm {
         font-size: 0.875rem;
         line-height: 1.65;
@@ -65,6 +69,9 @@
       .prose h1, .prose h2, .prose h3, .prose h4, .prose strong {
         font-weight: 700;
         color: #1f2937; /* text-gray-800 */
+      }
+      .dark .prose h1, .dark .prose h2, .dark .prose h3, .dark .prose h4, .dark .prose strong {
+        color: #f9fafb; /* dark:text-gray-50 */
       }
       .prose h2 {
         font-size: 1.5rem; /* text-2xl */
@@ -111,7 +118,7 @@
 </script>
 <link rel="stylesheet" href="/index.css">
 </head>
-  <body class="bg-slate-100">
+  <body class="bg-slate-100 dark:bg-slate-900">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>

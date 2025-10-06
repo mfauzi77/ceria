@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
     SparklesIcon,
@@ -27,7 +26,8 @@ interface LandingPageProps {
   onNavigate: () => void;
 }
 
-const SectionCard = ({ icon, title, children }: { icon: React.ReactNode, title: string, children: React.ReactNode }) => (
+// Fix: Made children prop optional to resolve a confusing typescript error.
+const SectionCard = ({ icon, title, children }: { icon: React.ReactNode, title: string, children?: React.ReactNode }) => (
     <div className="bg-white p-6 md:p-8 rounded-2xl shadow-lg border border-slate-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
         <div className="flex items-center mb-4">
             <div className="bg-indigo-100 text-indigo-600 p-3 rounded-full">

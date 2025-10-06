@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface MapRegionData {
@@ -23,7 +22,8 @@ const IndonesiaMap: React.FC<IndonesiaMapProps> = ({ data, onRegionSelect, selec
         return '#10b981'; // emerald-500
     };
     
-    const regionDataMap = new Map(data.map(item => [item.id, item]));
+    // Fix: Explicitly type the Map to ensure correct type inference for .get()
+    const regionDataMap: Map<string, MapRegionData> = new Map(data.map(item => [item.id, item]));
 
     // Corrected and simplified SVG paths for Indonesian provinces
     const provinces = [

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { getAvailableRegions, getRegionDetails, nationalHistoricalRisk, allActiveAlerts, domainsData, kabupatenKotaDetails } from '../services/mockData';
 import { getRegionalAnalysisInsight } from '../services/geminiService';
+import { useTheme } from './ThemeContext';
 import { RegionDetailData, ActiveAlertData, InterventionPlan, InterventionPriority, InterventionStatus, Domain, KabupatenKotaDetailData } from '../types';
 import RegionSummary from './dataperwilayah/RegionSummary';
 import DomainBreakdown from './dataperwilayah/DomainBreakdown';
@@ -33,6 +34,8 @@ const DataPerWilayah: React.FC<DataPerWilayahProps> = ({ handleOpenInterventionM
     const [isInsightLoading, setIsInsightLoading] = useState(false);
     const [insightError, setInsightError] = useState<string | null>(null);
 
+    const { useIntegration } = useTheme();
+
     // Effect for handling external navigation context
     useEffect(() => {
         if (navigationContext) {
@@ -47,13 +50,22 @@ const DataPerWilayah: React.FC<DataPerWilayahProps> = ({ handleOpenInterventionM
 
     // Effect for initializing component and loading regions list
     useEffect(() => {
+        if (useIntegration) {
+            // For data integration, show empty state or placeholder
+            setRegions([]);
+            setRegionData(null);
+            setRegionalAlerts([]);
+            setKabupatenKotaData([]);
+            return;
+        }
+
         const availableRegions = getAvailableRegions();
         setRegions(availableRegions);
         if (availableRegions.length > 0 && !selectedRegionId) {
             const defaultRegion = availableRegions.find(r => r.id === 'jawa-barat') || availableRegions[0];
             setSelectedRegionId(defaultRegion.id);
         }
-    }, []);
+    }, [useIntegration]);
 
     const fetchInsight = async (data: RegionDetailData | KabupatenKotaDetailData) => {
         if (!data) return;
@@ -71,6 +83,11 @@ const DataPerWilayah: React.FC<DataPerWilayahProps> = ({ handleOpenInterventionM
 
     // Effect for fetching data when selected PROVINCE changes
     useEffect(() => {
+        if (useIntegration) {
+            // For data integration, don't load mock data
+            return;
+        }
+
         if (selectedRegionId) {
             const data = getRegionDetails(selectedRegionId);
             setRegionData(data);
@@ -83,7 +100,7 @@ const DataPerWilayah: React.FC<DataPerWilayahProps> = ({ handleOpenInterventionM
             
             if (data) {
                 const subRegionNames = data.kabupatenKotaIds?.map(id => kabupatenKotaDetails[id]?.name).filter(Boolean) || [];
-                const alerts = allActiveAlerts.filter(a => a.region === data.name || subRegionNames.includes(a.region));
+                const alerts = useIntegration ? [] : allActiveAlerts.filter(a => a.region === data.name || subRegionNames.includes(a.region));
                 setRegionalAlerts(alerts);
 
                 const subRegionData = data.kabupatenKotaIds
@@ -95,7 +112,7 @@ const DataPerWilayah: React.FC<DataPerWilayahProps> = ({ handleOpenInterventionM
                 setKabupatenKotaData([]);
             }
         }
-    }, [selectedRegionId]);
+    }, [selectedRegionId, useIntegration]);
     
     // --- START: DERIVED STATE & HANDLERS FOR KABUPATEN/KOTA VIEW ---
     const handleSelectKabupatenKota = (id: string) => {
@@ -123,9 +140,9 @@ const DataPerWilayah: React.FC<DataPerWilayahProps> = ({ handleOpenInterventionM
 
 
     const kabupatenKotaAlerts = useMemo(() => {
-        if (!selectedKabupatenKota) return [];
+        if (!selectedKabupatenKota || useIntegration) return [];
         return allActiveAlerts.filter(a => a.region === selectedKabupatenKota.name);
-    }, [selectedKabupatenKota]);
+    }, [selectedKabupatenKota, useIntegration]);
 
     const { regionalProfile: provinceProfile, nationalProfile } = useMemo(() => {
         const regional: { axis: Domain; value: number }[] = [];
@@ -221,6 +238,27 @@ const DataPerWilayah: React.FC<DataPerWilayahProps> = ({ handleOpenInterventionM
         };
         handleOpenInterventionModal(initialData, true);
     };
+
+    // Handle empty state for data integration
+    if (useIntegration) {
+        return (
+            <div className="space-y-6">
+                <div className="bg-white p-4 rounded-lg shadow-sm">
+                    <h2 className="text-xl font-bold text-slate-800">Analisis Mendalam per Wilayah</h2>
+                    <p className="text-sm text-slate-500 mt-1">Fitur analisis per wilayah belum tersedia untuk data integration.</p>
+                </div>
+                <div className="bg-white p-8 rounded-lg shadow-sm">
+                    <div className="flex items-center justify-center h-64">
+                        <div className="text-center">
+                            <div className="text-slate-400 text-4xl mb-4">🗺️</div>
+                            <p className="text-slate-600 font-medium mb-2">Data tidak tersedia</p>
+                            <p className="text-slate-500 text-sm">Fitur analisis per wilayah belum tersedia untuk data integration</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6">

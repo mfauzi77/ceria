@@ -5,21 +5,19 @@ type Theme = 'light' | 'dark';
 interface ThemeContextType {
   theme: Theme;
   toggleTheme: () => void;
+  isAdmin: boolean;
+  login: (username: string, password: string) => Promise<boolean>;
+  logout: () => void;
+  useIntegration: boolean; // true: Data Integration backend, false: mockData
+  setUseIntegration: (v: boolean) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window === 'undefined') {
-        return 'light';
-    }
-    const storedTheme = localStorage.getItem('theme');
-    if (storedTheme === 'dark' || storedTheme === 'light') {
-      return storedTheme;
-    }
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  });
+  const [theme, setTheme] = useState<Theme>('light');
+  const [isAdmin, setIsAdmin] = useState<boolean>(() => sessionStorage.getItem('ceriaAdmin') === 'true');
+  const [useIntegration, setUseIntegration] = useState<boolean>(() => localStorage.getItem('ceriaUseIntegration') === 'true');
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -31,11 +29,27 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     localStorage.setItem('theme', theme);
   }, [theme]);
 
-  const toggleTheme = () => {
-    setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
+  const toggleTheme = () => setTheme('light');
+
+  const login = async (username: string, password: string): Promise<boolean> => {
+    const ok = (username === 'adminceria@kemenkopmk.go.id' && password === 'adminceria') || (username.trim().length > 0 && password === 'admin');
+    if (ok) {
+      sessionStorage.setItem('ceriaAdmin', 'true');
+      setIsAdmin(true);
+    }
+    return ok;
   };
 
-  const value = useMemo(() => ({ theme, toggleTheme }), [theme]);
+  const logout = () => {
+    sessionStorage.removeItem('ceriaAdmin');
+    setIsAdmin(false);
+  };
+
+  useEffect(() => {
+    localStorage.setItem('ceriaUseIntegration', String(useIntegration));
+  }, [useIntegration]);
+
+  const value = useMemo(() => ({ theme, toggleTheme, isAdmin, login, logout, useIntegration, setUseIntegration }), [theme, isAdmin, useIntegration]);
 
   return (
     <ThemeContext.Provider value={value}>
