@@ -2,11 +2,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { UserCircleIcon, ArrowLeftOnRectangleIcon, CalendarIcon, BellAlertIcon } from './icons/Icons';
 import { View, ActiveAlertData, AlertLevel } from '../types';
-import { fetchLastUpdated } from '../services/dataService';
-import { useTheme } from './ThemeContext';
 import { allActiveAlerts } from '../services/mockData';
 import NotificationDropdown from './header/NotificationDropdown';
-// ThemeToggle hidden per request; force light mode in ThemeContext
+import ThemeToggle from './ThemeToggle';
 
 
 interface HeaderProps {
@@ -19,16 +17,13 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ setIsSidebarOpen, onLogout, setActiveView, onNavigateToRegion }) => {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
-  const { isAdmin, logout, useIntegration } = useTheme();
   
   const profileMenuRef = useRef<HTMLDivElement>(null);
   const notificationsRef = useRef<HTMLDivElement>(null);
 
-  const highPriorityAlerts = useIntegration ? [] : allActiveAlerts.filter(
+  const highPriorityAlerts = allActiveAlerts.filter(
     alert => alert.level === AlertLevel.Critical || alert.level === AlertLevel.High
   );
-
-  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -41,15 +36,6 @@ const Header: React.FC<HeaderProps> = ({ setIsSidebarOpen, onLogout, setActiveVi
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const ts = await fetchLastUpdated();
-        setLastUpdated(ts);
-      } catch {}
-    })();
   }, []);
 
   const handleNotificationNavigate = (view: View) => {
@@ -75,11 +61,12 @@ const Header: React.FC<HeaderProps> = ({ setIsSidebarOpen, onLogout, setActiveVi
           <p className="text-xs text-slate-500 dark:text-slate-400">Sistem Pendukung Keputusan Cerdas untuk Pemerataan Layanan PAUD HI</p>
           <div className="flex items-center text-xs text-slate-500 dark:text-slate-400 font-medium mt-1.5">
             <CalendarIcon className="w-4 h-4 mr-1.5 text-slate-400 dark:text-slate-500" />
-            <span>{lastUpdated ? `Data diperbarui ${new Date(lastUpdated).toLocaleString('id-ID', { dateStyle: 'long', timeStyle: 'short' })}` : 'Memuat waktu pembaruan...'}</span>
+            <span>Data diproses per 30 Juni 2024</span>
           </div>
         </div>
       </div>
       <div className="flex items-center space-x-2 md:space-x-4">
+        <ThemeToggle />
         <div className="relative" ref={notificationsRef}>
             <button 
                 className="relative p-1" 
@@ -100,7 +87,6 @@ const Header: React.FC<HeaderProps> = ({ setIsSidebarOpen, onLogout, setActiveVi
               />
             )}
         </div>
-        {/* Standalone Login button removed to avoid duplicate; use profile menu instead */}
         <div className="relative" ref={profileMenuRef}>
           <button onClick={() => setIsProfileMenuOpen(prev => !prev)} className="flex items-center" aria-expanded={isProfileMenuOpen} aria-haspopup="true">
             <img
@@ -119,35 +105,14 @@ const Header: React.FC<HeaderProps> = ({ setIsSidebarOpen, onLogout, setActiveVi
                 <UserCircleIcon className="w-5 h-5 mr-2 text-gray-500 dark:text-slate-400"/>
                 Profil
               </a>
-              {!isAdmin ? (
-                <button
-                  onClick={() => setActiveView(View.Login)}
-                  className="w-full text-left flex items-center px-4 py-2 text-sm text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20"
-                  role="menuitem"
-                >
-                  <ArrowLeftOnRectangleIcon className="w-5 h-5 mr-2 text-indigo-500" />
-                  Login
-                </button>
-              ) : (
-                <>
-                  <button
-                    onClick={() => setActiveView(View.AdminDashboard)}
-                    className="w-full text-left flex items-center px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-600"
-                    role="menuitem"
-                  >
-                    <UserCircleIcon className="w-5 h-5 mr-2 text-slate-500" />
-                    Admin
-                  </button>
-                  <button
-                    onClick={() => { logout(); onLogout(); }}
-                    className="w-full text-left flex items-center px-4 py-2 text-sm text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
-                    role="menuitem"
-                  >
-                    <ArrowLeftOnRectangleIcon className="w-5 h-5 mr-2 text-red-500 dark:text-red-500" />
-                    Log Out
-                  </button>
-                </>
-              )}
+              <button
+                onClick={onLogout}
+                className="w-full text-left flex items-center px-4 py-2 text-sm text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
+                role="menuitem"
+              >
+                <ArrowLeftOnRectangleIcon className="w-5 h-5 mr-2 text-red-500 dark:text-red-500" />
+                Log Out
+              </button>
             </div>
           )}
         </div>

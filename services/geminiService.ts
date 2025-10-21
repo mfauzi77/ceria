@@ -1,11 +1,88 @@
-
-
-
 import { GoogleGenAI, GenerateContentResponse, Type } from "@google/genai";
-import { ActiveAlertData, KeyIndicatorData, RegionalForecastData, DomainFilter, RegionDetailData, ResourceData, ScenarioParams, ChildProfile, GrowthRecord, GroundingSource, MonthlySummaryData, DomainComparisonData, SmartRecommendationResponse } from "../types";
+import { ActiveAlertData, KeyIndicatorData, RegionalForecastData, DomainFilter, RegionDetailData, ResourceData, ScenarioParams, ChildProfile, GrowthRecord, GroundingSource, MonthlySummaryData, DomainComparisonData, SmartRecommendationResponse, DataValidationResult } from "../types";
 
 // Use the real Gemini API, which will be picked up by the functions below.
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+
+const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+            const result = reader.result as string;
+            // Remove "data:mime/type;base64," prefix
+            const base64String = result.split(',')[1];
+            resolve(base64String);
+        };
+        reader.onerror = error => reject(error);
+    });
+};
+
+export const extractDataFromFile = async (file: File): Promise<{headers: string[], rows: Record<string, any>[]}> => {
+    try {
+        const base64Data = await fileToBase64(file);
+
+        const prompt = `You are an expert data extraction API. Your task is to analyze the provided file and extract its tabular data. Return the result as a single JSON object with two keys: 'headers' and 'rows'.
+- The value of 'headers' should be a JSON array of strings representing the column headers.
+- The value of 'rows' should be a JSON array of arrays, where each inner array represents a row of data corresponding to the headers. All cell values should be converted to strings.
+If the file is unreadable or not tabular, return empty arrays for both 'headers' and 'rows' keys.`;
+        
+        const filePart = {
+            inlineData: {
+                data: base64Data,
+                mimeType: file.type,
+            },
+        };
+
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: { parts: [{ text: prompt }, filePart] },
+            config: {
+                responseMimeType: 'application/json',
+                responseSchema: {
+                    type: Type.OBJECT,
+                    properties: {
+                        headers: {
+                            type: Type.ARRAY,
+                            items: { type: Type.STRING }
+                        },
+                        rows: {
+                            type: Type.ARRAY,
+                            items: {
+                                type: Type.ARRAY,
+                                items: { 
+                                    type: Type.STRING 
+                                }
+                            }
+                        }
+                    },
+                    required: ["headers", "rows"],
+                }
+            }
+        });
+
+        const jsonResponse = JSON.parse(response.text);
+        const { headers, rows: dataRows } = jsonResponse;
+
+        if (!headers || headers.length === 0 || !dataRows || dataRows.length === 0) {
+            return { headers: [], rows: [] };
+        }
+
+        const rows = dataRows.map((rowArray: any[]) => {
+            const rowObject: Record<string, any> = {};
+            headers.forEach((header: string, index: number) => {
+                rowObject[header] = rowArray[index];
+            });
+            return rowObject;
+        });
+        
+        return { headers, rows };
+
+    } catch(e) {
+        console.error("Gemini API call failed in extractDataFromFile", e);
+        throw new Error("Gagal mengekstrak data dengan AI. Pastikan file berisi data tabular dan coba lagi.");
+    }
+};
 
 
 export const getExecutiveBriefing = async (
@@ -393,5 +470,84 @@ export const getDomainComparisonInsight = async (
         return `### Gagal Memuat Analisis AI
 
 Terjadi kesalahan. Analisis manual: Bidang **${highestRiskDomain.domain}** menunjukkan tantangan terbesar tahun ini dengan skor risiko rata-rata **${highestRiskDomain.averageRisk.toFixed(1)}**.`;
+    }
+};
+
+export const validateUploadedData = async (csvData: string): Promise<DataValidationResult> => {
+    const prompt = `
+        You are an expert data quality analyst for the Indonesian Ministry of Health, specializing in Early Childhood Development data (PAUD HI).
+        Your task is to validate a CSV data file.
+
+        The expected columns and their approximate valid ranges are:
+        - province: String (Valid Indonesian province name)
+        - cityName: String (Valid Indonesian city/regency name)
+        - period: String (Format YYYY-MM)
+        - stuntingRate: Number (0-60, anything above 45 is a high outlier)
+        - apm: Number (0-100)
+        - immunizationRate: Number (0-100)
+        - sanitationAccess: Number (0-100)
+
+        CSV Data to Validate:
+        \`\`\`csv
+        ${csvData}
+        \`\`\`
+
+        Instructions:
+        1.  Analyze the provided CSV data. The first line is the header.
+        2.  Check for the following issues:
+            - Missing values in any cell.
+            - Incorrect data types (e.g., text in a number column).
+            - Outliers (e.g., stuntingRate > 60, apm > 100).
+            - Logical inconsistencies (e.g., a cityName that does not belong to the given province).
+            - Formatting errors (e.g., incorrect period format).
+        3.  Return a JSON object with the following structure:
+            - status: "success" if no major issues are found, otherwise "issues_found".
+            - summary: A brief one-sentence summary of the validation result in Bahasa Indonesia.
+            - issues: An array of objects, where each object represents a specific issue found. Include the row number (starting from 1 for the first data row), column name, the problematic value, and a clear description of the issue in Bahasa Indonesia. If no issues are found, return an empty array.
+    `;
+
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: prompt,
+            config: {
+                responseMimeType: "application/json",
+                responseSchema: {
+                    type: Type.OBJECT,
+                    properties: {
+                        status: { type: Type.STRING },
+                        summary: { type: Type.STRING },
+                        issues: {
+                            type: Type.ARRAY,
+                            items: {
+                                type: Type.OBJECT,
+                                properties: {
+                                    row: { type: Type.NUMBER },
+                                    column: { type: Type.STRING },
+                                    value: { type: Type.STRING },
+                                    description: { type: Type.STRING },
+                                },
+                                required: ["row", "column", "value", "description"],
+                            }
+                        }
+                    },
+                    required: ["status", "summary", "issues"],
+                },
+            },
+        });
+        const jsonText = response.text.trim();
+        return JSON.parse(jsonText) as DataValidationResult;
+    } catch (e) {
+        console.error("Gemini API call failed in validateUploadedData", e);
+        return {
+            status: 'issues_found',
+            summary: "Gagal memvalidasi data dengan AI.",
+            issues: [{
+                row: 0,
+                column: 'System',
+                value: 'Error',
+                description: 'Terjadi kesalahan saat berkomunikasi dengan layanan AI. Harap periksa koneksi atau coba lagi nanti.'
+            }],
+        };
     }
 };

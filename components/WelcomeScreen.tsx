@@ -1,24 +1,28 @@
-
 import React, { useState, useEffect } from 'react';
-import { ArrowRightIcon } from './icons/Icons';
+import { ArrowRightIcon, SparklesIcon, DashboardIcon } from './icons/Icons';
+import { View } from '../types';
 
 interface WelcomeScreenProps {
-    onComplete: () => void;
+    onDashboardNavigate: () => void;
+    onAiAgentNavigate: () => void;
 }
 
-const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onComplete }) => {
-    const [phase, setPhase] = useState('entering'); // 'entering', 'exiting', 'exited'
+const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onDashboardNavigate, onAiAgentNavigate }) => {
+    const [phase, setPhase] = useState('entering'); // 'entering', 'entered', 'exiting'
 
     useEffect(() => {
-        // This effect only runs once on mount to trigger the entrance animations.
         const enterTimeout = requestAnimationFrame(() => setPhase('entered'));
         return () => cancelAnimationFrame(enterTimeout);
     }, []);
     
-    const handleStartClick = () => {
+    const handleDashboardClick = () => {
         setPhase('exiting');
-        // The onComplete callback is triggered after the fade-out animation duration.
-        setTimeout(onComplete, 800); 
+        setTimeout(onDashboardNavigate, 500); 
+    };
+
+    const handleAiAgentClick = () => {
+        setPhase('exiting');
+        setTimeout(onAiAgentNavigate, 500);
     };
 
     const isVisible = phase === 'entered' || phase === 'exiting';
@@ -26,44 +30,52 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onComplete }) => {
     
     return (
         <div 
-            className={`fixed inset-0 bg-white flex flex-col items-center justify-center z-50 transition-opacity duration-700 ease-in-out ${isExiting ? 'opacity-0' : 'opacity-100'}`}
-            aria-label="Welcome Screen"
+            className={`fixed inset-0 bg-slate-100 flex flex-col lg:flex-row z-50 transition-opacity duration-500 ease-in-out ${isExiting ? 'opacity-0' : 'opacity-100'}`}
             role="dialog"
         >
-            <div 
-                className={`transition-all duration-1000 ease-out delay-200 ${isVisible && !isExiting ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
-            >
-                <img 
-                    src="/images/logo.png"
-                    alt="Logo Kemenko PMK"
-                    className="h-36 w-36 object-contain mb-6"
-                />
+            {/* Left Panel - AI Agent */}
+            <div className={`w-full lg:w-1/2 bg-gradient-to-br from-slate-800 to-slate-900 text-white flex flex-col items-center justify-center p-8 lg:p-12 text-center relative overflow-hidden transition-transform duration-700 ease-out ${isVisible && !isExiting ? 'translate-x-0' : '-translate-x-full'}`}>
+                <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
+                <div className={`relative transition-all duration-700 ease-out delay-300 ${isVisible && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                    <div className="mx-auto bg-indigo-500/20 text-indigo-300 p-4 rounded-full inline-block">
+                        <SparklesIcon className="w-10 h-10" />
+                    </div>
+                </div>
+                <h2 className={`text-2xl md:text-3xl font-bold mt-6 transition-all duration-700 ease-out delay-500 ${isVisible && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>Asisten AI CERIA</h2>
+                <p className={`mt-2 max-w-sm text-slate-300 transition-all duration-700 ease-out delay-700 ${isVisible && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                    Ajukan pertanyaan, minta analisis data, atau diskusikan strategi intervensi secara langsung dengan asisten cerdas kami.
+                </p>
+                <div className={`mt-8 transition-all duration-700 ease-out delay-[900ms] ${isVisible && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                    <button 
+                        onClick={handleAiAgentClick}
+                        className="group flex items-center justify-center w-full sm:w-auto bg-indigo-500 font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-indigo-400 transform hover:scale-105 transition-all duration-300 ease-in-out"
+                    >
+                        Diskusikan dengan AI
+                        <ArrowRightIcon className="w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" />
+                    </button>
+                    <p className="text-xs text-slate-400 mt-2">Masuk ke halaman pilihan asisten AI</p>
+                </div>
             </div>
 
-            <div 
-                className={`text-center transition-all duration-1000 ease-out delay-500 ${isVisible && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-            >
-                <h1 className="text-3xl md:text-4xl font-bold text-slate-800 tracking-tight">CERIA</h1>
-                {/* <p className="mt-2 text-md md:text-lg text-slate-500 max-w-lg px-4">
-                    Cerdas, Efektif, Responsif, Inovatif, Akurat 
-              </p> */}
-              <p className="mt-2 text-md md:text-lg text-slate-500 max-w-lg px-4">
-                   Sistem Terpadu dan Cerdas untuk Memastikan Layanan PAUD HI yang Merata dan Berkualitas
-              </p>
-            </div>
-
-            <div 
-                className={`mt-10 transition-all duration-700 ease-out delay-1000 ${isVisible && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-            >
-                <button 
-                    onClick={handleStartClick}
-                    className="group flex items-center justify-center bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-800 font-bold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-in-out focus:outline-none focus:ring-4 focus:ring-amber-300"
-                    disabled={!isVisible || isExiting}
-                    aria-label="Mulai menggunakan aplikasi"
-                >
-                    Mulai
-                    <ArrowRightIcon className="w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" />
-                </button>
+            {/* Right Panel - Dashboard */}
+            <div className={`w-full lg:w-1/2 bg-white flex flex-col items-center justify-center p-8 lg:p-12 text-center relative overflow-hidden transition-transform duration-700 ease-out ${isVisible && !isExiting ? 'translate-x-0' : 'translate-x-full'}`}>
+                <div className={`transition-all duration-700 ease-out delay-300 ${isVisible && !isExiting ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
+                    <img src="/images/logo.png" alt="Logo Kemenko PMK" className="h-24 w-24 md:h-28 md:w-28 mb-4"/>
+                </div>
+                <h1 className={`text-2xl md:text-3xl font-bold text-slate-800 transition-all duration-700 ease-out delay-500 ${isVisible && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>Dashboard Analitik CERIA</h1>
+                <p className={`mt-2 max-w-sm text-slate-500 transition-all duration-700 ease-out delay-700 ${isVisible && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                    Visualisasikan data, pantau risiko, dan kelola intervensi di seluruh Indonesia untuk pengambilan keputusan berbasis data.
+                </p>
+                <div className={`mt-8 transition-all duration-700 ease-out delay-[900ms] ${isVisible && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                    <button 
+                        onClick={handleDashboardClick}
+                        className="group flex items-center justify-center w-full sm:w-auto bg-amber-400 text-slate-800 font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-amber-500 transform hover:scale-105 transition-all duration-300 ease-in-out"
+                    >
+                        Masuk ke Dashboard
+                        <ArrowRightIcon className="w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" />
+                    </button>
+                    <p className="text-xs text-slate-500 mt-2">Masuk ke dashboard utama</p>
+                </div>
             </div>
         </div>
     );

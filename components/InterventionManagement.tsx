@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { InterventionPlan, InterventionStatus } from '../types';
-import { useTheme } from './ThemeContext';
 import InterventionCard from './interventions/InterventionCard';
 import { DocumentPlusIcon } from './icons/Icons';
 
@@ -11,7 +10,7 @@ interface InterventionManagementProps {
 }
 
 const InterventionManagement: React.FC<InterventionManagementProps> = ({ plans, onOpenModal, onUpdatePlanStatus }) => {
-    const { useIntegration } = useTheme();
+    
     const [draggedPlanId, setDraggedPlanId] = useState<string | null>(null);
     const [dragOverStatus, setDragOverStatus] = useState<InterventionStatus | null>(null);
     
@@ -58,36 +57,15 @@ const InterventionManagement: React.FC<InterventionManagementProps> = ({ plans, 
         setDragOverStatus(null);
     };
 
-    // Handle empty state for data integration
-    if (useIntegration) {
-        return (
-            <div className="space-y-6">
-                <div className="bg-white p-4 rounded-lg shadow-sm">
-                    <h2 className="text-xl font-bold text-slate-800">Manajemen Rencana Intervensi</h2>
-                    <p className="text-sm text-slate-500 mt-1">Fitur manajemen intervensi belum tersedia untuk data integration.</p>
-                </div>
-                <div className="bg-white p-8 rounded-lg shadow-sm">
-                    <div className="flex items-center justify-center h-64">
-                        <div className="text-center">
-                            <div className="text-slate-400 text-4xl mb-4">📋</div>
-                            <p className="text-slate-600 font-medium mb-2">Data tidak tersedia</p>
-                            <p className="text-slate-500 text-sm">Fitur manajemen intervensi belum tersedia untuk data integration</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
     return (
         <div className="space-y-6 h-full flex flex-col">
             {/* Header */}
             <div className="flex-shrink-0">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
                     <div>
-                    <h2 className="text-xl font-bold text-slate-800">Manajemen Rencana Intervensi</h2>
-                    <p className="text-sm text-slate-500">Lacak dan kelola semua program intervensi dari satu tempat.</p>
-                </div>
+                        <h2 className="text-xl font-bold text-slate-800">Manajemen Rencana Intervensi</h2>
+                        <p className="text-sm text-slate-500">Lacak dan kelola semua program intervensi dari satu tempat.</p>
+                    </div>
                     <button 
                         onClick={() => onOpenModal(null)}
                         className="mt-3 sm:mt-0 flex items-center px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">

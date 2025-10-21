@@ -1,7 +1,6 @@
 
-import React, { useState } from 'react';
-import { NAVIGATION_ITEMS, SUB_NAVIGATION_ITEMS, PERSONAL_NAVIGATION_ITEMS, DATA_INTEGRATION_NAV } from '../constants';
-import { useTheme } from './ThemeContext';
+import React from 'react';
+import { NAVIGATION_ITEMS, SUB_NAVIGATION_ITEMS, PERSONAL_NAVIGATION_ITEMS } from '../constants';
 import { NavItem, View } from '../types';
 
 interface SidebarProps {
@@ -34,7 +33,6 @@ const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView, isOpen, se
     );
   };
 
-  const { isAdmin } = useTheme();
   return (
     <>
     {/* Overlay for mobile */}
@@ -45,9 +43,9 @@ const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView, isOpen, se
 
     <aside className={`fixed lg:relative inset-y-0 left-0 w-64 flex-shrink-0 bg-white dark:bg-slate-800 shadow-lg dark:shadow-slate-700/50 flex flex-col p-4 z-30 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
       <div className="flex items-center mb-6 px-2">
-        <img src="/images/logo.png" alt="Logo Kemenko PMK" className="h-12 w-10 mr-3"/>
+        <img src="/images/logo.png" alt="Logo Kemenko PMK" className="h-12 w-12 mr-3"/>
         <div className="text-gray-800 dark:text-slate-100">
-            <p className="font-bold text-lg leading-tight">CERIA</p>
+            <p className="font-bold text-lg leading-tight">Kemenko PMK</p>
             <p className="text-xs text-gray-500 dark:text-slate-400">PAUD HI</p>
         </div>
       </div>
@@ -59,15 +57,6 @@ const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView, isOpen, se
                 <NavLink key={item.id} item={item} />
                 ))}
             </div>
-            {isAdmin && (
-              <CollapsibleSection title="Data Integrations">
-                  <div className="space-y-1 max-h-64 overflow-auto pr-1">
-                      {DATA_INTEGRATION_NAV.map((item) => (
-                          <NavLink key={item.id} item={item} />
-                      ))}
-                  </div>
-              </CollapsibleSection>
-            )}
             <h3 className="px-4 mt-6 text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-2">Actions</h3>
             <div className="space-y-1">
                 {SUB_NAVIGATION_ITEMS.map((item) => (
@@ -99,20 +88,3 @@ const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView, isOpen, se
 };
 
 export default Sidebar;
-
-const CollapsibleSection: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => {
-  const [open, setOpen] = useState(false);
-  return (
-    <div className="mt-6">
-      <button onClick={() => setOpen(o => !o)} className="w-full flex items-center justify-between px-4 py-2 text-xs font-semibold text-gray-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 rounded">
-        <span className="uppercase tracking-wider">{title}</span>
-        <span>{open ? '−' : '+'}</span>
-      </button>
-      {open && (
-        <div className="mt-2">
-          {children}
-        </div>
-      )}
-    </div>
-  );
-};

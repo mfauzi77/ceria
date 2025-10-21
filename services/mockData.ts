@@ -1,1214 +1,1051 @@
-import { RiskAssessmentData, KeyIndicatorData, ActiveAlertData, RiskCategory, AlertLevel, ForecastDataPoint, RegionalForecastData, RegionDetailData, DomainData, DataSource, LogEntry, InterventionPlan, InterventionStatus, InterventionPriority, RegionalRiskScore, DomainFilter, ResourceData, Domain, RegionPerformance, DomainIndicatorData, DomainMetric, ParentData, KabupatenKotaDetailData, DomainMetrics } from '../types';
+import { 
+    RiskAssessmentData, KeyIndicatorData, ActiveAlertData, ForecastDataPoint, 
+    RegionalForecastData, RegionDetailData, DomainData, DataSource, LogEntry, 
+    InterventionPlan, RegionalRiskScore, DomainFilter, ResourceData, ParentData, 
+    KabupatenKotaDetailData, AlertLevel, Domain, DomainMetrics, DomainMetric, DomainIndicatorData 
+} from '../types';
 
-// Data partisipasi PAUD 2024 dari pengguna
-export const paudParticipationData2024 = [
-    { province: "Aceh", code: 1101, cityName: "Simeulue", apm: 26.39, apk: 26.66 },
-    { province: "Aceh", code: 1102, cityName: "Aceh Singkil", apm: 34.44, apk: 34.44 },
-    { province: "Aceh", code: 1103, cityName: "Aceh Selatan", apm: 41.18, apk: 43.95 },
-    { province: "Aceh", code: 1104, cityName: "Aceh Tenggara", apm: 24.67, apk: 25.44 },
-    { province: "Aceh", code: 1105, cityName: "Aceh Timur", apm: 11.53, apk: 11.53 },
-    { province: "Aceh", code: 1106, cityName: "Aceh Tengah", apm: 30.54, apk: 32.82 },
-    { province: "Aceh", code: 1107, cityName: "Aceh Barat", apm: 32.93, apk: 32.93 },
-    { province: "Aceh", code: 1108, cityName: "Aceh Besar", apm: 46.21, apk: 46.21 },
-    { province: "Aceh", code: 1109, cityName: "Pidie", apm: 25.52, apk: 25.52 },
-    { province: "Aceh", code: 1110, cityName: "Bireuen", apm: 30.35, apk: 30.35 },
-    { province: "Aceh", code: 1111, cityName: "Aceh Utara", apm: 24.37, apk: 24.37 },
-    { province: "Aceh", code: 1112, cityName: "Aceh Barat Daya", apm: 46.07, apk: 46.50 },
-    { province: "Aceh", code: 1113, cityName: "Gayo Lues", apm: 29.17, apk: 29.17 },
-    { province: "Aceh", code: 1114, cityName: "Aceh Tamiang", apm: 32.45, apk: 32.45 },
-    { province: "Aceh", code: 1115, cityName: "Nagan Raya", apm: 24.86, apk: 24.86 },
-    { province: "Aceh", code: 1116, cityName: "Aceh Jaya", apm: 53.59, apk: 56.66 },
-    { province: "Aceh", code: 1117, cityName: "Bener Meriah", apm: 30.15, apk: 30.86 },
-    { province: "Aceh", code: 1118, cityName: "Pidie Jaya", apm: 20.19, apk: 20.19 },
-    { province: "Aceh", code: 1171, cityName: "Banda Aceh", apm: 32.65, apk: 32.65 },
-    { province: "Aceh", code: 1172, cityName: "Sabang", apm: 29.76, apk: 29.76 },
-    { province: "Aceh", code: 1173, cityName: "Langsa", apm: 29.39, apk: 29.39 },
-    { province: "Aceh", code: 1174, cityName: "Lhokseumawe", apm: 39.92, apk: 39.92 },
-    { province: "Aceh", code: 1175, cityName: "Subulussalam", apm: 39.37, apk: 39.67 },
-    { province: "Sumatera Utara", code: 1201, cityName: "Nias", apm: 25.22, apk: 26.47 },
-    { province: "Sumatera Utara", code: 1202, cityName: "Mandailing Natal", apm: 22.79, apk: 22.79 },
-    { province: "Sumatera Utara", code: 1203, cityName: "Tapanuli Selatan", apm: 23.15, apk: 23.15 },
-    { province: "Sumatera Utara", code: 1204, cityName: "Tapanuli Tengah", apm: 20.73, apk: 20.73 },
-    { province: "Sumatera Utara", code: 1205, cityName: "Tapanuli Utara", apm: 25.40, apk: 25.40 },
-    { province: "Sumatera Utara", code: 1206, cityName: "Toba", apm: 25.64, apk: 25.64 },
-    { province: "Sumatera Utara", code: 1207, cityName: "Labuhanbatu", apm: 25.41, apk: 25.41 },
-    { province: "Sumatera Utara", code: 1208, cityName: "Asahan", apm: 18.53, apk: 18.99 },
-    { province: "Sumatera Utara", code: 1209, cityName: "Simalungun", apm: 19.16, apk: 19.67 },
-    { province: "Sumatera Utara", code: 1210, cityName: "Dairi", apm: 13.50, apk: 13.50 },
-    { province: "Sumatera Utara", code: 1211, cityName: "Karo", apm: 23.50, apk: 23.50 },
-    { province: "Sumatera Utara", code: 1212, cityName: "Deli Serdang", apm: 21.75, apk: 21.75 },
-    { province: "Sumatera Utara", code: 1213, cityName: "Langkat", apm: 16.89, apk: 16.89 },
-    { province: "Sumatera Utara", code: 1214, cityName: "Nias Selatan", apm: 12.30, apk: 12.30 },
-    { province: "Sumatera Utara", code: 1215, cityName: "Humbang Hasunduta", apm: 27.47, apk: 27.97 },
-    { province: "Sumatera Utara", code: 1216, cityName: "Pakpak Bharat", apm: 23.65, apk: 25.65 },
-    { province: "Sumatera Utara", code: 1217, cityName: "Samosir", apm: 37.88, apk: 37.88 },
-    { province: "Sumatera Utara", code: 1218, cityName: "Serdang Bedagai", apm: 32.38, apk: 33.80 },
-    { province: "Sumatera Utara", code: 1219, cityName: "Batu Bara", apm: 31.90, apk: 32.29 },
-    { province: "Sumatera Utara", code: 1220, cityName: "Padang Lawas Utara", apm: 21.71, apk: 22.20 },
-    { province: "Sumatera Utara", code: 1221, cityName: "Padang Lawas", apm: 26.22, apk: 26.22 },
-    { province: "Sumatera Utara", code: 1222, cityName: "Labuhanbatu Selatan", apm: 23.87, apk: 23.87 },
-    { province: "Sumatera Utara", code: 1223, cityName: "Labuhanbatu Utara", apm: 27.66, apk: 27.66 },
-    { province: "Sumatera Utara", code: 1224, cityName: "Nias Utara", apm: 25.09, apk: 25.66 },
-    { province: "Sumatera Utara", code: 1225, cityName: "Nias Barat", apm: 22.62, apk: 23.06 },
-    { province: "Sumatera Utara", code: 1271, cityName: "Sibolga", apm: 33.87, apk: 35.55 },
-    { province: "Sumatera Utara", code: 1272, cityName: "Tanjungbalai", apm: 24.60, apk: 24.60 },
-    { province: "Sumatera Utara", code: 1273, cityName: "Pematang Siantar", apm: 33.40, apk: 33.40 },
-    { province: "Sumatera Utara", code: 1274, cityName: "Tebing Tinggi", apm: 33.82, apk: 34.55 },
-    { province: "Sumatera Utara", code: 1275, cityName: "Medan", apm: 21.35, apk: 21.35 },
-    { province: "Sumatera Utara", code: 1276, cityName: "Binjai", apm: 31.71, apk: 31.71 },
-    { province: "Sumatera Utara", code: 1277, cityName: "Padangsidimpuan", apm: 24.45, apk: 24.45 },
-    { province: "Sumatera Utara", code: 1278, cityName: "Gunungsitoli", apm: 33.16, apk: 35.15 },
-    { province: "Sumatera Barat", code: 1301, cityName: "Kepulauan Mentawai", apm: 32.47, apk: 32.47 },
-    { province: "Sumatera Barat", code: 1302, cityName: "Pesisir Selatan", apm: 25.36, apk: 25.41 },
-    { province: "Sumatera Barat", code: 1303, cityName: "Solok", apm: 25.88, apk: 25.88 },
-    { province: "Sumatera Barat", code: 1304, cityName: "Sijunjung", apm: 33.22, apk: 33.22 },
-    { province: "Sumatera Barat", code: 1305, cityName: "Tanah Datar", apm: 21.23, apk: 21.23 },
-    { province: "Sumatera Barat", code: 1306, cityName: "Padang Pariaman", apm: 19.59, apk: 19.59 },
-    { province: "Sumatera Barat", code: 1307, cityName: "Agam", apm: 24.42, apk: 24.42 },
-    { province: "Sumatera Barat", code: 1308, cityName: "Lima Puluh Kota", apm: 31.85, apk: 31.85 },
-    { province: "Sumatera Barat", code: 1309, cityName: "Pasaman", apm: 31.14, apk: 31.87 },
-    { province: "Sumatera Barat", code: 1310, cityName: "Solok Selatan", apm: 22.80, apk: 23.21 },
-    { province: "Sumatera Barat", code: 1311, cityName: "Dharmasraya", apm: 27.48, apk: 27.48 },
-    { province: "Sumatera Barat", code: 1312, cityName: "Pasaman Barat", apm: 25.02, apk: 25.02 },
-    { province: "Sumatera Barat", code: 1371, cityName: "Padang", apm: 32.70, apk: 33.13 },
-    { province: "Sumatera Barat", code: 1372, cityName: "Kota Solok", apm: 34.53, apk: 34.53 },
-    { province: "Sumatera Barat", code: 1373, cityName: "Sawahlunto", apm: 39.53, apk: 39.53 },
-    { province: "Sumatera Barat", code: 1374, cityName: "Padang Panjang", apm: 39.62, apk: 41.41 },
-    { province: "Sumatera Barat", code: 1375, cityName: "Bukittinggi", apm: 25.93, apk: 26.35 },
-    { province: "Sumatera Barat", code: 1376, cityName: "Payakumbuh", apm: 36.52, apk: 36.52 },
-    { province: "Sumatera Barat", code: 1377, cityName: "Pariaman", apm: 29.50, apk: 30.51 },
-    { province: "Riau", code: 1401, cityName: "Kuantan Singingi", apm: 33.21, apk: 33.21 },
-    { province: "Riau", code: 1402, cityName: "Indragiri Hulu", apm: 18.63, apk: 19.08 },
-    { province: "Riau", code: 1403, cityName: "Indragiri Hilir", apm: 17.83, apk: 17.83 },
-    { province: "Riau", code: 1404, cityName: "Pelalawan", apm: 21.34, apk: 21.34 },
-    { province: "Riau", code: 1405, cityName: "Siak", apm: 30.18, apk: 30.18 },
-    { province: "Riau", code: 1406, cityName: "Kampar", apm: 19.70, apk: 19.70 },
-    { province: "Riau", code: 1407, cityName: "Rokan Hulu", apm: 24.31, apk: 24.31 },
-    { province: "Riau", code: 1408, cityName: "Bengkalis", apm: 23.87, apk: 23.87 },
-    { province: "Riau", code: 1409, cityName: "Rokan Hilir", apm: 19.50, apk: 19.50 },
-    { province: "Riau", code: 1410, cityName: "Kepulauan Meranti", apm: 27.53, apk: 27.73 },
-    { province: "Riau", code: 1471, cityName: "Pekanbaru", apm: 24.71, apk: 24.71 },
-    { province: "Riau", code: 1473, cityName: "Dumai", apm: 17.81, apk: 17.81 },
-    { province: "Jambi", code: 1501, cityName: "Kerinci", apm: 53.51, apk: 54.29 },
-    { province: "Jambi", code: 1502, cityName: "Merangin", apm: 31.50, apk: 31.50 },
-    { province: "Jambi", code: 1503, cityName: "Sarolangun", apm: 34.27, apk: 34.27 },
-    { province: "Jambi", code: 1504, cityName: "Batang Hari", apm: 31.26, apk: 31.26 },
-    { province: "Jambi", code: 1505, cityName: "Muaro Jambi", apm: 32.68, apk: 32.68 },
-    { province: "Jambi", code: 1506, cityName: "Tanjung Jabung Timur", apm: 39.12, apk: 39.12 },
-    { province: "Jambi", code: 1507, cityName: "Tanjung Jabung Barat", apm: 25.96, apk: 25.96 },
-    { province: "Jambi", code: 1508, cityName: "Tebo", apm: 31.64, apk: 31.64 },
-    { province: "Jambi", code: 1509, cityName: "Bungo", apm: 29.66, apk: 29.66 },
-    { province: "Jambi", code: 1571, cityName: "Jambi", apm: 24.56, apk: 24.56 },
-    { province: "Jambi", code: 1572, cityName: "Sungai Penuh", apm: 38.38, apk: 38.38 },
-    { province: "Sumatera Selatan", code: 1601, cityName: "Ogan Komering Ulu", apm: 30.12, apk: 30.12 },
-    { province: "Sumatera Selatan", code: 1602, cityName: "Ogan Komering Ilir", apm: 30.89, apk: 33.36 },
-    { province: "Sumatera Selatan", code: 1603, cityName: "Muara Enim", apm: 22.66, apk: 22.66 },
-    { province: "Sumatera Selatan", code: 1604, cityName: "Lahat", apm: 34.88, apk: 34.88 },
-    { province: "Sumatera Selatan", code: 1605, cityName: "Musi Rawas", apm: 26.92, apk: 28.71 },
-    { province: "Sumatera Selatan", code: 1606, cityName: "Musi Banyuasin", apm: 24.54, apk: 24.54 },
-    { province: "Sumatera Selatan", code: 1607, cityName: "Banyu Asin", apm: 19.35, apk: 19.35 },
-    { province: "Sumatera Selatan", code: 1608, cityName: "Ogan Komering Ulu S", apm: 29.10, apk: 29.10 },
-    { province: "Sumatera Selatan", code: 1609, cityName: "Ogan Komering Ulu T", apm: 34.88, apk: 34.88 },
-    { province: "Sumatera Selatan", code: 1610, cityName: "Ogan Ilir", apm: 29.58, apk: 30.23 },
-    { province: "Sumatera Selatan", code: 1611, cityName: "Empat Lawang", apm: 21.62, apk: 21.62 },
-    { province: "Sumatera Selatan", code: 1612, cityName: "Penukal Abab Lemata", apm: 13.34, apk: 13.80 },
-    { province: "Sumatera Selatan", code: 1613, cityName: "Musi Rawas Utara", apm: 24.19, apk: 24.19 },
-    { province: "Sumatera Selatan", code: 1671, cityName: "Palembang", apm: 23.08, apk: 23.54 },
-    { province: "Sumatera Selatan", code: 1672, cityName: "Prabumulih", apm: 24.62, apk: 24.62 },
-    { province: "Sumatera Selatan", code: 1673, cityName: "Pagar Alam", apm: 19.54, apk: 19.54 },
-    { province: "Sumatera Selatan", code: 1674, cityName: "Lubuklinggau", apm: 22.92, apk: 22.92 },
-    { province: "Bengkulu", code: 1701, cityName: "Bengkulu Selatan", apm: 49.87, apk: 49.87 },
-    { province: "Bengkulu", code: 1702, cityName: "Rejang Lebong", apm: 14.45, apk: 14.45 },
-    { province: "Bengkulu", code: 1703, cityName: "Bengkulu Utara", apm: 33.82, apk: 33.82 },
-    { province: "Bengkulu", code: 1704, cityName: "Kaur", apm: 26.23, apk: 26.23 },
-    { province: "Bengkulu", code: 1705, cityName: "Seluma", apm: 24.31, apk: 24.31 },
-    { province: "Bengkulu", code: 1706, cityName: "Mukomuko", apm: 34.64, apk: 34.64 },
-    { province: "Bengkulu", code: 1707, cityName: "Lebong", apm: 22.81, apk: 22.81 },
-    { province: "Bengkulu", code: 1708, cityName: "Kepahiang", apm: 18.98, apk: 18.98 },
-    { province: "Bengkulu", code: 1709, cityName: "Bengkulu Tengah", apm: 25.43, apk: 25.43 },
-    { province: "Bengkulu", code: 1771, cityName: "Bengkulu", apm: 16.73, apk: 16.73 },
-    { province: "Lampung", code: 1801, cityName: "Lampung Barat", apm: 23.00, apk: 23.00 },
-    { province: "Lampung", code: 1802, cityName: "Tanggamus", apm: 18.97, apk: 20.54 },
-    { province: "Lampung", code: 1803, cityName: "Lampung Selatan", apm: 28.67, apk: 29.53 },
-    { province: "Lampung", code: 1804, cityName: "Lampung Timur", apm: 37.67, apk: 37.67 },
-    { province: "Lampung", code: 1805, cityName: "Lampung Tengah", apm: 39.18, apk: 39.18 },
-    { province: "Lampung", code: 1806, cityName: "Lampung Utara", apm: 20.15, apk: 20.15 },
-    { province: "Lampung", code: 1807, cityName: "Way Kanan", apm: 32.89, apk: 32.89 },
-    { province: "Lampung", code: 1808, cityName: "Tulangbawang", apm: 43.23, apk: 43.23 },
-    { province: "Lampung", code: 1809, cityName: "Pesawaran", apm: 34.62, apk: 34.62 },
-    { province: "Lampung", code: 1810, cityName: "Pringsewu", apm: 32.54, apk: 32.54 },
-    { province: "Lampung", code: 1811, cityName: "Mesuji", apm: 37.35, apk: 37.98 },
-    { province: "Lampung", code: 1812, cityName: "Tulang Bawang Barat", apm: 31.35, apk: 31.35 },
-    { province: "Lampung", code: 1813, cityName: "Pesisir Barat", apm: 16.19, apk: 17.05 },
-    { province: "Lampung", code: 1871, cityName: "Bandar Lampung", apm: 31.73, apk: 33.10 },
-    { province: "Lampung", code: 1872, cityName: "Metro", apm: 51.41, apk: 52.31 },
-    { province: "Kepulauan Bangka Belitung", code: 1901, cityName: "Bangka", apm: 20.96, apk: 20.96 },
-    { province: "Kepulauan Bangka Belitung", code: 1902, cityName: "Belitung", apm: 29.77, apk: 29.77 },
-    { province: "Kepulauan Bangka Belitung", code: 1903, cityName: "Bangka Barat", apm: 45.02, apk: 45.02 },
-    { province: "Kepulauan Bangka Belitung", code: 1904, cityName: "Bangka Tengah", apm: 26.45, apk: 26.45 },
-    { province: "Kepulauan Bangka Belitung", code: 1905, cityName: "Bangka Selatan", apm: 28.72, apk: 28.72 },
-    { province: "Kepulauan Bangka Belitung", code: 1906, cityName: "Belitung Timur", apm: 48.36, apk: 48.36 },
-    { province: "Kepulauan Bangka Belitung", code: 1971, cityName: "Pangkalpinang", apm: 37.42, apk: 37.42 },
-    { province: "Kepulauan Riau", code: 2101, cityName: "Karimun", apm: 22.96, apk: 22.96 },
-    { province: "Kepulauan Riau", code: 2102, cityName: "Bintan", apm: 33.02, apk: 33.02 },
-    { province: "Kepulauan Riau", code: 2103, cityName: "Natuna", apm: 33.30, apk: 34.46 },
-    { province: "Kepulauan Riau", code: 2104, cityName: "Lingga", apm: 46.14, apk: 46.14 },
-    { province: "Kepulauan Riau", code: 2105, cityName: "Kepulauan Anambas", apm: 45.69, apk: 47.56 },
-    { province: "Kepulauan Riau", code: 2171, cityName: "Batam", apm: 24.82, apk: 24.82 },
-    { province: "Kepulauan Riau", code: 2172, cityName: "Tanjung Pinang", apm: 29.32, apk: 29.32 },
-    { province: "Dki Jakarta", code: 3101, cityName: "Kepulauan Seribu", apm: 52.26, apk: 56.49 },
-    { province: "Dki Jakarta", code: 3171, cityName: "Jakarta Selatan", apm: 34.15, apk: 34.15 },
-    { province: "Dki Jakarta", code: 3172, cityName: "Jakarta Timur", apm: 35.23, apk: 35.23 },
-    { province: "Dki Jakarta", code: 3173, cityName: "Jakarta Pusat", apm: 29.28, apk: 30.58 },
-    { province: "Dki Jakarta", code: 3174, cityName: "Jakarta Barat", apm: 41.38, apk: 41.56 },
-    { province: "Dki Jakarta", code: 3175, cityName: "Jakarta Utara", apm: 40.33, apk: 40.33 },
-    { province: "Jawa Barat", code: 3201, cityName: "Bogor", apm: 23.59, apk: 23.98 },
-    { province: "Jawa Barat", code: 3202, cityName: "Sukabumi", apm: 38.15, apk: 38.15 },
-    { province: "Jawa Barat", code: 3203, cityName: "Cianjur", apm: 32.51, apk: 32.51 },
-    { province: "Jawa Barat", code: 3204, cityName: "Bandung", apm: 30.03, apk: 30.03 },
-    { province: "Jawa Barat", code: 3205, cityName: "Garut", apm: 37.88, apk: 37.88 },
-    { province: "Jawa Barat", code: 3206, cityName: "Tasikmalaya", apm: 46.22, apk: 46.22 },
-    { province: "Jawa Barat", code: 3207, cityName: "Ciamis", apm: 43.17, apk: 43.17 },
-    { province: "Jawa Barat", code: 3208, cityName: "Kuningan", apm: 35.63, apk: 35.63 },
-    { province: "Jawa Barat", code: 3209, cityName: "Cirebon", apm: 41.81, apk: 41.81 },
-    { province: "Jawa Barat", code: 3210, cityName: "Majalengka", apm: 30.36, apk: 30.73 },
-    { province: "Jawa Barat", code: 3211, cityName: "Sumedang", apm: 32.73, apk: 32.73 },
-    { province: "Jawa Barat", code: 3212, cityName: "Indramayu", apm: 24.38, apk: 24.38 },
-    { province: "Jawa Barat", code: 3213, cityName: "Subang", apm: 29.68, apk: 29.68 },
-    { province: "Jawa Barat", code: 3214, cityName: "Purwakarta", apm: 29.65, apk: 29.65 },
-    { province: "Jawa Barat", code: 3215, cityName: "Karawang", apm: 29.92, apk: 29.92 },
-    { province: "Jawa Barat", code: 3216, cityName: "Bekasi", apm: 29.44, apk: 29.44 },
-    { province: "Jawa Barat", code: 3217, cityName: "Bandung Barat", apm: 29.98, apk: 30.39 },
-    { province: "Jawa Barat", code: 3218, cityName: "Pangandaran", apm: 33.30, apk: 33.30 },
-    { province: "Jawa Barat", code: 3271, cityName: "Kota Bogor", apm: 36.43, apk: 36.43 },
-    { province: "Jawa Barat", code: 3272, cityName: "Kota Sukabumi", apm: 38.89, apk: 38.89 },
-    { province: "Jawa Barat", code: 3273, cityName: "Kota Bandung", apm: 35.43, apk: 35.43 },
-    { province: "Jawa Barat", code: 3274, cityName: "Kota Cirebon", apm: 35.91, apk: 35.91 },
-    { province: "Jawa Barat", code: 3275, cityName: "Kota Bekasi", apm: 33.87, apk: 34.89 },
-    { province: "Jawa Barat", code: 3276, cityName: "Depok", apm: 35.07, apk: 35.20 },
-    { province: "Jawa Barat", code: 3277, cityName: "Cimahi", apm: 40.30, apk: 40.30 },
-    { province: "Jawa Barat", code: 3278, cityName: "Kota Tasikmalaya", apm: 46.48, apk: 46.48 },
-    { province: "Jawa Barat", code: 3279, cityName: "Banjar", apm: 52.15, apk: 52.39 },
-    { province: "Jawa Tengah", code: 3301, cityName: "Cilacap", apm: 32.93, apk: 34.06 },
-    { province: "Jawa Tengah", code: 3302, cityName: "Banyumas", apm: 41.00, apk: 41.00 },
-    { province: "Jawa Tengah", code: 3303, cityName: "Purbalingga", apm: 43.90, apk: 43.90 },
-    { province: "Jawa Tengah", code: 3304, cityName: "Banjarnegara", apm: 57.00, apk: 57.69 },
-    { province: "Jawa Tengah", code: 3305, cityName: "Kebumen", apm: 43.80, apk: 44.24 },
-    { province: "Jawa Tengah", code: 3306, cityName: "Purworejo", apm: 45.62, apk: 45.62 },
-    { province: "Jawa Tengah", code: 3307, cityName: "Wonosobo", apm: 49.37, apk: 49.37 },
-    { province: "Jawa Tengah", code: 3308, cityName: "Magelang", apm: 45.91, apk: 45.91 },
-    { province: "Jawa Tengah", code: 3309, cityName: "Boyolali", apm: 48.30, apk: 48.30 },
-    { province: "Jawa Tengah", code: 3310, cityName: "Klaten", apm: 59.62, apk: 60.77 },
-    { province: "Jawa Tengah", code: 3311, cityName: "Sukoharjo", apm: 56.14, apk: 56.28 },
-    { province: "Jawa Tengah", code: 3312, cityName: "Wonogiri", apm: 42.35, apk: 42.35 },
-    { province: "Jawa Tengah", code: 3313, cityName: "Karanganyar", apm: 38.46, apk: 38.46 },
-    { province: "Jawa Tengah", code: 3314, cityName: "Sragen", apm: 39.39, apk: 39.52 },
-    { province: "Jawa Tengah", code: 3315, cityName: "Grobogan", apm: 48.25, apk: 49.57 },
-    { province: "Jawa Tengah", code: 3316, cityName: "Blora", apm: 58.49, apk: 58.79 },
-    { province: "Jawa Tengah", code: 3317, cityName: "Rembang", apm: 68.41, apk: 68.41 },
-    { province: "Jawa Tengah", code: 3318, cityName: "Pati", apm: 51.25, apk: 51.98 },
-    { province: "Jawa Tengah", code: 3319, cityName: "Kudus", apm: 51.27, apk: 52.64 },
-    { province: "Jawa Tengah", code: 3320, cityName: "Jepara", apm: 51.56, apk: 52.63 },
-    { province: "Jawa Tengah", code: 3321, cityName: "Demak", apm: 34.11, apk: 34.11 },
-    { province: "Jawa Tengah", code: 3322, cityName: "Semarang", apm: 46.35, apk: 46.89 },
-    { province: "Jawa Tengah", code: 3323, cityName: "Temanggung", apm: 53.68, apk: 53.68 },
-    { province: "Jawa Tengah", code: 3324, cityName: "Kendal", apm: 48.42, apk: 48.42 },
-    { province: "Jawa Tengah", code: 3325, cityName: "Batang", apm: 46.59, apk: 46.59 },
-    { province: "Jawa Tengah", code: 3326, cityName: "Pekalongan", apm: 48.46, apk: 48.46 },
-    { province: "Jawa Tengah", code: 3327, cityName: "Pemalang", apm: 42.44, apk: 42.44 },
-    { province: "Jawa Tengah", code: 3328, cityName: "Tegal", apm: 48.39, apk: 48.39 },
-    { province: "Jawa Tengah", code: 3329, cityName: "Brebes", apm: 40.53, apk: 40.53 },
-    { province: "Jawa Tengah", code: 3371, cityName: "Kota Magelang", apm: 45.54, apk: 45.54 },
-    { province: "Jawa Tengah", code: 3372, cityName: "Surakarta", apm: 51.98, apk: 51.98 },
-    { province: "Jawa Tengah", code: 3373, cityName: "Salatiga", apm: 57.97, apk: 61.48 },
-    { province: "Jawa Tengah", code: 3374, cityName: "Kota Semarang", apm: 54.71, apk: 55.31 },
-    { province: "Jawa Tengah", code: 3375, cityName: "Kota Pekalongan", apm: 60.09, apk: 63.29 },
-    { province: "Jawa Tengah", code: 3376, cityName: "Kota Tegal", apm: 49.79, apk: 49.79 },
-    { province: "Di Yogyakarta", code: 3401, cityName: "Kulon Progo", apm: 72.88, apk: 75.63 },
-    { province: "Di Yogyakarta", code: 3402, cityName: "Bantul", apm: 62.48, apk: 64.96 },
-    { province: "Di Yogyakarta", code: 3403, cityName: "Gunungkidul", apm: 70.68, apk: 76.06 },
-    { province: "Di Yogyakarta", code: 3404, cityName: "Sleman", apm: 56.32, apk: 57.69 },
-    { province: "Di Yogyakarta", code: 3471, cityName: "Yogyakarta", apm: 62.67, apk: 67.93 },
-    { province: "Jawa Timur", code: 3501, cityName: "Pacitan", apm: 44.74, apk: 44.74 },
-    { province: "Jawa Timur", code: 3502, cityName: "Ponorogo", apm: 58.88, apk: 58.88 },
-    { province: "Jawa Timur", code: 3503, cityName: "Trenggalek", apm: 57.29, apk: 57.29 },
-    { province: "Jawa Timur", code: 3504, cityName: "Tulungagung", apm: 62.91, apk: 63.58 },
-    { province: "Jawa Timur", code: 3505, cityName: "Blitar", apm: 47.41, apk: 47.41 },
-    { province: "Jawa Timur", code: 3506, cityName: "Kediri", apm: 56.72, apk: 57.11 },
-    { province: "Jawa Timur", code: 3507, cityName: "Malang", apm: 54.65, apk: 54.65 },
-    { province: "Jawa Timur", code: 3508, cityName: "Lumajang", apm: 58.65, apk: 60.10 },
-    { province: "Jawa Timur", code: 3509, cityName: "Jember", apm: 41.20, apk: 41.20 },
-    { province: "Jawa Timur", code: 3510, cityName: "Banyuwangi", apm: 50.53, apk: 50.53 },
-    { province: "Jawa Timur", code: 3511, cityName: "Bondowoso", apm: 59.17, apk: 61.24 },
-    { province: "Jawa Timur", code: 3512, cityName: "Situbondo", apm: 47.47, apk: 47.47 },
-    { province: "Jawa Timur", code: 3513, cityName: "Probolinggo", apm: 49.23, apk: 49.66 },
-    { province: "Jawa Timur", code: 3514, cityName: "Pasuruan", apm: 47.86, apk: 48.58 },
-    { province: "Jawa Timur", code: 3515, cityName: "Sidoarjo", apm: 55.69, apk: 55.69 },
-    { province: "Jawa Timur", code: 3516, cityName: "Mojokerto", apm: 64.95, apk: 66.27 },
-    { province: "Jawa Timur", code: 3517, cityName: "Jombang", apm: 55.97, apk: 55.97 },
-    { province: "Jawa Timur", code: 3518, cityName: "Nganjuk", apm: 50.10, apk: 50.10 },
-    { province: "Jawa Timur", code: 3519, cityName: "Madiun", apm: 55.33, apk: 55.33 },
-    { province: "Jawa Timur", code: 3520, cityName: "Magetan", apm: 54.13, apk: 54.13 },
-    { province: "Jawa Timur", code: 3521, cityName: "Ngawi", apm: 42.48, apk: 42.48 },
-    { province: "Jawa Timur", code: 3522, cityName: "Bojonegoro", apm: 60.83, apk: 64.24 },
-    { province: "Jawa Timur", code: 3523, cityName: "Tuban", apm: 59.91, apk: 61.19 },
-    { province: "Jawa Timur", code: 3524, cityName: "Lamongan", apm: 68.49, apk: 69.11 },
-    { province: "Jawa Timur", code: 3525, cityName: "Gresik", apm: 58.37, apk: 58.72 },
-    { province: "Jawa Timur", code: 3526, cityName: "Bangkalan", apm: 35.71, apk: 35.71 },
-    { province: "Jawa Timur", code: 3527, cityName: "Sampang", apm: 40.51, apk: 40.76 },
-    { province: "Jawa Timur", code: 3528, cityName: "Pamekasan", apm: 52.87, apk: 52.87 },
-    { province: "Jawa Timur", code: 3529, cityName: "Sumenep", apm: 42.45, apk: 43.05 },
-    { province: "Jawa Timur", code: 3571, cityName: "Kota Kediri", apm: 58.75, apk: 58.75 },
-    { province: "Jawa Timur", code: 3572, cityName: "Kota Blitar", apm: 61.06, apk: 64.13 },
-    { province: "Jawa Timur", code: 3573, cityName: "Kota Malang", apm: 52.30, apk: 53.15 },
-    { province: "Jawa Timur", code: 3574, cityName: "Kota Probolinggo", apm: 55.97, apk: 56.57 },
-    { province: "Jawa Timur", code: 3575, cityName: "Kota Pasuruan", apm: 55.77, apk: 57.61 },
-    { province: "Jawa Timur", code: 3576, cityName: "Kota Mojokerto", apm: 61.53, apk: 63.63 },
-    { province: "Jawa Timur", code: 3577, cityName: "Kota Madiun", apm: 44.05, apk: 44.05 },
-    { province: "Jawa Timur", code: 3578, cityName: "Surabaya", apm: 61.39, apk: 62.57 },
-    { province: "Jawa Timur", code: 3579, cityName: "Batu", apm: 58.76, apk: 58.76 },
-    { province: "Banten", code: 3601, cityName: "Pandeglang", apm: 28.36, apk: 29.54 },
-    { province: "Banten", code: 3602, cityName: "Lebak", apm: 13.54, apk: 13.54 },
-    { province: "Banten", code: 3603, cityName: "Tangerang", apm: 24.76, apk: 24.76 },
-    { province: "Banten", code: 3604, cityName: "Serang", apm: 29.23, apk: 30.36 },
-    { province: "Banten", code: 3671, cityName: "Kota Tangerang", apm: 35.94, apk: 36.48 },
-    { province: "Banten", code: 3672, cityName: "Cilegon", apm: 41.76, apk: 41.76 },
-    { province: "Banten", code: 3673, cityName: "Kota Serang", apm: 31.44, apk: 31.44 },
-    { province: "Banten", code: 3674, cityName: "Tangerang Selatan", apm: 25.86, apk: 26.90 },
-    { province: "Bali", code: 5101, cityName: "Jembrana", apm: 20.72, apk: 20.72 },
-    { province: "Bali", code: 5102, cityName: "Tabanan", apm: 34.83, apk: 34.83 },
-    { province: "Bali", code: 5103, cityName: "Badung", apm: 39.81, apk: 39.81 },
-    { province: "Bali", code: 5104, cityName: "Gianyar", apm: 29.12, apk: 29.12 },
-    { province: "Bali", code: 5105, cityName: "Klungkung", apm: 32.79, apk: 32.79 },
-    { province: "Bali", code: 5106, cityName: "Bangli", apm: 31.23, apk: 31.23 },
-    { province: "Bali", code: 5107, cityName: "Karangasem", apm: 23.21, apk: 23.21 },
-    { province: "Bali", code: 5108, cityName: "Buleleng", apm: 22.15, apk: 22.15 },
-    { province: "Bali", code: 5171, cityName: "Denpasar", apm: 35.31, apk: 36.72 },
-    { province: "Nusa Tenggara Barat", code: 5201, cityName: "Lombok Barat", apm: 38.75, apk: 38.75 },
-    { province: "Nusa Tenggara Barat", code: 5202, cityName: "Lombok Tengah", apm: 46.05, apk: 46.05 },
-    { province: "Nusa Tenggara Barat", code: 5203, cityName: "Lombok Timur", apm: 34.79, apk: 34.79 },
-    { province: "Nusa Tenggara Barat", code: 5204, cityName: "Sumbawa", apm: 52.93, apk: 54.68 },
-    { province: "Nusa Tenggara Barat", code: 5205, cityName: "Dompu", apm: 36.62, apk: 36.75 },
-    { province: "Nusa Tenggara Barat", code: 5206, cityName: "Bima", apm: 50.96, apk: 51.50 },
-    { province: "Nusa Tenggara Barat", code: 5207, cityName: "Sumbawa Barat", apm: 44.57, apk: 44.57 },
-    { province: "Nusa Tenggara Barat", code: 5208, cityName: "Lombok Utara", apm: 37.34, apk: 37.34 },
-    { province: "Nusa Tenggara Barat", code: 5271, cityName: "Mataram", apm: 42.42, apk: 42.42 },
-    { province: "Nusa Tenggara Barat", code: 5272, cityName: "Kota Bima", apm: 40.65, apk: 40.65 },
-    { province: "Nusa Tenggara Timur", code: 5301, cityName: "Sumba Barat", apm: 40.73, apk: 44.04 },
-    { province: "Nusa Tenggara Timur", code: 5302, cityName: "Sumba Timur", apm: 39.23, apk: 39.23 },
-    { province: "Nusa Tenggara Timur", code: 5303, cityName: "Kupang", apm: 33.80, apk: 35.40 },
-    { province: "Nusa Tenggara Timur", code: 5304, cityName: "Timor Tengah Selatan", apm: 41.63, apk: 42.83 },
-    { province: "Nusa Tenggara Timur", code: 5305, cityName: "Timor Tengah Utara", apm: 33.13, apk: 34.15 },
-    { province: "Nusa Tenggara Timur", code: 5306, cityName: "Belu", apm: 31.91, apk: 33.33 },
-    { province: "Nusa Tenggara Timur", code: 5307, cityName: "Alor", apm: 40.60, apk: 42.70 },
-    { province: "Nusa Tenggara Timur", code: 5308, cityName: "Lembata", apm: 46.98, apk: 46.98 },
-    { province: "Nusa Tenggara Timur", code: 5309, cityName: "Flores Timur", apm: 46.91, apk: 46.91 },
-    { province: "Nusa Tenggara Timur", code: 5310, cityName: "Sikka", apm: 56.86, apk: 58.21 },
-    { province: "Nusa Tenggara Timur", code: 5311, cityName: "Ende", apm: 37.89, apk: 37.89 },
-    { province: "Nusa Tenggara Timur", code: 5312, cityName: "Ngada", apm: 27.45, apk: 27.45 },
-    { province: "Nusa Tenggara Timur", code: 5313, cityName: "Manggarai", apm: 27.71, apk: 27.71 },
-    { province: "Nusa Tenggara Timur", code: 5314, cityName: "Rote Ndao", apm: 27.87, apk: 30.28 },
-    { province: "Nusa Tenggara Timur", code: 5315, cityName: "Manggarai Barat", apm: 22.33, apk: 22.83 },
-    { province: "Nusa Tenggara Timur", code: 5316, cityName: "Sumba Tengah", apm: 42.56, apk: 44.60 },
-    { province: "Nusa Tenggara Timur", code: 5317, cityName: "Sumba Barat Daya", apm: 25.97, apk: 26.83 },
-    { province: "Nusa Tenggara Timur", code: 5318, cityName: "Nagekeo", apm: 37.46, apk: 37.46 },
-    { province: "Nusa Tenggara Timur", code: 5319, cityName: "Manggarai Timur", apm: 21.28, apk: 21.84 },
-    { province: "Nusa Tenggara Timur", code: 5320, cityName: "Sabu Raijua", apm: 42.75, apk: 43.80 },
-    { province: "Nusa Tenggara Timur", code: 5321, cityName: "Malaka", apm: 29.82, apk: 31.22 },
-    { province: "Nusa Tenggara Timur", code: 5371, cityName: "Kota Kupang", apm: 24.00, apk: 24.00 },
-    { province: "Kalimantan Barat", code: 6101, cityName: "Sambas", apm: 24.46, apk: 24.46 },
-    { province: "Kalimantan Barat", code: 6102, cityName: "Bengkayang", apm: 24.51, apk: 24.51 },
-    { province: "Kalimantan Barat", code: 6103, cityName: "Landak", apm: 23.10, apk: 23.39 },
-    { province: "Kalimantan Barat", code: 6104, cityName: "Mempawah", apm: 21.64, apk: 21.64 },
-    { province: "Kalimantan Barat", code: 6105, cityName: "Sanggau", apm: 22.39, apk: 22.39 },
-    { province: "Kalimantan Barat", code: 6106, cityName: "Ketapang", apm: 14.70, apk: 14.70 },
-    { province: "Kalimantan Barat", code: 6107, cityName: "Sintang", apm: 22.05, apk: 22.05 },
-    { province: "Kalimantan Barat", code: 6108, cityName: "Kapuas Hulu", apm: 32.64, apk: 33.60 },
-    { province: "Kalimantan Barat", code: 6109, cityName: "Sekadau", apm: 21.34, apk: 21.81 },
-    { province: "Kalimantan Barat", code: 6110, cityName: "Melawi", apm: 27.22, apk: 27.22 },
-    { province: "Kalimantan Barat", code: 6111, cityName: "Kayong Utara", apm: 20.28, apk: 20.28 },
-    { province: "Kalimantan Barat", code: 6112, cityName: "Kubu Raya", apm: 13.60, apk: 13.60 },
-    { province: "Kalimantan Barat", code: 6171, cityName: "Pontianak", apm: 29.90, apk: 29.90 },
-    { province: "Kalimantan Barat", code: 6172, cityName: "Singkawang", apm: 23.22, apk: 23.22 },
-    { province: "Kalimantan Tengah", code: 6201, cityName: "Kotawaringin Barat", apm: 36.55, apk: 37.66 },
-    { province: "Kalimantan Tengah", code: 6202, cityName: "Kotawaringin Timur", apm: 27.52, apk: 27.52 },
-    { province: "Kalimantan Tengah", code: 6203, cityName: "Kapuas", apm: 35.08, apk: 36.98 },
-    { province: "Kalimantan Tengah", code: 6204, cityName: "Barito Selatan", apm: 38.76, apk: 38.76 },
-    { province: "Kalimantan Tengah", code: 6205, cityName: "Barito Utara", apm: 40.45, apk: 40.45 },
-    { province: "Kalimantan Tengah", code: 6206, cityName: "Sukamara", apm: 40.69, apk: 40.91 },
-    { province: "Kalimantan Tengah", code: 6207, cityName: "Lamandau", apm: 50.78, apk: 51.92 },
-    { province: "Kalimantan Tengah", code: 6208, cityName: "Seruyan", apm: 43.22, apk: 43.22 },
-    { province: "Kalimantan Tengah", code: 6209, cityName: "Katingan", apm: 29.04, apk: 29.04 },
-    { province: "Kalimantan Tengah", code: 6210, cityName: "Pulang Pisau", apm: 31.27, apk: 31.27 },
-    { province: "Kalimantan Tengah", code: 6211, cityName: "Gunung Mas", apm: 39.48, apk: 39.48 },
-    { province: "Kalimantan Tengah", code: 6212, cityName: "Barito Timur", apm: 35.58, apk: 37.57 },
-    { province: "Kalimantan Tengah", code: 6213, cityName: "Murung Raya", apm: 35.01, apk: 35.01 },
-    { province: "Kalimantan Tengah", code: 6271, cityName: "Palangka Raya", apm: 40.49, apk: 40.49 },
-    { province: "Kalimantan Selatan", code: 6301, cityName: "Tanah Laut", apm: 39.94, apk: 40.96 },
-    { province: "Kalimantan Selatan", code: 6302, cityName: "Kotabaru", apm: 43.74, apk: 43.74 },
-    { province: "Kalimantan Selatan", code: 6303, cityName: "Banjar", apm: 39.46, apk: 39.46 },
-    { province: "Kalimantan Selatan", code: 6304, cityName: "Barito Kuala", apm: 41.10, apk: 41.10 },
-    { province: "Kalimantan Selatan", code: 6305, cityName: "Tapin", apm: 51.60, apk: 51.60 },
-    { province: "Kalimantan Selatan", code: 6306, cityName: "Hulu Sungai Selatan", apm: 59.17, apk: 59.17 },
-    { province: "Kalimantan Selatan", code: 6307, cityName: "Hulu Sungai Tengah", apm: 55.96, apk: 56.32 },
-    { province: "Kalimantan Selatan", code: 6308, cityName: "Hulu Sungai Utara", apm: 51.06, apk: 52.63 },
-    { province: "Kalimantan Selatan", code: 6309, cityName: "Tabalong", apm: 37.54, apk: 37.54 },
-    { province: "Kalimantan Selatan", code: 6310, cityName: "Tanah Bumbu", apm: 40.62, apk: 40.62 },
-    { province: "Kalimantan Selatan", code: 6311, cityName: "Balangan", apm: 52.08, apk: 52.08 },
-    { province: "Kalimantan Selatan", code: 6371, cityName: "Banjarmasin", apm: 34.71, apk: 35.74 },
-    { province: "Kalimantan Selatan", code: 6372, cityName: "Banjarbaru", apm: 44.06, apk: 45.08 },
-    { province: "Kalimantan Timur", code: 6401, cityName: "Paser", apm: 27.06, apk: 28.32 },
-    { province: "Kalimantan Timur", code: 6402, cityName: "Kutai Barat", apm: 26.93, apk: 26.93 },
-    { province: "Kalimantan Timur", code: 6403, cityName: "Kutai Kartanegara", apm: 26.58, apk: 26.58 },
-    { province: "Kalimantan Timur", code: 6404, cityName: "Kutai Timur", apm: 20.23, apk: 20.23 },
-    { province: "Kalimantan Timur", code: 6405, cityName: "Berau", apm: 37.64, apk: 37.64 },
-    { province: "Kalimantan Timur", code: 6409, cityName: "Penajam Paser Utara", apm: 28.48, apk: 28.48 },
-    { province: "Kalimantan Timur", code: 6411, cityName: "Mahakam Ulu", apm: 38.14, apk: 40.45 },
-    { province: "Kalimantan Timur", code: 6471, cityName: "Balikpapan", apm: 22.68, apk: 22.68 },
-    { province: "Kalimantan Timur", code: 6472, cityName: "Samarinda", apm: 23.75, apk: 23.75 },
-    { province: "Kalimantan Timur", code: 6474, cityName: "Bontang", apm: 45.68, apk: 45.68 },
-    { province: "Kalimantan Utara", code: 6501, cityName: "Malinau", apm: 46.02, apk: 48.20 },
-    { province: "Kalimantan Utara", code: 6502, cityName: "Bulungan", apm: 27.90, apk: 27.90 },
-    { province: "Kalimantan Utara", code: 6503, cityName: "Tana Tidung", apm: 55.44, apk: 55.75 },
-    { province: "Kalimantan Utara", code: 6504, cityName: "Nunukan", apm: 28.69, apk: 29.99 },
-    { province: "Kalimantan Utara", code: 6571, cityName: "Tarakan", apm: 26.76, apk: 26.76 },
-    { province: "Sulawesi Utara", code: 7101, cityName: "Bolaang Mongondow", apm: 34.86, apk: 34.86 },
-    { province: "Sulawesi Utara", code: 7102, cityName: "Minahasa", apm: 28.15, apk: 28.15 },
-    { province: "Sulawesi Utara", code: 7103, cityName: "Kepulauan Sangihe", apm: 39.10, apk: 39.10 },
-    { province: "Sulawesi Utara", code: 7104, cityName: "Kepulauan Talaud", apm: 44.70, apk: 47.93 },
-    { province: "Sulawesi Utara", code: 7105, cityName: "Minahasa Selatan", apm: 23.11, apk: 23.11 },
-    { province: "Sulawesi Utara", code: 7106, cityName: "Minahasa Utara", apm: 26.03, apk: 26.03 },
-    { province: "Sulawesi Utara", code: 7107, cityName: "Bolaang Mongondow Utara", apm: 50.96, apk: 51.57 },
-    { province: "Sulawesi Utara", code: 7108, cityName: "Siau Tagulandang Biaro", apm: 35.23, apk: 35.23 },
-    { province: "Sulawesi Utara", code: 7109, cityName: "Minahasa Tenggara", apm: 36.53, apk: 36.53 },
-    { province: "Sulawesi Utara", code: 7110, cityName: "Bolaang Mongondow Selatan", apm: 32.05, apk: 32.05 },
-    { province: "Sulawesi Utara", code: 7111, cityName: "Bolaang Mongondow Timur", apm: 38.35, apk: 38.35 },
-    { province: "Sulawesi Utara", code: 7171, cityName: "Manado", apm: 19.82, apk: 19.82 },
-    { province: "Sulawesi Utara", code: 7172, cityName: "Bitung", apm: 18.23, apk: 18.23 },
-    { province: "Sulawesi Utara", code: 7173, cityName: "Tomohon", apm: 26.79, apk: 26.79 },
-    { province: "Sulawesi Utara", code: 7174, cityName: "Kotamobagu", apm: 29.38, apk: 29.38 },
-    { province: "Sulawesi Tengah", code: 7201, cityName: "Banggai Kepulauan", apm: 54.59, apk: 55.78 },
-    { province: "Sulawesi Tengah", code: 7202, cityName: "Banggai", apm: 39.06, apk: 39.55 },
-    { province: "Sulawesi Tengah", code: 7203, cityName: "Morowali", apm: 38.72, apk: 40.00 },
-    { province: "Sulawesi Tengah", code: 7204, cityName: "Poso", apm: 38.41, apk: 38.41 },
-    { province: "Sulawesi Tengah", code: 7205, cityName: "Donggala", apm: 26.56, apk: 26.56 },
-    { province: "Sulawesi Tengah", code: 7206, cityName: "Toli Toli", apm: 31.33, apk: 31.33 },
-    { province: "Sulawesi Tengah", code: 7207, cityName: "Buol", apm: 42.65, apk: 42.65 },
-    { province: "Sulawesi Tengah", code: 7208, cityName: "Parigi Moutong", apm: 40.29, apk: 40.29 },
-    { province: "Sulawesi Tengah", code: 7209, cityName: "Tojo Una Una", apm: 51.09, apk: 52.26 },
-    { province: "Sulawesi Tengah", code: 7210, cityName: "Sigi", apm: 32.71, apk: 32.71 },
-    { province: "Sulawesi Tengah", code: 7211, cityName: "Banggai Laut", apm: 36.02, apk: 36.02 },
-    { province: "Sulawesi Tengah", code: 7212, cityName: "Morowali Utara", apm: 37.78, apk: 39.63 },
-    { province: "Sulawesi Tengah", code: 7271, cityName: "Palu", apm: 19.70, apk: 19.70 },
-    { province: "Sulawesi Selatan", code: 7301, cityName: "Kepulauan Selayar", apm: 49.98, apk: 50.72 },
-    { province: "Sulawesi Selatan", code: 7302, cityName: "Bulukumba", apm: 41.66, apk: 41.66 },
-    { province: "Sulawesi Selatan", code: 7303, cityName: "Bantaeng", apm: 43.25, apk: 43.25 },
-    { province: "Sulawesi Selatan", code: 7304, cityName: "Jeneponto", apm: 27.27, apk: 27.27 },
-    { province: "Sulawesi Selatan", code: 7305, cityName: "Takalar", apm: 32.17, apk: 32.17 },
-    { province: "Sulawesi Selatan", code: 7306, cityName: "Gowa", apm: 29.80, apk: 31.10 },
-    { province: "Sulawesi Selatan", code: 7307, cityName: "Sinjai", apm: 59.64, apk: 59.64 },
-    { province: "Sulawesi Selatan", code: 7308, cityName: "Maros", apm: 31.59, apk: 31.59 },
-    { province: "Sulawesi Selatan", code: 7309, cityName: "Pangkajene Dan Kepulauan", apm: 42.39, apk: 43.37 },
-    { province: "Sulawesi Selatan", code: 7310, cityName: "Barru", apm: 33.72, apk: 33.72 },
-    { province: "Sulawesi Selatan", code: 7311, cityName: "Bone", apm: 33.50, apk: 33.50 },
-    { province: "Sulawesi Selatan", code: 7312, cityName: "Soppeng", apm: 27.80, apk: 27.80 },
-    { province: "Sulawesi Selatan", code: 7313, cityName: "Wajo", apm: 35.78, apk: 35.78 },
-    { province: "Sulawesi Selatan", code: 7314, cityName: "Sidenreng Rappang", apm: 36.05, apk: 36.05 },
-    { province: "Sulawesi Selatan", code: 7315, cityName: "Pinrang", apm: 29.47, apk: 29.47 },
-    { province: "Sulawesi Selatan", code: 7316, cityName: "Enrekang", apm: 31.54, apk: 32.20 },
-    { province: "Sulawesi Selatan", code: 7317, cityName: "Luwu", apm: 25.26, apk: 25.26 },
-    { province: "Sulawesi Selatan", code: 7318, cityName: "Tana Toraja", apm: 37.07, apk: 37.07 },
-    { province: "Sulawesi Selatan", code: 7322, cityName: "Luwu Utara", apm: 35.88, apk: 37.04 },
-    { province: "Sulawesi Selatan", code: 7325, cityName: "Luwu Timur", apm: 27.72, apk: 27.72 },
-    { province: "Sulawesi Selatan", code: 7326, cityName: "Toraja Utara", apm: 16.18, apk: 16.18 },
-    { province: "Sulawesi Selatan", code: 7371, cityName: "Makassar", apm: 21.20, apk: 21.20 },
-    { province: "Sulawesi Selatan", code: 7372, cityName: "Parepare", apm: 30.32, apk: 30.32 },
-    { province: "Sulawesi Selatan", code: 7373, cityName: "Palopo", apm: 28.42, apk: 29.03 },
-    { province: "Sulawesi Tenggara", code: 7401, cityName: "Buton", apm: 47.13, apk: 47.80 },
-    { province: "Sulawesi Tenggara", code: 7402, cityName: "Muna", apm: 36.73, apk: 36.73 },
-    { province: "Sulawesi Tenggara", code: 7403, cityName: "Konawe", apm: 22.69, apk: 22.69 },
-    { province: "Sulawesi Tenggara", code: 7404, cityName: "Kolaka", apm: 24.19, apk: 24.19 },
-    { province: "Sulawesi Tenggara", code: 7405, cityName: "Konawe Selatan", apm: 20.12, apk: 20.12 },
-    { province: "Sulawesi Tenggara", code: 7406, cityName: "Bombana", apm: 50.44, apk: 50.44 },
-    { province: "Sulawesi Tenggara", code: 7407, cityName: "Wakatobi", apm: 48.53, apk: 55.25 },
-    { province: "Sulawesi Tenggara", code: 7408, cityName: "Kolaka Utara", apm: 35.05, apk: 35.05 },
-    { province: "Sulawesi Tenggara", code: 7409, cityName: "Buton Utara", apm: 42.31, apk: 42.41 },
-    { province: "Sulawesi Tenggara", code: 7410, cityName: "Konawe Utara", apm: 44.26, apk: 44.46 },
-    { province: "Sulawesi Tenggara", code: 7411, cityName: "Kolaka Timur", apm: 41.16, apk: 41.16 },
-    { province: "Sulawesi Tenggara", code: 7412, cityName: "Konawe Kepulauan", apm: 47.44, apk: 48.40 },
-    { province: "Sulawesi Tenggara", code: 7413, cityName: "Muna Barat", apm: 32.38, apk: 32.38 },
-    { province: "Sulawesi Tenggara", code: 7414, cityName: "Buton Tengah", apm: 32.23, apk: 32.23 },
-    { province: "Sulawesi Tenggara", code: 7415, cityName: "Buton Selatan", apm: 32.64, apk: 32.64 },
-    { province: "Sulawesi Tenggara", code: 7471, cityName: "Kendari", apm: 25.21, apk: 25.21 },
-    { province: "Sulawesi Tenggara", code: 7472, cityName: "Baubau", apm: 31.09, apk: 31.91 },
-    { province: "Gorontalo", code: 7501, cityName: "Boalemo", apm: 46.32, apk: 48.85 },
-    { province: "Gorontalo", code: 7502, cityName: "Gorontalo", apm: 39.36, apk: 39.36 },
-    { province: "Gorontalo", code: 7503, cityName: "Pohuwato", apm: 63.08, apk: 63.46 },
-    { province: "Gorontalo", code: 7504, cityName: "Bone Bolango", apm: 65.40, apk: 66.62 },
-    { province: "Gorontalo", code: 7505, cityName: "Gorontalo Utara", apm: 53.61, apk: 53.94 },
-    { province: "Gorontalo", code: 7571, cityName: "Kota Gorontalo", apm: 44.50, apk: 44.50 },
-    { province: "Sulawesi Barat", code: 7601, cityName: "Majene", apm: 54.08, apk: 54.31 },
-    { province: "Sulawesi Barat", code: 7602, cityName: "Polewali Mandar", apm: 50.11, apk: 50.11 },
-    { province: "Sulawesi Barat", code: 7603, cityName: "Mamasa", apm: 46.33, apk: 47.14 },
-    { province: "Sulawesi Barat", code: 7604, cityName: "Mamuju", apm: 39.84, apk: 40.27 },
-    { province: "Sulawesi Barat", code: 7605, cityName: "Pasangkayu", apm: 38.18, apk: 38.18 },
-    { province: "Sulawesi Barat", code: 7606, cityName: "Mamuju Tengah", apm: 31.99, apk: 31.99 },
-    { province: "Maluku", code: 8101, cityName: "Kepulauan Tanimbar", apm: 33.22, apk: 33.22 },
-    { province: "Maluku", code: 8102, cityName: "Maluku Tenggara", apm: 37.55, apk: 37.55 },
-    { province: "Maluku", code: 8103, cityName: "Maluku Tengah", apm: 27.18, apk: 27.18 },
-    { province: "Maluku", code: 8104, cityName: "Buru", apm: 39.00, apk: 39.00 },
-    { province: "Maluku", code: 8105, cityName: "Kepulauan Aru", apm: 28.08, apk: 30.53 },
-    { province: "Maluku", code: 8106, cityName: "Seram Bagian Barat", apm: 29.05, apk: 29.65 },
-    { province: "Maluku", code: 8107, cityName: "Seram Bagian Timur", apm: 30.10, apk: 33.36 },
-    { province: "Maluku", code: 8108, cityName: "Maluku Barat Daya", apm: 39.16, apk: 40.77 },
-    { province: "Maluku", code: 8109, cityName: "Buru Selatan", apm: 44.48, apk: 45.50 },
-    { province: "Maluku", code: 8171, cityName: "Ambon", apm: 22.00, apk: 22.00 },
-    { province: "Maluku", code: 8172, cityName: "Tual", apm: 33.60, apk: 33.60 },
-    { province: "Maluku Utara", code: 8201, cityName: "Halmahera Barat", apm: 33.06, apk: 33.06 },
-    { province: "Maluku Utara", code: 8202, cityName: "Halmahera Tengah", apm: 51.90, apk: 56.18 },
-    { province: "Maluku Utara", code: 8203, cityName: "Kepulauan Sula", apm: 26.08, apk: 26.08 },
-    { province: "Maluku Utara", code: 8204, cityName: "Halmahera Selatan", apm: 38.12, apk: 38.12 },
-    { province: "Maluku Utara", code: 8205, cityName: "Halmahera Utara", apm: 39.31, apk: 40.46 },
-    { province: "Maluku Utara", code: 8206, cityName: "Halmahera Timur", apm: 41.24, apk: 41.24 },
-    { province: "Maluku Utara", code: 8207, cityName: "Pulau Morotai", apm: 44.80, apk: 52.01 },
-    { province: "Maluku Utara", code: 8208, cityName: "Pulau Taliabu", apm: 39.29, apk: 39.29 },
-    { province: "Maluku Utara", code: 8271, cityName: "Ternate", apm: 26.26, apk: 26.26 },
-    { province: "Maluku Utara", code: 8272, cityName: "Tidore Kepulauan", apm: 38.82, apk: 38.82 },
-    { province: "Papua Barat", code: 9101, cityName: "Fakfak", apm: 36.56, apk: 37.32 },
-    { province: "Papua Barat", code: 9102, cityName: "Kaimana", apm: 27.66, apk: 27.72 },
-    { province: "Papua Barat", code: 9103, cityName: "Teluk Wondama", apm: 23.53, apk: 24.03 },
-    { province: "Papua Barat", code: 9104, cityName: "Teluk Bintuni", apm: 48.49, apk: 49.19 },
-    { province: "Papua Barat", code: 9105, cityName: "Manokwari", apm: 28.08, apk: 28.08 },
-    { province: "Papua Barat", code: 9111, cityName: "Manokwari Selatan", apm: 40.53, apk: 40.53 },
-    { province: "Papua Barat", code: 9112, cityName: "Pegunungan Arfak", apm: 16.47, apk: 16.47 },
-    { province: "Papua Barat Daya", code: 9201, cityName: "Raja Ampat", apm: 22.94, apk: 23.88 },
-    { province: "Papua Barat Daya", code: 9202, cityName: "Sorong", apm: 26.52, apk: 26.52 },
-    { province: "Papua Barat Daya", code: 9203, cityName: "Sorong Selatan", apm: 21.25, apk: 22.57 },
-    { province: "Papua Barat Daya", code: 9204, cityName: "Maybrat", apm: 34.31, apk: 34.31 },
-    { province: "Papua Barat Daya", code: 9205, cityName: "Tambrauw", apm: 20.66, apk: 20.66 },
-    { province: "Papua Barat Daya", code: 9271, cityName: "Kota Sorong", apm: 16.41, apk: 16.41 },
-    { province: "Papua", code: 9403, cityName: "Jayapura", apm: 30.87, apk: 33.26 },
-    { province: "Papua", code: 9408, cityName: "Kepulauan Yapen", apm: 10.21, apk: 10.21 },
-    { province: "Papua", code: 9409, cityName: "Biak Numfor", apm: 25.09, apk: 26.88 },
-    { province: "Papua", code: 9419, cityName: "Sarmi", apm: 14.61, apk: 14.61 },
-    { province: "Papua", code: 9420, cityName: "Keerom", apm: 19.91, apk: 19.91 },
-    { province: "Papua", code: 9426, cityName: "Waropen", apm: 25.12, apk: 26.24 },
-    { province: "Papua", code: 9427, cityName: "Supiori", apm: 31.83, apk: 33.05 },
-    { province: "Papua", code: 9428, cityName: "Mamberamo Raya", apm: 23.93, apk: 23.93 },
-    { province: "Papua", code: 9471, cityName: "Kota Jayapura", apm: 13.14, apk: 13.14 },
-    { province: "Papua Selatan", code: 9501, cityName: "Merauke", apm: 34.50, apk: 34.50 },
-    { province: "Papua Selatan", code: 9502, cityName: "Boven Digoel", apm: 14.88, apk: 14.88 },
-    { province: "Papua Selatan", code: 9503, cityName: "Mappi", apm: 9.04, apk: 9.04 },
-    { province: "Papua Selatan", code: 9504, cityName: "Asmat", apm: 6.11, apk: 6.14 },
-    { province: "Papua Tengah", code: 9601, cityName: "Mimika", apm: 18.00, apk: 18.00 },
-    { province: "Papua Tengah", code: 9602, cityName: "Dogiyai", apm: null, apk: null },
-    { province: "Papua Tengah", code: 9603, cityName: "Deiyai", apm: 0.98, apk: 0.98 },
-    { province: "Papua Tengah", code: 9604, cityName: "Nabire", apm: 18.53, apk: 18.53 },
-    { province: "Papua Tengah", code: 9605, cityName: "Paniai", apm: 5.24, apk: 5.24 },
-    { province: "Papua Tengah", code: 9606, cityName: "Intan Jaya", apm: 4.45, apk: 4.45 },
-    { province: "Papua Tengah", code: 9607, cityName: "Puncak", apm: 0.59, apk: 0.59 },
-    { province: "Papua Tengah", code: 9608, cityName: "Puncak Jaya", apm: 2.86, apk: 2.86 },
-    { province: "Papua Pegunungan", code: 9701, cityName: "Nduga", apm: 0.46, apk: 0.46 },
-    { province: "Papua Pegunungan", code: 9702, cityName: "Jayawijaya", apm: 4.85, apk: 4.85 },
-    { province: "Papua Pegunungan", code: 9703, cityName: "Lanny Jaya", apm: 1.72, apk: 1.72 },
-    { province: "Papua Pegunungan", code: 9704, cityName: "Tolikara", apm: 1.60, apk: 1.60 },
-    { province: "Papua Pegunungan", code: 9705, cityName: "Mamberamo Tengah", apm: 4.63, apk: 4.63 },
-    { province: "Papua Pegunungan", code: 9706, cityName: "Yalimo", apm: 2.19, apk: 2.19 },
-    { province: "Papua Pegunungan", code: 9707, cityName: "Yahukimo", apm: 3.87, apk: 3.87 },
-    { province: "Papua Pegunungan", code: 9708, cityName: "Pegunungan Bintang", apm: 6.99, apk: 6.99 }
-];
-
-
-// Calculate National Averages from real data
-const validApms = paudParticipationData2024.map(d => d.apm).filter((v): v is number => v !== null);
-const validApks = paudParticipationData2024.map(d => d.apk).filter((v): v is number => v !== null);
-const nationalAverageApm = validApms.reduce((sum, v) => sum + v, 0) / validApms.length;
-const nationalAverageApk = validApks.reduce((sum, v) => sum + v, 0) / validApks.length;
-
-// Helper to normalize city names for matching
-const normalizeName = (name: string): string => {
-    return name.toLowerCase().replace(/^(kabupaten|kota|kab\.|adm\.)\s*/, '');
+// --- UTILITY FUNCTIONS ---
+const parseValue = (val: string | undefined): number | null => {
+  if (!val || val.trim() === 'NA' || val.trim() === '–' || val.trim() === '') {
+    return null;
+  }
+  return parseFloat(val.replace(',', '.'));
 };
 
-const paudDataMap = new Map<string, { apm: number | null, apk: number | null }>();
-paudParticipationData2024.forEach(d => {
-    // A few city names in the user data are slightly different, we manually correct them for mapping
-    let correctedCityName = d.cityName;
-    if (d.cityName === 'Pangkajene Dan Kepulauan') correctedCityName = 'Pangkajene Kepulauan';
-    if (d.cityName === 'Banyu Asin') correctedCityName = 'Banyuasin';
-    if (d.province === 'Di Yogyakarta' && d.cityName === 'Yogyakarta') correctedCityName = 'Kota Yogyakarta';
-    if (d.province === 'Jambi' && d.cityName === 'Jambi') correctedCityName = 'Kota Jambi';
-    if (d.province === 'Bengkulu' && d.cityName === 'Bengkulu') correctedCityName = 'Kota Bengkulu';
-    if (d.province === 'Gorontalo' && d.cityName === 'Gorontalo') correctedCityName = 'Kab. Gorontalo';
-    if (d.cityName === 'Kota Gorontalo') correctedCityName = 'Gorontalo'; // Match the city name used in indonesiaData
-    if (d.cityName === 'Palangka Raya') correctedCityName = 'Palangkaraya';
-    if (d.cityName === 'Toli Toli') correctedCityName = 'Tolitoli';
-    if (d.cityName === 'Parepare') correctedCityName = 'Pare Pare';
-    if (d.cityName === 'Bau Bau') correctedCityName = 'Bau-Bau';
-    if (d.cityName === 'Fakfak') correctedCityName = 'Fak Fak';
-    if (d.province === 'Papua Barat Daya' && d.cityName === 'Sorong') correctedCityName = 'Kab. Sorong';
-     if (d.cityName === 'Kota Sorong') correctedCityName = 'Sorong';
+const generateId = (name: string): string => {
+    return name.toLowerCase().replace(/ /g, '-').replace(/\./g, '');
+}
 
-    const key = `${normalizeName(d.province)}|${normalizeName(correctedCityName)}`;
-    paudDataMap.set(key, { apm: d.apm, apk: d.apk });
+const generateHistoricalData = (baseScore: number, length: number = 6): { month: string; score: number }[] => {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'];
+    return months.slice(-length).map(month => ({
+        month,
+        score: parseFloat(Math.max(0, Math.min(100, baseScore + (Math.random() - 0.5) * 10)).toFixed(1))
+    }));
+};
+
+// --- RAW DATA FROM USER CSVs ---
+
+const bencanaRawData = {
+    "Aceh": { BANJIR: 47, "CUACA EKSTREM": 14, "KEBAKARAN HUTAN DAN LAHAN": 35, KEKERINGAN: 1, "TANAH LONGSOR": 2 },
+    "Sumatera Utara": { BANJIR: 120, "CUACA EKSTREM": 43, "KEBAKARAN HUTAN DAN LAHAN": 170, KEKERINGAN: 2, "TANAH LONGSOR": 15 },
+    "Sumatera Barat": { BANJIR: 64, "CUACA EKSTREM": 10, "ERUPSI GUNUNG API": 3, "GELOMBANG PASANG DAN ABRASI": 3, "KEBAKARAN HUTAN DAN LAHAN": 7, KEKERINGAN: 1, "TANAH LONGSOR": 10 },
+    "Riau": { BANJIR: 53, "CUACA EKSTREM": 2, "GELOMBANG PASANG DAN ABRASI": 2, "KEBAKARAN HUTAN DAN LAHAN": 10, "TANAH LONGSOR": 1 },
+    "Jambi": { BANJIR: 44, "CUACA EKSTREM": 7, "KEBAKARAN HUTAN DAN LAHAN": 79, "TANAH LONGSOR": 2 },
+    "Sumatera Selatan": { BANJIR: 69, "CUACA EKSTREM": 9, "KEBAKARAN HUTAN DAN LAHAN": 192, "TANAH LONGSOR": 1 },
+    "Bengkulu": { BANJIR: 9, "CUACA EKSTREM": 3, GEMPABUMI: 1, "KEBAKARAN HUTAN DAN LAHAN": 1, KEKERINGAN: 1, "TANAH LONGSOR": 4 },
+    "Lampung": { BANJIR: 28, "CUACA EKSTREM": 24, "KEBAKARAN HUTAN DAN LAHAN": 7, KEKERINGAN: 1 },
+    "Kep. Bangka Belitung": { BANJIR: 2, "CUACA EKSTREM": 3, "KEBAKARAN HUTAN DAN LAHAN": 19 },
+    "Kepulauan Riau": { BANJIR: 4, "CUACA EKSTREM": 16, "KEBAKARAN HUTAN DAN LAHAN": 58, "TANAH LONGSOR": 1 },
+    "DKI Jakarta": { BANJIR: 17, "CUACA EKSTREM": 5, "TANAH LONGSOR": 1 },
+    "Jawa Barat": { BANJIR: 140, "CUACA EKSTREM": 193, "GELOMBANG PASANG DAN ABRASI": 1, GEMPABUMI: 5, "KEBAKARAN HUTAN DAN LAHAN": 16, KEKERINGAN: 25, "TANAH LONGSOR": 77 },
+    "Jawa Tengah": { BANJIR: 78, "CUACA EKSTREM": 71, GEMPABUMI: 3, "KEBAKARAN HUTAN DAN LAHAN": 38, KEKERINGAN: 22, "TANAH LONGSOR": 19 },
+    "DI Yogyakarta": { "CUACA EKSTREM": 38, GEMPABUMI: 1, "KEBAKARAN HUTAN DAN LAHAN": 15, KEKERINGAN: 3, "TANAH LONGSOR": 5 },
+    "Jawa Timur": { BANJIR: 121, "CUACA EKSTREM": 141, "GELOMBANG PASANG DAN ABRASI": 2, GEMPABUMI: 2, "KEBAKARAN HUTAN DAN LAHAN": 145, KEKERINGAN: 11, "TANAH LONGSOR": 14 },
+    "Banten": { BANJIR: 66, "CUACA EKSTREM": 17, "GELOMBANG PASANG DAN ABRASI": 1, GEMPABUMI: 1, "KEBAKARAN HUTAN DAN LAHAN": 4, KEKERINGAN: 2, "TANAH LONGSOR": 7 },
+    "Bali": { BANJIR: 2, "CUACA EKSTREM": 17, GEMPABUMI: 1, "KEBAKARAN HUTAN DAN LAHAN": 11, "TANAH LONGSOR": 4 },
+    "Nusa Tenggara Barat": { BANJIR: 44, "CUACA EKSTREM": 17, "GELOMBANG PASANG DAN ABRASI": 2, GEMPABUMI: 1, "KEBAKARAN HUTAN DAN LAHAN": 3, KEKERINGAN: 9, "TANAH LONGSOR": 1 },
+    "Nusa Tenggara Timur": { BANJIR: 13, "CUACA EKSTREM": 13, "ERUPSI GUNUNG API": 3, "GELOMBANG PASANG DAN ABRASI": 4, "KEBAKARAN HUTAN DAN LAHAN": 14, KEKERINGAN: 1, "TANAH LONGSOR": 5 },
+    "Kalimantan Barat": { BANJIR: 56, "CUACA EKSTREM": 3, "KEBAKARAN HUTAN DAN LAHAN": 10 },
+    "Kalimantan Tengah": { BANJIR: 39, "KEBAKARAN HUTAN DAN LAHAN": 17 },
+    "Kalimantan Selatan": { BANJIR: 15, "CUACA EKSTREM": 4, "KEBAKARAN HUTAN DAN LAHAN": 6, "TANAH LONGSOR": 1 },
+    "Kalimantan Timur": { BANJIR: 29, "CUACA EKSTREM": 4, "GELOMBANG PASANG DAN ABRASI": 1, "KEBAKARAN HUTAN DAN LAHAN": 107, "TANAH LONGSOR": 3 },
+    "Kalimantan Utara": { BANJIR: 5, "KEBAKARAN HUTAN DAN LAHAN": 3, "TANAH LONGSOR": 2 },
+    "Sulawesi Utara": { BANJIR: 17, "CUACA EKSTREM": 3, "ERUPSI GUNUNG API": 1, "GELOMBANG PASANG DAN ABRASI": 1, "TANAH LONGSOR": 1 },
+    "Sulawesi Tengah": { BANJIR: 85, "CUACA EKSTREM": 4, GEMPABUMI: 2, "KEBAKARAN HUTAN DAN LAHAN": 2, "TANAH LONGSOR": 1 },
+    "Sulawesi Selatan": { BANJIR: 91, "CUACA EKSTREM": 45, "GELOMBANG PASANG DAN ABRASI": 2, "KEBAKARAN HUTAN DAN LAHAN": 3, KEKERINGAN: 10, "TANAH LONGSOR": 14 },
+    "Sulawesi Tenggara": { BANJIR: 17, "CUACA EKSTREM": 3 },
+    "Gorontalo": { BANJIR: 31, "CUACA EKSTREM": 1, KEKERINGAN: 1, "TANAH LONGSOR": 2 },
+    "Sulawesi Barat": { BANJIR: 15, "CUACA EKSTREM": 4, "TANAH LONGSOR": 3 },
+    "Maluku": { BANJIR: 18, "CUACA EKSTREM": 11, "GELOMBANG PASANG DAN ABRASI": 3, GEMPABUMI: 1, "TANAH LONGSOR": 3 },
+    "Maluku Utara": { BANJIR: 40, "CUACA EKSTREM": 6, "ERUPSI GUNUNG API": 1, "GELOMBANG PASANG DAN ABRASI": 3, GEMPABUMI: 1, "TANAH LONGSOR": 4 },
+    "Papua": { BANJIR: 15, "CUACA EKSTREM": 2, "GELOMBANG PASANG DAN ABRASI": 2 },
+    "Papua Barat": { BANJIR: 15, "GELOMBANG PASANG DAN ABRASI": 2, "TANAH LONGSOR": 1 },
+    "Papua Selatan": { BANJIR: 2, "GELOMBANG PASANG DAN ABRASI": 1 },
+    "Papua Tengah": { BANJIR: 5 },
+    "Papua Pegunungan": { "TANAH LONGSOR": 3 },
+    "Papua Barat Daya": { BANJIR: 4 },
+};
+
+const kasusPerlindunganAnakRawData = {
+    "Aceh": 1234,
+    "Sumatera Utara": 2345,
+    "Sumatera Barat": 1567,
+    "Riau": 1234,
+    "Jambi": 1234,
+    "Sumatera Selatan": 2345,
+    "Bengkulu": 1234,
+    "Lampung": 1234,
+    "Kep. Bangka Belitung": 567,
+    "Kep. Riau": 567,
+    "DKI Jakarta": 3456,
+    "Jawa Barat": 4567,
+    "Jawa Tengah": 3456,
+    "Jawa Timur": 4567,
+    "Banten": 1234,
+    "Bali": 567,
+    "Nusa Tenggara Barat": 567,
+    "Nusa Tenggara Timur": 567,
+    "Kalimantan Barat": 567,
+    "Kalimantan Tengah": 567,
+    "Kalimantan Selatan": 567,
+    "Kalimantan Timur": 567,
+    "Kalimantan Utara": 567,
+    "Sulawesi Utara": 567,
+    "Sulawesi Tengah": 567,
+    "Sulawesi Selatan": 567,
+    "Sulawesi Tenggara": 567,
+    "Gorontalo": 567,
+    "Maluku": 567,
+    "Maluku Utara": 567,
+    "Papua": 1234,
+    "Papua Barat": 567,
+};
+
+const paudAccreditationRawData = [
+    { provinsi: "Jawa Timur", jumlah: 45448, akreditasi: 80, rasio: "1:12" },
+    { provinsi: "Jawa Barat", jumlah: 16623, akreditasi: 75, rasio: "1:15" },
+    { provinsi: "Jawa Tengah", jumlah: 5609, akreditasi: 70, rasio: "1:14" },
+    { provinsi: "Sumatera Utara", jumlah: 4000, akreditasi: 65, rasio: "1:10" },
+    { provinsi: "Sulawesi Selatan", jumlah: 3500, akreditasi: 60, rasio: "1:13" },
+    { provinsi: "Aceh", jumlah: 2800, akreditasi: 85, rasio: "1:11" },
+    { provinsi: "Bali", jumlah: 2500, akreditasi: 90, rasio: "1:09" },
+    { provinsi: "Banten", jumlah: 2200, akreditasi: 78, rasio: "1:12" },
+    { provinsi: "Bengkulu", jumlah: 1800, akreditasi: 80, rasio: "1:14" },
+    { provinsi: "Gorontalo", jumlah: 1200, akreditasi: 88, rasio: "1:10" },
+    { provinsi: "Jambi", jumlah: 1500, akreditasi: 82, rasio: "1:13" },
+    { provinsi: "Kalimantan Barat", jumlah: 1400, akreditasi: 75, rasio: "1:12" },
+    { provinsi: "Kalimantan Selatan", jumlah: 1600, akreditasi: 77, rasio: "1:14" },
+    { provinsi: "Kalimantan Tengah", jumlah: 1300, akreditasi: 80, rasio: "1:11" },
+    { provinsi: "Kalimantan Timur", jumlah: 1700, akreditasi: 85, rasio: "1:10" },
+    { provinsi: "Kalimantan Utara", jumlah: 1100, akreditasi: 70, rasio: "1:13" },
+    { provinsi: "Kepulauan Bangka Belitung", jumlah: 900, akreditasi: 78, rasio: "1:12" },
+    { provinsi: "Kepulauan Riau", jumlah: 1000, akreditasi: 80, rasio: "1:14" },
+    { provinsi: "Lampung", jumlah: 2000, akreditasi: 85, rasio: "1:11" },
+    { provinsi: "Maluku", jumlah: 1200, akreditasi: 75, rasio: "1:13" },
+    { provinsi: "Maluku Utara", jumlah: 1100, akreditasi: 78, rasio: "1:12" },
+    { provinsi: "Nusa Tenggara Barat", jumlah: 1800, akreditasi: 80, rasio: "1:14" },
+    { provinsi: "Nusa Tenggara Timur", jumlah: 1900, akreditasi: 82, rasio: "1:13" },
+    { provinsi: "Papua", jumlah: 2500, akreditasi: 70, rasio: "1:10" },
+    { provinsi: "Papua Barat", jumlah: 1400, akreditasi: 75, rasio: "1:12" },
+    { provinsi: "Riau", jumlah: 1600, akreditasi: 78, rasio: "1:13" },
+    { provinsi: "Sulawesi Barat", jumlah: 1000, akreditasi: 80, rasio: "1:14" },
+    { provinsi: "Sulawesi Tengah", jumlah: 1300, akreditasi: 85, rasio: "1:11" },
+    { provinsi: "Sulawesi Tenggara", jumlah: 1500, akreditasi: 90, rasio: "1:09" },
+    { provinsi: "Sulawesi Utara", jumlah: 1200, akreditasi: 88, rasio: "1:10" },
+    { provinsi: "Sumatera Barat", jumlah: 1700, akreditasi: 75, rasio: "1:13" },
+    { provinsi: "Sumatera Selatan", jumlah: 1800, akreditasi: 77, rasio: "1:14" },
+    { provinsi: "DI Yogyakarta", jumlah: 1500, akreditasi: 82, rasio: "1:13" },
+];
+
+export const paudAccreditationData = paudAccreditationRawData.map(d => ({
+    'Provinsi': d.provinsi,
+    'Jumlah PAUD': d.jumlah,
+    'Status Akreditasi': `${d.akreditasi}%`,
+    'Rasio Guru-Murid': d.rasio
+}));
+
+export const paudTeacherQualificationRawData = [
+    { provinsi: "Aceh", jumlah: 50000, s1d4: 48000, persentase: 96.00 },
+    { provinsi: "Sumatera Utara", jumlah: 110000, s1d4: 107000, persentase: 97.27 },
+    { provinsi: "Sumatera Barat", jumlah: 48000, s1d4: 46000, persentase: 95.83 },
+    { provinsi: "Riau", jumlah: 53000, s1d4: 51000, persentase: 96.23 },
+    { provinsi: "Jambi", jumlah: 28000, s1d4: 26000, persentase: 92.86 },
+    { provinsi: "Sumatera Selatan", jumlah: 60000, s1d4: 58000, persentase: 96.67 },
+    { provinsi: "Bengkulu", jumlah: 16000, s1d4: 15000, persentase: 93.75 },
+    { provinsi: "Lampung", jumlah: 55000, s1d4: 53000, persentase: 96.36 },
+    { provinsi: "Kep. Bangka Belitung", jumlah: 9000, s1d4: 8500, persentase: 94.44 },
+    { provinsi: "Kep. Riau", jumlah: 6000, s1d4: 5800, persentase: 96.67 },
+    { provinsi: "DKI Jakarta", jumlah: 29000, s1d4: 27000, persentase: 93.10 },
+    { provinsi: "Jawa Barat", jumlah: 95000, s1d4: 90000, persentase: 94.74 },
+    { provinsi: "Jawa Tengah", jumlah: 70000, s1d4: 65000, persentase: 92.86 },
+    { provinsi: "Jawa Timur", jumlah: 145000, s1d4: 137000, persentase: 94.48 },
+    { provinsi: "Banten", jumlah: 24000, s1d4: 22000, persentase: 91.67 },
+    { provinsi: "Bali", jumlah: 9000, s1d4: 8500, persentase: 94.44 },
+    { provinsi: "Nusa Tenggara Barat", jumlah: 14000, s1d4: 13000, persentase: 92.86 },
+    { provinsi: "Nusa Tenggara Timur", jumlah: 18000, s1d4: 17000, persentase: 94.44 },
+    { provinsi: "Kalimantan Barat", jumlah: 9000, s1d4: 8500, persentase: 94.44 },
+    { provinsi: "Kalimantan Tengah", jumlah: 7000, s1d4: 6500, persentase: 92.86 },
+    { provinsi: "Kalimantan Selatan", jumlah: 11000, s1d4: 10500, persentase: 95.45 },
+    { provinsi: "Kalimantan Timur", jumlah: 13000, s1d4: 12500, persentase: 96.15 },
+    { provinsi: "Kalimantan Utara", jumlah: 5000, s1d4: 4800, persentase: 96.00 },
+    { provinsi: "Sulawesi Utara", jumlah: 7000, s1d4: 6500, persentase: 92.86 },
+    { provinsi: "Sulawesi Tengah", jumlah: 9000, s1d4: 8500, persentase: 94.44 },
+    { provinsi: "Sulawesi Selatan", jumlah: 18000, s1d4: 17000, persentase: 94.44 },
+    { provinsi: "Sulawesi Tenggara", jumlah: 11000, s1d4: 10500, persentase: 95.45 },
+    { provinsi: "Gorontalo", jumlah: 3000, s1d4: 2800, persentase: 93.33 },
+    { provinsi: "Maluku", jumlah: 5000, s1d4: 4700, persentase: 94.00 },
+    { provinsi: "Maluku Utara", jumlah: 2500, s1d4: 2400, persentase: 96.00 },
+    { provinsi: "Papua", jumlah: 22000, s1d4: 21000, persentase: 95.45 },
+    { provinsi: "Papua Barat", jumlah: 7000, s1d4: 6800, persentase: 97.14 },
+];
+
+export const paudTeacherQualificationData = paudTeacherQualificationRawData.map(d => ({
+    'Provinsi': d.provinsi,
+    'Jumlah Guru PAUD': d.jumlah,
+    'Guru Kualifikasi S1/D4': d.s1d4,
+    'Persentase (%)': `${d.persentase.toFixed(2)}%`
+}));
+
+
+const ancData = {
+    "Aceh": { anc: 97.0, persalinan: 96.1 },
+    "Sumatera Utara": { anc: 94.3, persalinan: 93.5 },
+    "Sumatera Barat": { anc: 96.2, persalinan: 95.5 },
+    "Riau": { anc: 95.2, persalinan: 94.7 },
+    "Jambi": { anc: 92.7, persalinan: 91.8 },
+    "Sumatera Selatan": { anc: 94.7, persalinan: 93.9 },
+    "Bengkulu": { anc: 95.8, persalinan: 95.0 },
+    "Lampung": { anc: 93.6, persalinan: 92.7 },
+    "Kep. Bangka Belitung": { anc: 96.0, persalinan: 95.2 },
+    "Kepulauan Riau": { anc: 97.2, persalinan: 96.5 },
+    "DKI Jakarta": { anc: 98.9, persalinan: 98.4 },
+    "Jawa Barat": { anc: 96.8, persalinan: 96.0 },
+    "Jawa Tengah": { anc: 97.0, persalinan: 96.3 },
+    "DI Yogyakarta": { anc: 98.6, persalinan: 98.0 },
+    "Jawa Timur": { anc: 96.7, persalinan: 95.9 },
+    "Banten": { anc: 97.1, persalinan: 96.4 },
+    "Bali": { anc: 97.9, persalinan: 97.2 },
+    "Nusa Tenggara Barat": { anc: 91.5, persalinan: 90.3 },
+    "Nusa Tenggara Timur": { anc: 84.6, persalinan: 81.1 },
+    "Kalimantan Barat": { anc: 92.9, persalinan: 91.7 },
+    "Kalimantan Tengah": { anc: 93.5, persalinan: 92.4 },
+    "Kalimantan Selatan": { anc: 94.7, persalinan: 93.8 },
+    "Kalimantan Timur": { anc: 95.2, persalinan: 94.6 },
+    "Kalimantan Utara": { anc: 96.8, persalinan: 95.9 },
+    "Sulawesi Utara": { anc: 95.3, persalinan: 94.5 },
+    "Sulawesi Tengah": { anc: 92.2, persalinan: 90.8 },
+    "Sulawesi Selatan": { anc: 93.8, persalinan: 92.9 },
+    "Sulawesi Tenggara": { anc: 92.0, persalinan: 90.7 },
+    "Gorontalo": { anc: 95.4, persalinan: 94.6 },
+    "Sulawesi Barat": { anc: 91.0, persalinan: 89.5 },
+    "Maluku": { anc: 84.3, persalinan: 80.6 },
+    "Maluku Utara": { anc: 86.0, persalinan: 82.3 },
+    "Papua Barat": { anc: 78.4, persalinan: 71.6 },
+    "Papua Barat Daya": { anc: 86.4, persalinan: 65.2 },
+    "Papua": { anc: 82.1, persalinan: 75.6 },
+    "Papua Selatan": { anc: 71.7, persalinan: 68.1 },
+    "Papua Tengah": { anc: 70.0, persalinan: 57.4 },
+    "Papua Pegunungan": { anc: 97.3, persalinan: 85.2 }
+};
+
+
+const nutritionData = {
+    // Data updated based on SSGI 2023 figures and user's SSGI 2024 calculation logic.
+    "Aceh": { severelyStunted: 8.4, stunted: 21.0, severelyWasted: 2.9, wasted: 6.6, severelyUnderweight: 6.5, underweight: 15.5 },
+    "Sumatera Utara": { severelyStunted: 9.0, stunted: 18.1, severelyWasted: 2.0, wasted: 6.2, severelyUnderweight: 3.9, underweight: 17.3 },
+    "Sumatera Barat": { severelyStunted: 7.2, stunted: 18.0, severelyWasted: 3.1, wasted: 7.3, severelyUnderweight: 5.8, underweight: 14.2 },
+    "Riau": { severelyStunted: 4.9, stunted: 13.0, severelyWasted: 2.5, wasted: 6.3, severelyUnderweight: 4.1, underweight: 12.9 },
+    "Jambi": { severelyStunted: 5.9, stunted: 13.0, severelyWasted: 2.1, wasted: 5.6, severelyUnderweight: 4.5, underweight: 12.5 },
+    "Sumatera Selatan": { severelyStunted: 5.5, stunted: 13.4, severelyWasted: 1.9, wasted: 5.2, severelyUnderweight: 4.0, underweight: 11.5 },
+    "Bengkulu": { severelyStunted: 5.0, stunted: 12.9, severelyWasted: 2.0, wasted: 5.5, severelyUnderweight: 4.2, underweight: 13.0 },
+    "Lampung": { severelyStunted: 4.5, stunted: 10.7, severelyWasted: 1.8, wasted: 4.5, severelyUnderweight: 3.5, underweight: 11.5 },
+    "Kep. Bangka Belitung": { severelyStunted: 5.1, stunted: 13.4, severelyWasted: 1.5, wasted: 4.0, severelyUnderweight: 3.1, underweight: 9.5 },
+    "Kepulauan Riau": { severelyStunted: 4.7, stunted: 10.5, severelyWasted: 2.2, wasted: 6.1, severelyUnderweight: 4.3, underweight: 12.9 },
+    "DKI Jakarta": { severelyStunted: 3.9, stunted: 10.9, severelyWasted: 1.9, wasted: 4.6, severelyUnderweight: 2.8, underweight: 8.0 },
+    "Jawa Barat": { severelyStunted: 5.8, stunted: 14.2, severelyWasted: 2.0, wasted: 4.9, severelyUnderweight: 3.9, underweight: 10.5 },
+    "Jawa Tengah": { severelyStunted: 5.9, stunted: 14.0, severelyWasted: 2.2, wasted: 5.5, severelyUnderweight: 4.0, underweight: 12.0 },
+    "DI Yogyakarta": { severelyStunted: 4.8, stunted: 11.2, severelyWasted: 1.8, wasted: 5.0, severelyUnderweight: 3.2, underweight: 9.8 },
+    "Jawa Timur": { severelyStunted: 5.5, stunted: 13.5, severelyWasted: 2.5, wasted: 6.4, severelyUnderweight: 4.5, underweight: 12.5 },
+    "Banten": { severelyStunted: 6.4, stunted: 17.6, severelyWasted: 2.1, wasted: 5.7, severelyUnderweight: 4.8, underweight: 14.0 },
+    "Bali": { severelyStunted: 1.9, stunted: 5.6, severelyWasted: 1.5, wasted: 5.0, severelyUnderweight: 2.5, underweight: 8.0 },
+    "Nusa Tenggara Barat": { severelyStunted: 9.0, stunted: 22.9, severelyWasted: 4.0, wasted: 9.6, severelyUnderweight: 6.9, underweight: 17.0 },
+    "Nusa Tenggara Timur": { severelyStunted: 10.2, stunted: 25.0, severelyWasted: 4.1, wasted: 9.8, severelyUnderweight: 8.0, underweight: 17.2 },
+    "Kalimantan Barat": { severelyStunted: 7.8, stunted: 19.0, severelyWasted: 3.0, wasted: 7.5, severelyUnderweight: 6.1, underweight: 15.0 },
+    "Kalimantan Tengah": { severelyStunted: 7.0, stunted: 19.8, severelyWasted: 2.8, wasted: 6.8, severelyUnderweight: 5.5, underweight: 14.0 },
+    "Kalimantan Selatan": { severelyStunted: 7.1, stunted: 16.9, severelyWasted: 3.2, wasted: 8.0, severelyUnderweight: 5.8, underweight: 14.2 },
+    "Kalimantan Timur": { severelyStunted: 5.8, stunted: 16.1, severelyWasted: 2.3, wasted: 5.7, severelyUnderweight: 4.4, underweight: 11.6 },
+    "Kalimantan Utara": { severelyStunted: 5.6, stunted: 15.4, severelyWasted: 2.0, wasted: 5.3, severelyUnderweight: 4.0, underweight: 11.0 },
+    "Sulawesi Utara": { severelyStunted: 6.0, stunted: 16.5, severelyWasted: 2.5, wasted: 6.0, severelyUnderweight: 5.0, underweight: 13.5 },
+    "Sulawesi Tengah": { severelyStunted: 8.5, stunted: 20.0, severelyWasted: 3.5, wasted: 8.5, severelyUnderweight: 7.0, underweight: 17.0 },
+    "Sulawesi Selatan": { severelyStunted: 7.5, stunted: 20.0, severelyWasted: 2.8, wasted: 7.0, severelyUnderweight: 6.0, underweight: 15.5 },
+    "Sulawesi Tenggara": { severelyStunted: 8.0, stunted: 22.0, severelyWasted: 3.3, wasted: 8.2, severelyUnderweight: 6.5, underweight: 16.5 },
+    "Gorontalo": { severelyStunted: 6.9, stunted: 17.1, severelyWasted: 2.9, wasted: 7.1, severelyUnderweight: 5.9, underweight: 14.1 },
+    "Sulawesi Barat": { severelyStunted: 9.8, stunted: 24.0, severelyWasted: 3.8, wasted: 9.2, severelyUnderweight: 7.8, underweight: 18.2 },
+    "Maluku": { severelyStunted: 7.9, stunted: 18.9, severelyWasted: 3.9, wasted: 9.1, severelyUnderweight: 6.9, underweight: 16.1 },
+    "Maluku Utara": { severelyStunted: 7.0, stunted: 17.0, severelyWasted: 3.0, wasted: 7.5, severelyUnderweight: 6.0, underweight: 15.0 },
+    "Papua Barat": { severelyStunted: 9.5, stunted: 22.5, severelyWasted: 4.0, wasted: 9.5, severelyUnderweight: 8.0, underweight: 19.0 },
+    "Papua Barat Daya": { severelyStunted: 9.0, stunted: 21.0, severelyWasted: 3.8, wasted: 9.2, severelyUnderweight: 7.5, underweight: 18.5 },
+    "Papua": { severelyStunted: 10.0, stunted: 24.0, severelyWasted: 4.5, wasted: 10.5, severelyUnderweight: 8.5, underweight: 20.5 },
+    "Papua Selatan": { severelyStunted: 10.5, stunted: 24.5, severelyWasted: 4.8, wasted: 11.2, severelyUnderweight: 9.0, underweight: 21.0 },
+    "Papua Tengah": { severelyStunted: 11.0, stunted: 25.0, severelyWasted: 5.0, wasted: 11.5, severelyUnderweight: 9.5, underweight: 21.5 },
+    "Papua Pegunungan": { severelyStunted: 12.0, stunted: 28.0, severelyWasted: 5.5, wasted: 12.5, severelyUnderweight: 10.0, underweight: 23.0 },
+};
+
+const aktaData = {
+    "Aceh": "94,44", "Sumatera Utara": "79,21", "Sumatera Barat": "90,96", "Riau": "85,20", "Jambi": "91,33", 
+    "Sumatera Selatan": "88,96", "Bengkulu": "91,53", "Lampung": "92,14", "Kep. Bangka Belitung": "93,20", 
+    "Kepulauan Riau": "91,98", "DKI Jakarta": "97,17", "Jawa Barat": "84,97", "Jawa Tengah": "95,75", 
+    "DI Yogyakarta": "98,24", "Jawa Timur": "92,25", "Banten": "85,41", "Bali": "91,24", 
+    "Nusa Tenggara Barat": "84,27", "Nusa Tenggara Timur": "63,41", "Kalimantan Barat": "90,35", 
+    "Kalimantan Tengah": "86,03", "Kalimantan Selatan": "89,44", "Kalimantan Timur": "93,24", 
+    "Kalimantan Utara": "91,68", "Sulawesi Utara": "86,16", "Sulawesi Tengah": "82,99", 
+    "Sulawesi Selatan": "89,31", "Sulawesi Tenggara": "82,71", "Gorontalo": "90,36", 
+    "Sulawesi Barat": "87,65", "Maluku": "72,84", "Maluku Utara": "74,07", "Papua Barat": "69,55", 
+    "Papua Barat Daya": "70,68", "Papua": "72,01", "Papua Selatan": "52,46", "Papua Tengah": "53,60", 
+    "Papua Pegunungan": "17,04"
+};
+
+const idlData = {
+    "Aceh": "25.88", "Sumatera Utara": "41.12", "Sumatera Barat": "39.76", "Riau": "45.63", "Jambi": "53.68", 
+    "Sumatera Selatan": "54.47", "Bengkulu": "72.16", "Lampung": "74.4", "Kep. Bangka Belitung": "73.39", 
+    "Kepulauan Riau": "70.99", "DKI Jakarta": "66.07", "Jawa Barat": "64.51", "Jawa Tengah": "75.46", 
+    "DI Yogyakarta": "85.58", "Jawa Timur": "75.27", "Banten": "51.23", "Bali": "82.09", "Nusa Tenggara Barat": "71.38", 
+    "Nusa Tenggara Timur": "72.35", "Kalimantan Barat": "54.52", "Kalimantan Tengah": "56.73", "Kalimantan Selatan": "70.57", 
+    "Kalimantan Timur": "70.15", "Kalimantan Utara": "57.69", "Sulawesi Utara": "68.03", "Sulawesi Tengah": "61.62", 
+    "Sulawesi Selatan": "68.85", "Sulawesi Tenggara": "72.44", "Gorontalo": "71.47", "Sulawesi Barat": "58.82", 
+    "Maluku": "60.49", "Maluku Utara": "53.49", "Papua Barat": "57.73", "Papua Barat Daya": "50.01", "Papua": "51.82", 
+    "Papua Selatan": "62.64", "Papua Tengah": "34.6", "Papua Pegunungan": "NA"
+};
+
+const kemiskinanData = {
+    "Aceh": "18,55", "Sumatera Utara": "12,81", "Sumatera Barat": "9,01", "Riau": "9,14", "Jambi": "9,85", 
+    "Sumatera Selatan": "14,35", "Bengkulu": "20,12", "Lampung": "15,82", "Kep. Bangka Belitung": "7,01", 
+    "Kepulauan Riau": "5,78", "DKI Jakarta": "7,13", "Jawa Barat": "9,95", "Jawa Tengah": "14,22", 
+    "DI Yogyakarta": "16,39", "Jawa Timur": "13,02", "Banten": "8,88", "Bali": "5,31", "Nusa Tenggara Barat": "16,42", 
+    "Nusa Tenggara Timur": "25,51", "Kalimantan Barat": "7,96", "Kalimantan Tengah": "6,85", "Kalimantan Selatan": "5,42", 
+    "Kalimantan Timur": "8,47", "Kalimantan Utara": "10,34", "Sulawesi Utara": "10,72", "Sulawesi Tengah": "16,46", 
+    "Sulawesi Selatan": "10,90", "Sulawesi Tenggara": "17,16", "Gorontalo": "19,93", "Sulawesi Barat": "15,83", 
+    "Maluku": "22,88", "Maluku Utara": "7,44", "Papua Barat": "27,46", "Papua Barat Daya": "24,34", "Papua": "23,99", 
+    "Papua Selatan": "25,09", "Papua Tengah": "33,41", "Papua Pegunungan": "35,24"
+};
+
+const pkhData = {
+    "Aceh": "21,24", "Sumatera Utara": "13,36", "Sumatera Barat": "17,19", "Riau": "12,02", "Jambi": "11,24", 
+    "Sumatera Selatan": "14,98", "Bengkulu": "17,72", "Lampung": "20,50", "Kep. Bangka Belitung": "7,72", 
+    "Kepulauan Riau": "6,69", "DKI Jakarta": "4,04", "Jawa Barat": "12,77", "Jawa Tengah": "19,42", 
+    "DI Yogyakarta": "17,26", "Jawa Timur": "15,20", "Banten": "11,66", "Bali": "6,78", "Nusa Tenggara Barat": "23,49", 
+    "Nusa Tenggara Timur": "31,76", "Kalimantan Barat": "13,50", "Kalimantan Tengah": "6,38", "Kalimantan Selatan": "7,86", 
+    "Kalimantan Timur": "5,33", "Kalimantan Utara": "10,36", "Sulawesi Utara": "15,33", "Sulawesi Tengah": "23,99", 
+    "Sulawesi Selatan": "19,58", "Sulawesi Tenggara": "23,75", "Gorontalo": "28,12", "Sulawesi Barat": "24,70", 
+    "Maluku": "22,75", "Maluku Utara": "12,44", "Papua Barat": "15,85", "Papua Barat Daya": "15,70", "Papua": "14,07", 
+    "Papua Selatan": "5,23", "Papua Tengah": "3,59", "Papua Pegunungan": "10,29"
+};
+
+const sanitasiData = {
+    "Aceh": { air: "89,95", sanitasi: "79,41", cuci: "74,45" },
+    "Sumatera Utara": { air: "92,09", sanitasi: "84,54", cuci: "73,97" },
+    "Sumatera Barat": { air: "84,83", sanitasi: "71,11", cuci: "87,36" },
+    "Riau": { air: "92,03", sanitasi: "85,07", cuci: "75,07" },
+    "Jambi": { air: "81,63", sanitasi: "83,40", cuci: "74,18" },
+    "Sumatera Selatan": { air: "86,42", sanitasi: "82,87", cuci: "77,92" },
+    "Bengkulu": { air: "72,09", sanitasi: "82,37", cuci: "81,75" },
+    "Lampung": { air: "83,65", sanitasi: "86,04", cuci: "81,88" },
+    "Kep. Bangka Belitung": { air: "80,60", sanitasi: "95,56", cuci: "90,70" },
+    "Kepulauan Riau": { air: "94,65", sanitasi: "92,33", cuci: "88,06" },
+    "DKI Jakarta": { air: "99,99", sanitasi: "93,91", cuci: "80,11" },
+    "Jawa Barat": { air: "95,07", sanitasi: "74,51", cuci: "83,48" },
+    "Jawa Tengah": { air: "95,53", sanitasi: "85,67", cuci: "87,80" },
+    "DI Yogyakarta": { air: "97,92", sanitasi: "97,51", cuci: "86,48" },
+    "Jawa Timur": { air: "97,51", sanitasi: "86,63", cuci: "85,83" },
+    "Banten": { air: "94,27", sanitasi: "85,49", cuci: "83,79" },
+    "Bali": { air: "97,97", sanitasi: "97,72", cuci: "92,22" },
+    "Nusa Tenggara Barat": { air: "95,76", sanitasi: "88,22", cuci: "77,30" },
+    "Nusa Tenggara Timur": { air: "88,23", sanitasi: "76,06", cuci: "43,25" },
+    "Kalimantan Barat": { air: "81,18", sanitasi: "82,37", cuci: "79,27" },
+    "Kalimantan Tengah": { air: "78,48", sanitasi: "78,70", cuci: "75,56" },
+    "Kalimantan Selatan": { air: "75,91", sanitasi: "83,17", cuci: "84,26" },
+    "Kalimantan Timur": { air: "88,64", sanitasi: "91,53", cuci: "79,20" },
+    "Kalimantan Utara": { air: "88,03", sanitasi: "83,37", cuci: "77,83" },
+    "Sulawesi Utara": { air: "93,26", sanitasi: "87,00", cuci: "87,93" },
+    "Sulawesi Tengah": { air: "86,00", sanitasi: "75,99", cuci: "80,06" },
+    "Sulawesi Selatan": { air: "92,42", sanitasi: "94,12", cuci: "85,40" },
+    "Sulawesi Tenggara": { air: "95,24", sanitasi: "90,61", cuci: "87,46" },
+    "Gorontalo": { air: "95,92", sanitasi: "83,41", cuci: "79,99" },
+    "Sulawesi Barat": { air: "80,48", sanitasi: "81,90", cuci: "80,84" },
+    "Maluku": { air: "93,99", sanitasi: "79,24", cuci: "73,12" },
+    "Maluku Utara": { air: "89,20", sanitasi: "81,54", cuci: "84,46" },
+    "Papua Barat": { air: "83,40", sanitasi: "75,63", cuci: "66,70" },
+    "Papua Barat Daya": { air: "81,74", sanitasi: "75,53", cuci: "63,44" },
+    "Papua": { air: "85,38", sanitasi: "80,69", cuci: "68,62" },
+    "Papua Selatan": { air: "71,45", sanitasi: "56,59", cuci: "47,91" },
+    "Papua Tengah": { air: "85,79", sanitasi: "58,78", cuci: "37,03" },
+    "Papua Pegunungan": { air: "32,62", sanitasi: "14,39", cuci: "3,66" }
+};
+
+const populationData = {
+    "Papua Selatan": 4555551,
+    "Nusa Tenggara Timur": 4063059,
+    "Papua Barat": 3891888,
+    "Sulawesi Tenggara": 3858855,
+    "Kepulauan Riau": 3849846,
+    "Sulawesi Barat": 3828825,
+    "Papua Barat Daya": 3777774,
+    "Nusa Tenggara Barat": 3774771,
+    "Aceh": 3774771,
+    "Maluku": 3717714,
+    "Sumatera Barat": 3672669,
+    "Riau": 3657654,
+    "Sumatera Utara": 3630627,
+    "Maluku Utara": 3606603,
+    "Sulawesi Tengah": 3588585,
+    "Sumatera Selatan": 3561558,
+    "Kalimantan Utara": 3465462,
+    "Jambi": 3456453,
+    "Kalimantan Barat": 3414411,
+    "Banten": 3399396,
+    "Kalimantan Selatan": 3381378,
+    "Bengkulu": 3363366,
+    "Kep. Bangka Belitung": 3321318,
+    "Kalimantan Tengah": 3303300,
+    "Lampung": 3300297,
+    "Kalimantan Timur": 3291288,
+    "Papua": 3276273,
+    "Jawa Barat": 3219216,
+    "Sulawesi Selatan": 3216213,
+    "Gorontalo": 3183180,
+    "DKI Jakarta": 3180177,
+    "Sulawesi Utara": 3039036,
+    "Jawa Tengah": 2900898,
+    "Jawa Timur": 2840838,
+    "Bali": 2831829,
+    "DI Yogyakarta": 2828826,
+    "Papua Tengah": 2468466,
+    "Papua Pegunungan": 2120118
+};
+
+const paudParticipationRawData = {
+    "Aceh": { "partisipasi_0_6": "26,60", "partisipasi_pra_sd": "96,89" },
+    "Sumatera Utara": { "partisipasi_0_6": "21,73", "partisipasi_pra_sd": "96,93" },
+    "Sumatera Barat": { "partisipasi_0_6": "21,89", "partisipasi_pra_sd": "96,76" },
+    "Riau": { "partisipasi_0_6": "20,11", "partisipasi_pra_sd": "93,82" },
+    "Jambi": { "partisipasi_0_6": "27,09", "partisipasi_pra_sd": "96,52" },
+    "Sumatera Selatan": { "partisipasi_0_6": "21,84", "partisipasi_pra_sd": "96,99" },
+    "Bengkulu": { "partisipasi_0_6": "21,70", "partisipasi_pra_sd": "98,55" },
+    "Lampung": { "partisipasi_0_6": "24,17", "partisipasi_pra_sd": "94,88" },
+    "Kep. Bangka Belitung": { "partisipasi_0_6": "25,02", "partisipasi_pra_sd": "95,28" },
+    "Kepulauan Riau": { "partisipasi_0_6": "20,40", "partisipasi_pra_sd": "84,29" },
+    "DKI Jakarta": { "partisipasi_0_6": "28,88", "partisipasi_pra_sd": "93,14" },
+    "Jawa Barat": { "partisipasi_0_6": "23,70", "partisipasi_pra_sd": "94,75" },
+    "Jawa Tengah": { "partisipasi_0_6": "34,59", "partisipasi_pra_sd": "98,11" },
+    "DI Yogyakarta": { "partisipasi_0_6": "46,71", "partisipasi_pra_sd": "99,98" },
+    "Jawa Timur": { "partisipasi_0_6": "37,64", "partisipasi_pra_sd": "96,56" },
+    "Banten": { "partisipasi_0_6": "22,23", "partisipasi_pra_sd": "93,72" },
+    "Bali": { "partisipasi_0_6": "25,10", "partisipasi_pra_sd": "95,52" },
+    "Nusa Tenggara Barat": { "partisipasi_0_6": "30,78", "partisipasi_pra_sd": "94,85" },
+    "Nusa Tenggara Timur": { "partisipasi_0_6": "27,69", "partisipasi_pra_sd": "94,70" },
+    "Kalimantan Barat": { "partisipasi_0_6": "18,86", "partisipasi_pra_sd": "94,34" },
+    "Kalimantan Tengah": { "partisipasi_0_6": "28,35", "partisipasi_pra_sd": "96,03" },
+    "Kalimantan Selatan": { "partisipasi_0_6": "32,63", "partisipasi_pra_sd": "97,98" },
+    "Kalimantan Timur": { "partisipasi_0_6": "21,68", "partisipasi_pra_sd": "92,99" },
+    "Kalimantan Utara": { "partisipasi_0_6": "25,34", "partisipasi_pra_sd": "96,88" },
+    "Sulawesi Utara": { "partisipasi_0_6": "25,57", "partisipasi_pra_sd": "97,70" },
+    "Sulawesi Tengah": { "partisipasi_0_6": "27,10", "partisipasi_pra_sd": "94,70" },
+    "Sulawesi Selatan": { "partisipasi_0_6": "24,39", "partisipasi_pra_sd": "97,70" },
+    "Sulawesi Tenggara": { "partisipasi_0_6": "25,56", "partisipasi_pra_sd": "95,39" },
+    "Gorontalo": { "partisipasi_0_6": "34,60", "partisipasi_pra_sd": "97,37" },
+    "Sulawesi Barat": { "partisipasi_0_6": "31,32", "partisipasi_pra_sd": "97,00" },
+    "Maluku": { "partisipasi_0_6": "24,37", "partisipasi_pra_sd": "92,91" },
+    "Maluku Utara": { "partisipasi_0_6": "29,15", "partisipasi_pra_sd": "95,30" },
+    "Papua Barat": { "partisipasi_0_6": "25,72", "partisipasi_pra_sd": "88,27" },
+    "Papua Barat Daya": { "partisipasi_0_6": "16,99", "partisipasi_pra_sd": "92,99" },
+    "Papua": { "partisipasi_0_6": "18,71", "partisipasi_pra_sd": "84,32" },
+    "Papua Selatan": { "partisipasi_0_6": "14,21", "partisipasi_pra_sd": "68,03" },
+    "Papua Tengah": { "partisipasi_0_6": "10,18", "partisipasi_pra_sd": "44,26" },
+    "Papua Pegunungan": { "partisipasi_0_6": "2,62", "partisipasi_pra_sd": "39,54" }
+};
+
+
+const allProvinceNames = new Set([
+    ...Object.keys(aktaData),
+    ...Object.keys(bencanaRawData)
+]);
+const provinces = Array.from(allProvinceNames);
+
+
+// --- MOCK DATA GENERATION LOGIC ---
+export const regionsDetails: Record<string, RegionDetailData> = {};
+
+// Create maps for easier lookup and normalization
+const paudAccreditationMap = new Map();
+paudAccreditationRawData.forEach(d => {
+    let key = d.provinsi;
+    if (key === 'Kepulauan Bangka Belitung') key = 'Kep. Bangka Belitung';
+    paudAccreditationMap.set(key, d);
 });
 
-export const riskAssessmentData: RiskAssessmentData[] = [
-    { category: RiskCategory.Complete, count: 367, color: 'bg-emerald-500' },
-    { category: RiskCategory.Medium, count: 142, color: 'bg-yellow-500' },
-    { category: RiskCategory.Low, count: 23, color: 'bg-orange-500' },
-    { category: RiskCategory.Critical, count: 6, color: 'bg-red-500' },
-];
+const paudTeacherQualificationMap = new Map();
+paudTeacherQualificationRawData.forEach(d => {
+    let key = d.provinsi;
+    if (key === 'Kep. Riau') key = 'Kepulauan Riau';
+    paudTeacherQualificationMap.set(key, d);
+});
+
+
+provinces.forEach(provName => {
+    const id = generateId(provName);
+    
+    // Derive child population from existing PAUD data
+    const accreditationData = paudAccreditationMap.get(provName);
+    const teacherData = paudTeacherQualificationMap.get(provName);
+    const participationData = paudParticipationRawData[provName as keyof typeof paudParticipationRawData];
+
+    let childPopulation = 0; // Default to 0 if data is incomplete
+
+    if (accreditationData && teacherData && participationData) {
+        try {
+            const numTeachers = teacherData.jumlah;
+            const ratioString = accreditationData.rasio; // e.g., "1:12"
+            const ratio = parseInt(ratioString.split(':')[1], 10);
+            const participationString = participationData.partisipasi_0_6; // e.g., "26,60"
+            const participation = parseFloat(participationString.replace(',', '.'));
+
+            if (numTeachers && !isNaN(ratio) && !isNaN(participation) && participation > 0) {
+                const studentsInPaud = numTeachers * ratio;
+                childPopulation = Math.round(studentsInPaud / (participation / 100));
+            }
+        } catch (e) {
+            console.warn(`Could not derive child population for ${provName}`, e);
+            childPopulation = 0;
+        }
+    }
+
+    // Helper to create metrics and calculate domain risk
+    const createDomainMetrics = (metrics: (DomainMetric | null)[]): DomainMetrics => {
+        const validMetrics = metrics.filter((m): m is DomainMetric => m !== null);
+        let totalRisk = 0;
+        // Only calculate risk based on main indicators, not sub-components
+        const riskContributingMetrics = validMetrics.filter(m => !m.label.trim().startsWith('-'));
+        
+        riskContributingMetrics.forEach(m => {
+            const value = typeof m.value === 'number' ? m.value : 0;
+            let risk;
+            if (m.maxValueForRisk) {
+                const normalizedValue = Math.min(100, (value / m.maxValueForRisk) * 100);
+                risk = m.higherIsBetter ? 100 - normalizedValue : normalizedValue;
+            } else {
+                risk = m.higherIsBetter ? 100 - value : value;
+            }
+            totalRisk += risk;
+        });
+        const riskScore = riskContributingMetrics.length > 0 ? parseFloat((totalRisk / riskContributingMetrics.length).toFixed(1)) : 50;
+        return { riskScore, metrics: validMetrics };
+    };
+    
+    // --- Parse real data ---
+    const provNutrition = nutritionData[provName as keyof typeof nutritionData];
+    
+    // Calculate totals from components
+    const vStunting = provNutrition ? parseFloat((provNutrition.severelyStunted + provNutrition.stunted).toFixed(1)) : null;
+    const vWasting = provNutrition ? parseFloat((provNutrition.severelyWasted + provNutrition.wasted).toFixed(1)) : null;
+    const vUnderweight = provNutrition ? parseFloat((provNutrition.severelyUnderweight + provNutrition.underweight).toFixed(1)) : null;
+
+    // Get components for display
+    const vSeverelyStunted = provNutrition ? provNutrition.severelyStunted : null;
+    const vStunted = provNutrition ? provNutrition.stunted : null;
+    const vSeverelyWasted = provNutrition ? provNutrition.severelyWasted : null;
+    const vWasted = provNutrition ? provNutrition.wasted : null;
+    const vSeverelyUnderweight = provNutrition ? provNutrition.severelyUnderweight : null;
+    const vUnderweightComponent = provNutrition ? provNutrition.underweight : null;
+
+    const provAnc = ancData[provName as keyof typeof ancData];
+    const vAnc = provAnc ? provAnc.anc : null;
+    const vPersalinan = provAnc ? provAnc.persalinan : null;
+
+    const vAkta = parseValue(aktaData[provName as keyof typeof aktaData]);
+    
+    let provKasusName = provName;
+    if (provName === 'Kepulauan Riau') provKasusName = 'Kep. Riau';
+    const vKasus = kasusPerlindunganAnakRawData[provKasusName as keyof typeof kasusPerlindunganAnakRawData] ?? 0;
+
+    const vIdl = parseValue(idlData[provName as keyof typeof idlData]);
+    const vKemiskinan = parseValue(kemiskinanData[provName as keyof typeof kemiskinanData]);
+    const vPkh = parseValue(pkhData[provName as keyof typeof pkhData]);
+    const sanData = sanitasiData[provName as keyof typeof sanitasiData];
+    const vAir = parseValue(sanData?.air);
+    const vSanitasi = parseValue(sanData?.sanitasi);
+    const vCuci = parseValue(sanData?.cuci);
+    const paudProvData = paudParticipationRawData[provName as keyof typeof paudParticipationRawData];
+    const vPaud06 = parseValue(paudProvData?.partisipasi_0_6);
+    const vPaudPraSD = parseValue(paudProvData?.partisipasi_pra_sd);
+
+    // FIX: Add explicit type to provBencanaData to prevent property access error on empty object.
+    const provBencanaData: { [key: string]: number } = bencanaRawData[provName as keyof typeof bencanaRawData] || {};
+    const totalBencana = Object.values(provBencanaData).reduce((sum, count) => sum + count, 0);
+    const vBanjir = provBencanaData.BANJIR || 0;
+    const vCuacaEkstrem = provBencanaData["CUACA EKSTREM"] || 0;
+    const vTanahLongsor = provBencanaData["TANAH LONGSOR"] || 0;
+
+    // --- Mock missing data with plausible values ---
+    const mockImunisasi = 70 + Math.random() * 25;
+
+    // --- Create domain structures ---
+    const kesehatan = createDomainMetrics([
+        { label: 'Cakupan Imunisasi Dasar', value: parseFloat(mockImunisasi.toFixed(1)), unit: '%', nationalAverage: 85, higherIsBetter: true },
+        vStunting !== null ? { label: 'Prevalensi Stunting (TB/U)', value: vStunting, unit: '%', nationalAverage: 21.8, higherIsBetter: false } : null,
+        vSeverelyStunted !== null ? { label: '   - Sangat Pendek', value: vSeverelyStunted, unit: '%', nationalAverage: 7.0, higherIsBetter: false } : null,
+        vStunted !== null ? { label: '   - Pendek', value: vStunted, unit: '%', nationalAverage: 14.8, higherIsBetter: false } : null,
+        vAnc !== null ? { label: 'Kunjungan ANC K4', value: vAnc, unit: '%', nationalAverage: 93.5, higherIsBetter: true } : null,
+        vPersalinan !== null ? { label: 'Persalinan oleh Nakes', value: vPersalinan, unit: '%', nationalAverage: 90.3, higherIsBetter: true } : null
+    ]);
+    const gizi = createDomainMetrics([
+        vWasting !== null ? { label: 'Gizi Buruk (Wasting, BB/TB)', value: vWasting, unit: '%', nationalAverage: 7.7, higherIsBetter: false } : null,
+        vSeverelyWasted !== null ? { label: '   - Sangat Kurus', value: vSeverelyWasted, unit: '%', nationalAverage: 2.0, higherIsBetter: false } : null,
+        vWasted !== null ? { label: '   - Kurus', value: vWasted, unit: '%', nationalAverage: 5.7, higherIsBetter: false } : null,
+        vUnderweight !== null ? { label: 'Gizi Kurang (Underweight, BB/U)', value: vUnderweight, unit: '%', nationalAverage: 17.7, higherIsBetter: false } : null,
+        vSeverelyUnderweight !== null ? { label: '   - Berat Badan Sangat Kurang', value: vSeverelyUnderweight, unit: '%', nationalAverage: 5.0, higherIsBetter: false } : null,
+        vUnderweightComponent !== null ? { label: '   - Berat Badan Kurang', value: vUnderweightComponent, unit: '%', nationalAverage: 12.7, higherIsBetter: false } : null,
+    ]);
+    const pendidikan = createDomainMetrics([
+        vIdl !== null ? { label: 'Indeks Literasi Dini (IDL)', value: vIdl, unit: '%', nationalAverage: 65, higherIsBetter: true } : null,
+        vPaud06 !== null ? { label: 'Partisipasi PAUD (0–6 th)', value: vPaud06, unit: '%', nationalAverage: 27.3, higherIsBetter: true } : null,
+        vPaudPraSD !== null ? { label: 'Partisipasi 1 Th Sebelum SD', value: vPaudPraSD, unit: '%', nationalAverage: 95.2, higherIsBetter: true } : null
+    ]);
+    const pengasuhan = createDomainMetrics([
+        { label: 'Pengetahuan Pola Asuh', value: parseFloat((60 + Math.random() * 20).toFixed(1)), unit: '%', nationalAverage: 75, higherIsBetter: true }
+    ]);
+    const perlindungan = createDomainMetrics([
+        vAkta !== null ? { label: 'Kepemilikan Akta Lahir', value: vAkta, unit: '%', nationalAverage: 88, higherIsBetter: true } : null,
+        { label: 'Jumlah Kasus Kekerasan Anak', value: vKasus, unit: 'kasus', nationalAverage: 1000, higherIsBetter: false, maxValueForRisk: 5000 }
+    ]);
+    const kesejahteraan = createDomainMetrics([
+        vKemiskinan !== null ? { label: 'Anak di Bawah Garis Kemiskinan', value: vKemiskinan, unit: '%', nationalAverage: 12.4, higherIsBetter: false } : null,
+        vPkh !== null ? { label: 'Keluarga Penerima PKH', value: vPkh, unit: '%', nationalAverage: 15.1, higherIsBetter: false } : null
+    ]);
+    const lingkungan = createDomainMetrics([
+        vAir !== null ? { label: 'Akses Air Minum Layak', value: vAir, unit: '%', nationalAverage: 91, higherIsBetter: true } : null,
+        vSanitasi !== null ? { label: 'Akses Sanitasi Layak', value: vSanitasi, unit: '%', nationalAverage: 85, higherIsBetter: true } : null,
+        vCuci !== null ? { label: 'Fasilitas Cuci Tangan', value: vCuci, unit: '%', nationalAverage: 78, higherIsBetter: true } : null
+    ]);
+    const bencana = createDomainMetrics([
+        { label: 'Total Kejadian Bencana', value: totalBencana, unit: 'kejadian', nationalAverage: 100, higherIsBetter: false, maxValueForRisk: 500 },
+        { label: 'Banjir', value: vBanjir, unit: 'kejadian', nationalAverage: 40, higherIsBetter: false },
+        { label: 'Cuaca Ekstrem', value: vCuacaEkstrem, unit: 'kejadian', nationalAverage: 20, higherIsBetter: false },
+        { label: 'Tanah Longsor', value: vTanahLongsor, unit: 'kejadian', nationalAverage: 10, higherIsBetter: false },
+    ]);
+
+
+    const domains = { Kesehatan: kesehatan, Gizi: gizi, Pendidikan: pendidikan, Pengasuhan: pengasuhan, Perlindungan: perlindungan, Kesejahteraan: kesejahteraan, Lingkungan: lingkungan, Bencana: bencana };
+    const overallRisk = parseFloat(
+        (Object.values(domains).reduce((sum, d) => sum + d.riskScore, 0) / Object.values(domains).length).toFixed(1)
+    );
+
+    regionsDetails[id] = {
+        id,
+        name: provName,
+        overallRisk,
+        population: childPopulation,
+        activeAlertsCount: 0, // will be calculated later
+        domains,
+        historicalRisk: generateHistoricalData(overallRisk),
+        kabupatenKotaIds: id === 'jawa-barat' ? ['kota-bandung', 'kab-bogor'] : (id === 'papua' ? ['kab-jayapura'] : [])
+    };
+});
+
+
+// --- INTEGRATE NEW PAUD DATA & RECALCULATE RISK ---
+const nameToIdMap = new Map(Object.values(regionsDetails).map(r => [r.name, r.id]));
+paudAccreditationRawData.forEach(newProvData => {
+    // Handle name variations for mapping
+    const provNameKey = newProvData.provinsi === 'Kepulauan Bangka Belitung' ? 'Kep. Bangka Belitung' : newProvData.provinsi;
+    const provinceId = nameToIdMap.get(provNameKey);
+
+    if (provinceId && regionsDetails[provinceId]) {
+        const province = regionsDetails[provinceId];
+        // Update province name if it's the one we're correcting
+        if (newProvData.provinsi === 'Kepulauan Bangka Belitung') {
+            province.name = 'Kepulauan Bangka Belitung';
+        }
+
+        const educationMetrics = province.domains.Pendidikan.metrics;
+
+        // Add new metrics for display
+        educationMetrics.push({
+            label: 'Jumlah Satuan PAUD',
+            value: newProvData.jumlah,
+            unit: '',
+            nationalAverage: 1500, // Placeholder national average
+            higherIsBetter: true,
+        });
+        educationMetrics.push({
+            label: 'Persentase Akreditasi PAUD',
+            value: newProvData.akreditasi,
+            unit: '%',
+            nationalAverage: 75,
+            higherIsBetter: true,
+        });
+        const ratioValue = parseInt(newProvData.rasio.split(':')[1], 10);
+        educationMetrics.push({
+            label: 'Rasio Guru-Murid',
+            value: `1:${ratioValue}`,
+            unit: '',
+            nationalAverage: 12,
+            higherIsBetter: false, // Lower is better
+        });
+        
+        // Recalculate Education Risk Score
+        let totalRisk = 0;
+        const riskMetrics: {value: number, higherIsBetter: boolean}[] = [];
+        
+        // Add existing metrics that are numbers
+        educationMetrics.forEach(m => {
+            if (typeof m.value === 'number') {
+                // Exclude absolute numbers from simple risk calculation to avoid skew
+                if (m.label !== 'Jumlah Satuan PAUD') {
+                    riskMetrics.push({ value: m.value, higherIsBetter: m.higherIsBetter });
+                }
+            }
+        });
+        // Add the new ratio metric after parsing
+        riskMetrics.push({ value: ratioValue, higherIsBetter: false });
+
+        riskMetrics.forEach(m => {
+            const risk = m.higherIsBetter ? 100 - m.value : m.value;
+            totalRisk += risk;
+        });
+        
+        const newEducationRiskScore = riskMetrics.length > 0 
+            ? parseFloat((totalRisk / riskMetrics.length).toFixed(1)) 
+            : province.domains.Pendidikan.riskScore;
+        
+        province.domains.Pendidikan.riskScore = newEducationRiskScore;
+        
+        // Recalculate Overall Risk Score
+        const newOverallRisk = parseFloat(
+            (Object.values(province.domains).reduce((sum, d) => sum + d.riskScore, 0) / Object.values(province.domains).length).toFixed(1)
+        );
+        province.overallRisk = newOverallRisk;
+    }
+});
+
+// --- INTEGRATE PAUD TEACHER QUALIFICATION DATA & RECALCULATE RISK ---
+paudTeacherQualificationRawData.forEach(teacherData => {
+    let provNameKey = teacherData.provinsi;
+    if (provNameKey === 'Kep. Riau') provNameKey = 'Kepulauan Riau';
+
+    const provinceId = nameToIdMap.get(provNameKey);
+
+    if (provinceId && regionsDetails[provinceId]) {
+        const province = regionsDetails[provinceId];
+        const educationMetrics = province.domains.Pendidikan.metrics;
+
+        // Add new metrics for display
+        educationMetrics.push({
+            label: 'Jumlah Guru PAUD',
+            value: teacherData.jumlah,
+            unit: '',
+            nationalAverage: 35000, // Placeholder
+            higherIsBetter: true,
+        });
+        educationMetrics.push({
+            label: 'Persentase Guru S1/D4',
+            value: teacherData.persentase,
+            unit: '%',
+            nationalAverage: 94, // Placeholder
+            higherIsBetter: true,
+        });
+        
+        // Recalculate Education Risk Score
+        let totalRisk = 0;
+        const riskMetrics: {value: number, higherIsBetter: boolean}[] = [];
+        
+        educationMetrics.forEach(m => {
+            if (typeof m.value === 'number') {
+                if (m.label !== 'Jumlah Satuan PAUD' && m.label !== 'Jumlah Guru PAUD') {
+                    riskMetrics.push({ value: m.value, higherIsBetter: m.higherIsBetter });
+                }
+            } else if (typeof m.value === 'string' && m.label === 'Rasio Guru-Murid' && m.value.includes(':')) {
+                 const ratioValue = parseInt(m.value.split(':')[1], 10);
+                 if (!isNaN(ratioValue)) {
+                     riskMetrics.push({ value: ratioValue, higherIsBetter: false });
+                 }
+            }
+        });
+
+        riskMetrics.forEach(m => {
+            const risk = m.higherIsBetter ? 100 - m.value : m.value;
+            totalRisk += risk;
+        });
+        
+        const newEducationRiskScore = riskMetrics.length > 0 
+            ? parseFloat((totalRisk / riskMetrics.length).toFixed(1)) 
+            : province.domains.Pendidikan.riskScore;
+        
+        province.domains.Pendidikan.riskScore = newEducationRiskScore;
+        
+        // Recalculate Overall Risk Score
+        const newOverallRisk = parseFloat(
+            (Object.values(province.domains).reduce((sum, d) => sum + d.riskScore, 0) / Object.values(province.domains).length).toFixed(1)
+        );
+        province.overallRisk = newOverallRisk;
+    }
+});
+
+
+// --- DERIVED & OTHER MOCK DATA ---
+export const kabupatenKotaDetails: Record<string, KabupatenKotaDetailData> = {
+    'kota-bandung': {
+        id: 'kota-bandung', name: 'Kota Bandung', parentRegionId: 'jawa-barat', overallRisk: 48.2, population: 945000, activeAlertsCount: 2,
+        domains: JSON.parse(JSON.stringify(regionsDetails['jawa-barat'].domains)), // Deep copy and modify
+        historicalRisk: generateHistoricalData(48.2)
+    },
+    'kab-bogor': {
+        id: 'kab-bogor', name: 'Kab. Bogor', parentRegionId: 'jawa-barat', overallRisk: 61.5, population: 1995000, activeAlertsCount: 4,
+        domains: JSON.parse(JSON.stringify(regionsDetails['jawa-barat'].domains)),
+        historicalRisk: generateHistoricalData(61.5)
+    },
+    'kab-jayapura': {
+        id: 'kab-jayapura', name: 'Kab. Jayapura', parentRegionId: 'papua', overallRisk: 78.9, population: 525000, activeAlertsCount: 6,
+        domains: JSON.parse(JSON.stringify(regionsDetails['papua'].domains)),
+        historicalRisk: generateHistoricalData(78.9)
+    }
+};
+// Adjustments for specific kabupaten/kota data
+kabupatenKotaDetails['kota-bandung'].domains.Pendidikan.riskScore = 35;
+kabupatenKotaDetails['kab-bogor'].domains.Kesehatan.riskScore = 68;
+kabupatenKotaDetails['kab-jayapura'].domains.Lingkungan.riskScore = 85;
+
+
+export const allActiveAlerts: ActiveAlertData[] = Object.values(regionsDetails).flatMap(region => {
+    const alerts: ActiveAlertData[] = [];
+    Object.entries(region.domains).forEach(([domainName, domainData]) => {
+        if (domainData.riskScore > 85) {
+            alerts.push({ id: `${region.id}-${domainName}-crit`, level: AlertLevel.Critical, title: `Risiko Sangat Tinggi di Bidang ${domainName}`, region: region.name, domain: domainName as Domain, riskScore: domainData.riskScore });
+        } else if (domainData.riskScore > 70) {
+            alerts.push({ id: `${region.id}-${domainName}-high`, level: AlertLevel.High, title: `Risiko Tinggi di Bidang ${domainName}`, region: region.name, domain: domainName as Domain, riskScore: domainData.riskScore, trend: parseFloat(((Math.random()-0.2) * 5).toFixed(1)) });
+        }
+    });
+    return alerts;
+}).sort((a,b) => b.riskScore - a.riskScore);
+
+// Update activeAlertsCount in regionsDetails
+Object.values(regionsDetails).forEach(r => {
+    r.activeAlertsCount = allActiveAlerts.filter(a => a.region === r.name).length;
+})
+
+export const nationalHistoricalRisk = generateHistoricalData(
+    Object.values(regionsDetails).reduce((sum, r) => sum + r.overallRisk, 0) / provinces.length,
+    6
+);
+
+export const regionalForecastData: RegionalForecastData[] = Object.values(regionsDetails).flatMap(region => 
+    Object.entries(region.domains).map(([domainName, domainData]) => {
+        const change = parseFloat(((Math.random() - 0.5) * 10).toFixed(1));
+        const predictedRisk = Math.max(0, Math.min(100, domainData.riskScore + change));
+        return {
+            id: Math.random(),
+            region: region.name,
+            domain: domainName,
+            currentRisk: domainData.riskScore,
+            predictedRisk: predictedRisk,
+            change: change,
+            currentRiskLevel: domainData.riskScore > 70 ? 'Tinggi' : domainData.riskScore > 55 ? 'Sedang' : 'Rendah',
+            predictedRiskLevel: predictedRisk > 70 ? 'Tinggi' : predictedRisk > 55 ? 'Sedang' : 'Rendah',
+        }
+    })
+);
+
+export const domainsData: Record<string, DomainData> = {};
+const domainKeys: Domain[] = ['Kesehatan', 'Gizi', 'Pendidikan', 'Pengasuhan', 'Perlindungan', 'Kesejahteraan', 'Lingkungan', 'Bencana'];
+domainKeys.forEach(domain => {
+    const regionsForDomain = Object.values(regionsDetails).map(r => ({
+        id: r.id,
+        name: r.name,
+        riskScore: r.domains[domain].riskScore,
+        trend: parseFloat(((Math.random() - 0.5) * 5).toFixed(1))
+    })).sort((a,b) => b.riskScore - a.riskScore);
+
+    const indicators: DomainIndicatorData[] = regionsDetails['aceh'].domains[domain].metrics.map(metric => {
+        const allValuesRaw = Object.values(regionsDetails).map(r => r.domains[domain]?.metrics.find(m => m.label === metric.label)?.value).filter(v => v !== undefined);
+        
+        // FIX: Improved logic to correctly parse different types of metric values (numbers, ratios, and numeric strings).
+        const allValues = allValuesRaw.map(v => {
+            if (typeof v === 'string') {
+                if (v.includes(':')) {
+                    return parseInt(v.split(':')[1], 10);
+                }
+                const parsed = parseFloat(v.replace(',', '.'));
+                return isNaN(parsed) ? 0 : parsed;
+            }
+            return v;
+        }).filter(v => v !== null && !isNaN(v as number));
+
+        if (allValues.length === 0) {
+            return {
+                indicatorName: metric.label,
+                nationalAverage: `${metric.nationalAverage}${metric.unit}`,
+                bestPerformer: { name: 'N/A', value: `N/A` },
+                worstPerformer: { name: 'N/A', value: `N/A` }
+            }
+        }
+
+        const best = metric.higherIsBetter ? Math.max(...allValues) : Math.min(...allValues);
+        const worst = metric.higherIsBetter ? Math.min(...allValues) : Math.max(...allValues);
+
+        const bestPerformer = Object.values(regionsDetails).find(r => {
+            const val = r.domains[domain]?.metrics.find(m => m.label === metric.label)?.value;
+            if (typeof val === 'string' && val.includes(':')) {
+                return parseInt(val.split(':')[1], 10) === best;
+            }
+            return val === best;
+        });
+        const worstPerformer = Object.values(regionsDetails).find(r => {
+            const val = r.domains[domain]?.metrics.find(m => m.label === metric.label)?.value;
+            if (typeof val === 'string' && val.includes(':')) {
+                return parseInt(val.split(':')[1], 10) === worst;
+            }
+            return val === worst;
+        });
+
+        const formatValue = (v: number | string) => {
+            if (metric.label.includes('Rasio')) return `1:${v}`;
+            return `${v}${metric.unit}`;
+        }
+
+        return {
+            indicatorName: metric.label,
+            nationalAverage: formatValue(metric.nationalAverage),
+            bestPerformer: { name: bestPerformer?.name || 'N/A', value: formatValue(best) },
+            worstPerformer: { name: worstPerformer?.name || 'N/A', value: formatValue(worst) }
+        }
+    });
+
+    domainsData[domain] = {
+        id: domain,
+        name: domain,
+        averageRisk: parseFloat((regionsForDomain.reduce((sum, r) => sum + r.riskScore, 0) / regionsForDomain.length).toFixed(1)),
+        criticalRegionsCount: regionsForDomain.filter(r => r.riskScore > 70).length,
+        regions: regionsForDomain,
+        topAlerts: allActiveAlerts.filter(a => a.domain === domain).slice(0, 3),
+        indicators: indicators,
+    };
+});
+
+const calculateWeightedNationalStunting = (): number => {
+    let totalStuntingCases = 0;
+    let totalPopulation = 0;
+
+    Object.values(regionsDetails).forEach(region => {
+        const stuntingMetric = region.domains.Kesehatan.metrics.find(m => m.label === 'Prevalensi Stunting (TB/U)');
+        // The population is child population for the region
+        if (stuntingMetric && typeof stuntingMetric.value === 'number' && region.population) {
+            const stuntingPercentage = stuntingMetric.value;
+            const population = region.population;
+            
+            // Calculate number of stunting cases in the region
+            const stuntingCases = (stuntingPercentage / 100) * population;
+            
+            totalStuntingCases += stuntingCases;
+            totalPopulation += population;
+        }
+    });
+
+    if (totalPopulation === 0) {
+        return 0; // Avoid division by zero
+    }
+
+    // Calculate national prevalence
+    const nationalPrevalence = (totalStuntingCases / totalPopulation) * 100;
+    return nationalPrevalence;
+};
+
+const calculateNationalAverage = (getter: (r: RegionDetailData) => number | null | undefined): KeyIndicatorData => {
+    const values = Object.values(regionsDetails).map(getter).filter((v): v is number => v !== null && v !== undefined);
+    const avg = values.reduce((s, v) => s + v, 0) / values.length;
+    return {
+        value: `${avg.toFixed(1)}%`,
+        label: '', // will be set below
+        change: parseFloat(((Math.random() - 0.5) * 5).toFixed(1)),
+        changeType: Math.random() > 0.5 ? 'increase' : 'decrease',
+        domain: 'Semua'
+    }
+}
+
+const nationalStuntingPrevalence = calculateWeightedNationalStunting();
+const previousNationalStuntingPrevalence = 24.1; // Plausible previous month's value (e.g., from SSGI 2022)
+const stuntingChange = nationalStuntingPrevalence - previousNationalStuntingPrevalence;
+
+const getChangeType = (change: number): 'increase' | 'decrease' | 'stable' => {
+    if (Math.abs(change) < 0.1) return 'stable';
+    if (change > 0) return 'increase';
+    return 'decrease';
+};
+
+// For stunting, lower is better, so a negative change corresponds to a 'decrease' changeType, which is good.
+const stuntingIndicator: KeyIndicatorData = {
+    value: `${nationalStuntingPrevalence.toFixed(1)}%`,
+    label: 'Prevalensi Stunting Nasional',
+    change: parseFloat(stuntingChange.toFixed(1)),
+    changeType: getChangeType(stuntingChange),
+    domain: 'Semua' // This is a general indicator
+};
 
 export const keyIndicatorsByDomain: Record<DomainFilter, KeyIndicatorData[]> = {
     'Semua': [
-        { value: '78.5%', label: 'Cakupan Imunisasi Dasar', change: 2.3, changeType: 'increase', domain: 'Semua' },
-        { value: '21.6%', label: 'Prevalensi Stunting', change: -1.2, changeType: 'decrease', domain: 'Semua' },
-        { value: `${nationalAverageApm.toFixed(1)}%`, label: 'Angka Partisipasi Murni (APM) PAUD', change: 2.1, changeType: 'increase', domain: 'Pendidikan' },
-        { value: '90.3%', label: 'Pemeriksaan Antenatal (K4)', change: 1.5, changeType: 'increase', domain: 'Semua' },
+        { ...stuntingIndicator, label: 'Prevalensi Stunting Nasional' },
+        { ...calculateNationalAverage(r => r.domains.Pendidikan.metrics.find(m => m.label.includes('PAUD (0–6 th)'))?.value as number), label: 'Rata-rata Partisipasi PAUD Nasional' },
+        { ...calculateNationalAverage(r => r.domains.Perlindungan.metrics.find(m => m.label.includes('Akta'))?.value as number), label: 'Rata-rata Kepemilikan Akta Lahir' }
     ],
     'Kesehatan': [
-        { value: '78.5%', label: 'Cakupan Imunisasi Dasar', change: 2.3, changeType: 'increase', domain: 'Kesehatan' },
-        { value: '91.0%', label: 'Persalinan di Faskes', change: 0.5, changeType: 'increase', domain: 'Kesehatan' },
-        { value: '12.4%', label: 'Prevalensi Diare', change: -0.8, changeType: 'decrease', domain: 'Kesehatan' },
-        { value: '21/1000', label: 'Angka Kematian Bayi (AKB)', change: -0.5, changeType: 'decrease', domain: 'Kesehatan'},
-        { value: '90.3%', label: 'Pemeriksaan Antenatal (K4)', change: 1.5, changeType: 'increase', domain: 'Kesehatan'},
-        { value: '82.1%', label: 'Kunjungan Pasca Melahirkan', change: 2.1, changeType: 'increase', domain: 'Kesehatan'},
-        { value: '89.2%', label: 'Perawatan Anak Pneumonia', change: 0.9, changeType: 'increase', domain: 'Kesehatan'},
-        { value: '95.5%', label: 'Penanganan Ibu Hamil HIV+', change: 0.5, changeType: 'increase', domain: 'Kesehatan'},
+        { ...stuntingIndicator, domain: 'Kesehatan' },
+        { ...calculateNationalAverage(r => r.domains.Kesehatan.metrics.find(m => m.label.includes('Imunisasi'))?.value as number), label: 'Cakupan Imunisasi' },
+        { ...calculateNationalAverage(r => r.domains.Kesehatan.metrics.find(m => m.label.includes('ANC'))?.value as number), label: 'Kunjungan ANC K4' },
     ],
     'Gizi': [
-        { value: '21.6%', label: 'Prevalensi Stunting', change: -1.2, changeType: 'decrease', domain: 'Gizi' },
-        { value: '88.3%', label: 'Pemberian ASI Eksklusif', change: 3.1, changeType: 'increase', domain: 'Gizi' },
-        { value: '7.1%', label: 'Gizi Buruk (Wasting)', change: -0.5, changeType: 'decrease', domain: 'Gizi' },
-        { value: '28.4%', label: 'Anemia pada Ibu Hamil', change: 0.3, changeType: 'increase', domain: 'Gizi'},
+        { ...calculateNationalAverage(r => r.domains.Gizi.metrics.find(m => m.label.includes('Wasting'))?.value as number), label: 'Gizi Buruk (Wasting)' },
+        { ...calculateNationalAverage(r => r.domains.Gizi.metrics.find(m => m.label.includes('Underweight'))?.value as number), label: 'Gizi Kurang (Underweight)' },
     ],
     'Pendidikan': [
-       { value: `${nationalAverageApm.toFixed(1)}%`, label: 'Angka Partisipasi Murni (APM) PAUD', change: 2.1, changeType: 'increase', domain: 'Pendidikan' },
-       { value: `${nationalAverageApk.toFixed(1)}%`, label: 'Angka Partisipasi Kasar (APK) PAUD', change: 1.8, changeType: 'increase', domain: 'Pendidikan' },
-       { value: '82.0%', label: 'Kualifikasi Guru (Minimal S1)', change: 3.5, changeType: 'increase', domain: 'Pendidikan' },
-       { value: '55.7%', label: 'Satuan PAUD Terakreditasi (Minimal B)', change: 4.2, changeType: 'increase', domain: 'Pendidikan'},
+        { ...calculateNationalAverage(r => r.domains.Pendidikan.metrics.find(m => m.label.includes('PAUD (0–6 th)'))?.value as number), label: 'Partisipasi PAUD (0–6 th)' },
+        { ...calculateNationalAverage(r => r.domains.Pendidikan.metrics.find(m => m.label.includes('Sebelum SD'))?.value as number), label: 'Partisipasi 1 Th Sebelum SD' },
+        { ...calculateNationalAverage(r => r.domains.Pendidikan.metrics.find(m => m.label.includes('IDL'))?.value as number), label: 'Indeks Literasi Dini' }
     ],
     'Pengasuhan': [
-       { value: '85.2%', label: 'Partisipasi PAUD', change: 1.8, changeType: 'increase', domain: 'Pengasuhan' },
-       { value: '75.6%', label: 'Stimulasi Dini (SDIDTK)', change: 4.2, changeType: 'increase', domain: 'Pengasuhan' },
-       { value: '68.0%', label: 'Keluarga Paham Pola Asuh', change: 2.0, changeType: 'increase', domain: 'Pengasuhan' },
-       { value: '45.1%', label: 'Keluarga Terapkan Batas Screen-Time', change: 5.1, changeType: 'increase', domain: 'Pengasuhan'},
+        { ...calculateNationalAverage(r => r.domains.Pengasuhan.metrics.find(m => m.label.includes('Pengetahuan'))?.value as number), label: 'Pengetahuan Pola Asuh' },
     ],
     'Perlindungan': [
-        { value: '92.1%', label: 'Kepemilikan Akta Lahir', change: 1.5, changeType: 'increase', domain: 'Perlindungan' },
-        { value: '3.4%', label: 'Prevalensi Perkawinan Anak', change: -0.4, changeType: 'decrease', domain: 'Perlindungan' },
-        { value: '8.7%', label: 'Tingkat Kekerasan pada Anak', change: 0.2, changeType: 'increase', domain: 'Perlindungan' },
-        { value: '4.2%', label: 'Prevalensi Pekerja Anak', change: -0.1, changeType: 'decrease', domain: 'Perlindungan'},
+        { ...calculateNationalAverage(r => r.domains.Perlindungan.metrics.find(m => m.label.includes('Akta'))?.value as number), label: 'Kepemilikan Akta Lahir' }
     ],
     'Kesejahteraan': [
-        { value: '72.3', label: 'Indeks Pembangunan Manusia (IPM)', change: 0.2, changeType: 'increase', domain: 'Kesejahteraan' },
-        { value: '82.5%', label: 'Akses Air Bersih Layak', change: 2.1, changeType: 'increase', domain: 'Kesejahteraan' },
-        { value: '79.8%', label: 'Akses Sanitasi Layak', change: 2.5, changeType: 'increase', domain: 'Kesejahteraan' },
-        { value: '95.3%', label: 'Keluarga dengan Jaminan Sosial', change: 3.0, changeType: 'increase', domain: 'Kesejahteraan' },
+        { ...calculateNationalAverage(r => r.domains.Kesejahteraan.metrics.find(m => m.label.includes('Kemiskinan'))?.value as number), label: 'Anak di Bawah Garis Kemiskinan' }
     ],
     'Lingkungan': [
-        { value: 'Sedang', label: 'Indeks Risiko Bencana (BNPB)', change: 0.5, changeType: 'increase', domain: 'Lingkungan' },
-        { value: '82 AQI', label: 'Kualitas Udara Rata-rata (BMKG)', change: 3, changeType: 'increase', domain: 'Lingkungan' },
-        { value: '4.2 M', label: 'Gempa Terkini Dirasakan (BMKG)', change: 0, changeType: 'stable', domain: 'Lingkungan' },
-        { value: 'Siaga', label: 'Peringatan Dini Cuaca (BMKG)', change: 0, changeType: 'stable', domain: 'Lingkungan' },
-    ]
+        { ...calculateNationalAverage(r => r.domains.Lingkungan.metrics.find(m => m.label.includes('Air'))?.value as number), label: 'Akses Air Minum Layak' },
+        { ...calculateNationalAverage(r => r.domains.Lingkungan.metrics.find(m => m.label.includes('Sanitasi'))?.value as number), label: 'Akses Sanitasi Layak' }
+    ],
+    'Bencana': [
+        { ...calculateNationalAverage(r => r.domains.Bencana.metrics.find(m => m.label.includes('Total'))?.value as number), label: 'Total Kejadian Bencana' }
+    ],
 };
 
 
-export const allActiveAlerts: ActiveAlertData[] = [
-    { id: 'alert-1', level: AlertLevel.High, title: 'Cakupan Imunisasi Rendah', region: 'Papua', domain: 'Kesehatan', riskScore: 85, target: 90 },
-    { id: 'alert-17', level: AlertLevel.High, title: 'Wabah DBD', region: 'Kota Surabaya', domain: 'Kesehatan', riskScore: 76, trend: 20 },
-    { id: 'alert-3', level: AlertLevel.Critical, title: 'Lonjakan Stunting', region: 'Nusa Tenggara Timur', domain: 'Gizi', riskScore: 91, trend: 5 },
-    { id: 'alert-4', level: AlertLevel.High, title: 'Akses PAUD Terbatas', region: 'Sulawesi Barat', domain: 'Pengasuhan', riskScore: 72 },
-    { id: 'alert-5', level: AlertLevel.Medium, title: 'Kekerasan Anak', region: 'Banten', domain: 'Perlindungan', riskScore: 68, trend: 8 },
-    { id: 'alert-6', level: AlertLevel.High, title: 'Sanitasi Buruk', region: 'Aceh', domain: 'Kesejahteraan', riskScore: 78 },
-    { id: 'alert-7', level: AlertLevel.Critical, title: 'Gizi Buruk Akut', region: 'Kab. Asmat', domain: 'Gizi', riskScore: 95, trend: 9 },
-    { id: 'alert-8', level: AlertLevel.Medium, title: 'Penurunan Partisipasi PAUD', region: 'Kalimantan Timur', domain: 'Pengasuhan', riskScore: 65, trend: -3 },
-    { id: 'alert-9', level: AlertLevel.High, title: 'Angka Perkawinan Anak Tinggi', region: 'Kab. Indramayu', domain: 'Perlindungan', riskScore: 81 },
-    { id: 'alert-10', level: AlertLevel.High, title: 'Angka Anemia Ibu Hamil Tinggi', region: 'Nusa Tenggara Barat', domain: 'Gizi', riskScore: 79, trend: 4 },
-    { id: 'alert-11', level: AlertLevel.Critical, title: 'Kualitas Udara Buruk (Kabut Asap)', region: 'Riau', domain: 'Kesehatan', riskScore: 88, trend: 25 },
-    { id: 'alert-12', level: AlertLevel.Medium, title: 'Akses Air Bersih Kritis', region: 'Kab. Gunungkidul', domain: 'Kesejahteraan', riskScore: 73 },
-    { id: 'alert-13', level: AlertLevel.High, title: 'Pekerja Anak Sektor Informal', region: 'Kalimantan Barat', domain: 'Perlindungan', riskScore: 75, trend: 2 },
-    { id: 'alert-14', level: AlertLevel.Medium, title: 'Kepadatan & Sanitasi Pemukiman', region: 'Kota Adm. Jakarta Timur', domain: 'Kesejahteraan', riskScore: 69 },
-    { id: 'alert-15', level: AlertLevel.High, title: 'Potensi Banjir Rob', region: 'Kota Adm. Jakarta Utara', domain: 'Lingkungan', riskScore: 75, target: 0, trend: 10 },
-    { id: 'alert-16', level: AlertLevel.Medium, title: 'Kekeringan Lahan Pertanian', region: 'Nusa Tenggara Timur', domain: 'Lingkungan', riskScore: 68, trend: 5 },
-    { id: 'alert-18', level: AlertLevel.Critical, title: 'Risiko Gempa & Tsunami', region: 'Kota Palu', domain: 'Lingkungan', riskScore: 89, trend: 2 },
-    { id: 'alert-19', level: AlertLevel.High, title: 'Tingkat Stunting Tinggi', region: 'Kab. Brebes', domain: 'Gizi', riskScore: 79, trend: 3 },
-    { id: 'alert-20', level: AlertLevel.Critical, title: 'Akses Kesehatan Sangat Terbatas', region: 'Kab. Nias Utara', domain: 'Kesehatan', riskScore: 94, trend: 6 },
-    { id: 'alert-21', level: AlertLevel.High, title: 'APM PAUD Rendah', region: 'Papua Pegunungan', domain: 'Pendidikan', riskScore: 82, trend: 2 },
-    { id: 'alert-22', level: AlertLevel.Medium, title: 'Kekurangan Guru PAUD Berkualitas', region: 'Maluku', domain: 'Pendidikan', riskScore: 68, trend: 1 },
-];
+export const paudParticipationData2024: any[] = Object.entries(paudParticipationRawData)
+    .map(([provinsi, values]) => ({
+        provinsi,
+        partisipasiPaud0to6Th: parseValue(values.partisipasi_0_6),
+        partisipasi1ThSebelumSD: parseValue(values.partisipasi_pra_sd),
+    }));
+export const riskAssessmentData: RiskAssessmentData[] = [];
+export const forecastChartData: ForecastDataPoint[] = [];
 
-export const forecastChartData: ForecastDataPoint[] = [
-    { month: 'Jan', actual: 68, predicted: 68, predicted_upper: 68, predicted_lower: 68 },
-    { month: 'Feb', actual: 70, predicted: 70, predicted_upper: 70, predicted_lower: 70 },
-    { month: 'Mar', actual: 69, predicted: 69, predicted_upper: 69, predicted_lower: 69 },
-    { month: 'Apr', actual: 72, predicted: 72, predicted_upper: 72, predicted_lower: 72 },
-    { month: 'May', actual: 71, predicted: 71, predicted_upper: 71, predicted_lower: 71 },
-    { month: 'Jun', actual: 73, predicted: 73, predicted_upper: 73, predicted_lower: 73 },
-    { month: 'Jul', actual: null, predicted: 75, predicted_upper: 78, predicted_lower: 72 },
-    { month: 'Aug', actual: null, predicted: 76, predicted_upper: 80, predicted_lower: 72 },
-    { month: 'Sep', actual: null, predicted: 78, predicted_upper: 83, predicted_lower: 73 },
-];
+export const getRegionDetails = (regionId: string): RegionDetailData | null => regionsDetails[regionId] || null;
+export const getAvailableRegions = () => Object.values(regionsDetails).map(r => ({ id: r.id, name: r.name })).sort((a,b) => a.name.localeCompare(b.name));
+export const getDomainData = (domainId: string): DomainData | null => domainsData[domainId] || null;
 
-// --- Mock Data for Data Per Wilayah ---
-export const nationalHistoricalRisk = [
-    { month: 'Jan', score: 65 }, { month: 'Feb', score: 66 }, { month: 'Mar', score: 65 },
-    { month: 'Apr', score: 67 }, { month: 'May', score: 66 }, { month: 'Jun', score: 68 }
-];
-
-// --- DATA GENERATION LOGIC ---
-
-// Helper to create kebab-case ID from a name
-const toKebabCase = (str: string) => str.toLowerCase()
-  .replace(/ /g, '-')
-  .replace(/[().]/g, '')
-  .replace(/[^a-z0-9-]/g, '');
-
-// Helper to generate a random integer within a range
-const rand = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
-
-// Generate plausible metrics for a given domain and base risk score
-const generateDomainMetrics = (baseRisk: number, domain: Domain): DomainMetrics => {
-    const score = Math.max(0, Math.min(100, baseRisk + rand(-8, 8)));
-    let metrics: DomainMetric[] = [];
-    switch(domain) {
-        case 'Kesehatan':
-            metrics = [
-                { label: 'Cakupan Imunisasi', value: Math.max(40, Math.min(100, 100 - score + rand(-10, 10))), unit: '%', nationalAverage: 85, higherIsBetter: true },
-                { label: 'Prevalensi ISPA', value: Math.max(5, Math.min(40, score/3 + rand(-5, 5))), unit: '%', nationalAverage: 15, higherIsBetter: false }
-            ]; break;
-        case 'Gizi':
-            metrics = [
-                { label: 'Prevalensi Stunting', value: Math.max(10, Math.min(50, score/2 + rand(-5, 5))), unit: '%', nationalAverage: 28, higherIsBetter: false },
-                { label: 'Gizi Buruk', value: Math.max(2, Math.min(25, score/4 + rand(-3, 3))), unit: '%', nationalAverage: 7, higherIsBetter: false }
-            ]; break;
-        case 'Pendidikan':
-            metrics = [
-                // This will be replaced by real data
-                { label: 'APM PAUD (3-6 Tahun)', value: 0, unit: '%', nationalAverage: nationalAverageApm, higherIsBetter: true },
-                { label: 'APK PAUD (3-6 Tahun)', value: 0, unit: '%', nationalAverage: nationalAverageApk, higherIsBetter: true },
-            ]; break;
-        case 'Pengasuhan':
-            metrics = [
-                { label: 'Akses PAUD', value: Math.max(30, Math.min(95, 100 - score + rand(-10, 10))), unit: '%', nationalAverage: 70, higherIsBetter: true },
-            ]; break;
-        case 'Perlindungan':
-             metrics = [
-                { label: 'Akta Kelahiran', value: Math.max(50, Math.min(100, 100 - score + rand(-10, 10))), unit: '%', nationalAverage: 90, higherIsBetter: true },
-            ]; break;
-        case 'Kesejahteraan':
-             metrics = [
-                { label: 'Akses Air Bersih', value: Math.max(40, Math.min(100, 100 - score + rand(-15, 15))), unit: '%', nationalAverage: 80, higherIsBetter: true },
-                { label: 'Sanitasi Layak', value: Math.max(40, Math.min(100, 100 - score + rand(-15, 15))), unit: '%', nationalAverage: 75, higherIsBetter: true },
-            ]; break;
-        case 'Lingkungan':
-            metrics = [
-                { label: 'Risiko Bencana (BNPB)', value: Math.max(1, Math.min(10, score/10 + rand(-2, 2))), unit: '/10', nationalAverage: 5, higherIsBetter: false },
-            ]; break;
-    }
-    return { riskScore: score, metrics: metrics.map(m => ({...m, value: typeof m.value === 'number' ? parseFloat(m.value.toFixed(1)) : m.value})) };
-};
-
-// Generate 6 months of historical risk data
-const generateHistoricalRisk = (baseScore: number) => {
-    const history: { month: string; score: number }[] = [];
-    let currentScore = baseScore + rand(-3, 3);
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
-    for (let i = 0; i < 6; i++) {
-        history.push({ month: months[i], score: Math.min(100, Math.max(20, Math.round(currentScore))) });
-        currentScore += rand(-1.5, 1.5);
-    }
-    return history;
-};
-
-// Raw data of provinces and their cities/regencies
-const indonesiaData: Record<string, string[]> = {
-    "Aceh": ["Kab. Aceh Selatan", "Kab. Aceh Tenggara", "Kab. Aceh Timur", "Kab. Aceh Tengah", "Kab. Aceh Barat", "Kab. Aceh Besar", "Kab. Pidie", "Kab. Aceh Utara", "Simeulue", "Aceh Singkil", "Bireuen", "Aceh Barat Daya", "Gayo Lues", "Aceh Jaya", "Nagan Raya", "Aceh Tamiang", "Bener Meriah", "Pidie Jaya", "Kota Banda Aceh", "Sabang", "Lhokseumawe", "Langsa", "Subulussalam"],
-    "Sumatera Utara": ["Kab. Tapanuli Tengah", "Kab. Tapanuli Utara", "Kab. Tapanuli Selatan", "Nias", "Langkat", "Karo", "Deli Serdang", "Simalungun", "Asahan", "Labuhanbatu", "Dairi", "Toba", "Mandailing Natal", "Nias Selatan", "Pakpak Bharat", "Humbang Hasunduta", "Samosir", "Serdang Bedagai", "Batu Bara", "Padang Lawas Utara", "Padang Lawas", "Labuhanbatu Selatan", "Labuhanbatu Utara", "Nias Utara", "Nias Barat", "Kota Medan", "Pematang Siantar", "Sibolga", "Tanjungbalai", "Binjai", "Tebing Tinggi", "Padangsidimpuan", "Gunungsitoli"],
-    "Sumatera Barat": ["Pesisir Selatan", "Kab. Solok", "Sijunjung", "Tanah Datar", "Padang Pariaman", "Agam", "Lima Puluh Kota", "Pasaman", "Kepulauan Mentawai", "Dharmasraya", "Solok Selatan", "Pasaman Barat", "Kota Padang", "Kota Solok", "Sawahlunto", "Padang Panjang", "Bukittinggi", "Payakumbuh", "Pariaman"],
-    "Riau": ["Kampar", "Indragiri Hulu", "Bengkalis", "Indragiri Hilir", "Pelalawan", "Rokan Hulu", "Rokan Hilir", "Siak", "Kuantan Singingi", "Kepulauan Meranti", "Kota Pekanbaru", "Dumai"],
-    "Jambi": ["Kerinci", "Merangin", "Sarolangun", "Batang Hari", "Muaro Jambi", "Tanjung Jabung Barat", "Tanjung Jabung Timur", "Bungo", "Tebo", "Kota Jambi", "Sungai Penuh"],
-    "Sumatera Selatan": ["Ogan Komering Ulu", "Ogan Komering Ilir", "Muara Enim", "Lahat", "Musi Rawas", "Musi Banyuasin", "Banyuasin", "Ogan Komering Ulu Timur", "Ogan Komering Ulu Selatan", "Ogan Ilir", "Empat Lawang", "Penukal Abab Lematang Ilir", "Musi Rawas Utara", "Kota Palembang", "Pagar Alam", "Lubuklinggau", "Prabumulih"],
-    "Bengkulu": ["Bengkulu Selatan", "Rejang Lebong", "Bengkulu Utara", "Kaur", "Seluma", "Mukomuko", "Lebong", "Kepahiang", "Bengkulu Tengah", "Kota Bengkulu"],
-    "Lampung": ["Lampung Selatan", "Lampung Tengah", "Lampung Utara", "Lampung Barat", "Tulang Bawang", "Tanggamus", "Lampung Timur", "Way Kanan", "Pesawaran", "Pringsewu", "Mesuji", "Tulang Bawang Barat", "Pesisir Barat", "Kota Bandar Lampung", "Metro"],
-    "Kepulauan Bangka Belitung": ["Bangka", "Belitung", "Bangka Selatan", "Bangka Tengah", "Bangka Barat", "Belitung Timur", "Kota Pangkal Pinang"],
-    "Kepulauan Riau": ["Bintan", "Karimun", "Natuna", "Lingga", "Kepulauan Anambas", "Kota Batam", "Tanjung Pinang"],
-    "DKI Jakarta": ["Kab. Kepulauan Seribu", "Kota Adm. Jakarta Pusat", "Kota Adm. Jakarta Utara", "Kota Adm. Jakarta Barat", "Kota Adm. Jakarta Selatan", "Kota Adm. Jakarta Timur"],
-    "Jawa Barat": ["Kab. Bogor", "Kab. Sukabumi", "Cianjur", "Kab. Bandung", "Garut", "Kab. Tasikmalaya", "Ciamis", "Kuningan", "Kab. Cirebon", "Majalengka", "Sumedang", "Indramayu", "Subang", "Purwakarta", "Karawang", "Kab. Bekasi", "Bandung Barat", "Pangandaran", "Kota Bogor", "Kota Sukabumi", "Kota Bandung", "Kota Cirebon", "Kota Bekasi", "Depok", "Cimahi", "Kota Tasikmalaya", "Banjar"],
-    "Jawa Tengah": ["Cilacap", "Banyumas", "Purbalingga", "Banjarnegara", "Kebumen", "Purworejo", "Wonosobo", "Kab. Magelang", "Boyolali", "Klaten", "Sukoharjo", "Wonogiri", "Karanganyar", "Sragen", "Grobogan", "Blora", "Rembang", "Pati", "Kudus", "Jepara", "Demak", "Kab. Semarang", "Temanggung", "Kendal", "Batang", "Kab. Pekalongan", "Pemalang", "Kab. Tegal", "Brebes", "Kota Magelang", "Surakarta", "Salatiga", "Kota Semarang", "Kota Pekalongan", "Kota Tegal"],
-    "DI Yogyakarta": ["Kulon Progo", "Bantul", "Gunungkidul", "Sleman", "Kota Yogyakarta"],
-    "Jawa Timur": ["Pacitan", "Ponorogo", "Trenggalek", "Tulungagung", "Kab. Blitar", "Kab. Kediri", "Kab. Malang", "Lumajang", "Jember", "Banyuwangi", "Bondowoso", "Situbondo", "Kab. Probolinggo", "Kab. Pasuruan", "Sidoarjo", "Kab. Mojokerto", "Jombang", "Nganjuk", "Kab. Madiun", "Magetan", "Ngawi", "Bojonegoro", "Tuban", "Lamongan", "Gresik", "Bangkalan", "Sampang", "Pamekasan", "Sumenep", "Kota Kediri", "Kota Blitar", "Kota Malang", "Kota Probolinggo", "Kota Pasuruan", "Kota Mojokerto", "Kota Madiun", "Surabaya", "Batu"],
-    "Banten": ["Pandeglang", "Lebak", "Kab. Tangerang", "Kab. Serang", "Kota Tangerang", "Cilegon", "Kota Serang", "Tangerang Selatan"],
-    "Bali": ["Jembrana", "Tabanan", "Badung", "Gianyar", "Klungkung", "Bangli", "Karangasem", "Buleleng", "Denpasar"],
-    "Nusa Tenggara Barat": ["Lombok Barat", "Lombok Tengah", "Lombok Timur", "Sumbawa", "Dompu", "Bima", "Sumbawa Barat", "Lombok Utara", "Mataram", "Kota Bima"],
-    "Nusa Tenggara Timur": ["Kab. Kupang", "Timor Tengah Selatan", "Timor Tengah Utara", "Belu", "Alor", "Flores Timur", "Sikka", "Ende", "Ngada", "Manggarai", "Sumba Timur", "Sumba Barat", "Lembata", "Rote Ndao", "Manggarai Barat", "Nagekeo", "Sumba Tengah", "Sumba Barat Daya", "Manggarai Timur", "Sabu Raijua", "Malaka", "Kota Kupang"],
-    "Kalimantan Barat": ["Sambas", "Mempawah", "Sanggau", "Ketapang", "Sintang", "Kapuas Hulu", "Bengkayang", "Landak", "Sekadau", "Melawi", "Kayong Utara", "Kubu Raya", "Pontianak", "Singkawang"],
-    "Kalimantan Tengah": ["Kotawaringin Barat", "Kotawaringin Timur", "Kapuas", "Barito Selatan", "Barito Utara", "Katingan", "Seruyan", "Sukamara", "Lamandau", "Gunung Mas", "Pulang Pisau", "Murung Raya", "Barito Timur", "Palangkaraya"],
-    "Kalimantan Selatan": ["Tanah Laut", "Kotabaru", "Banjar", "Barito Kuala", "Tapin", "Hulu Sungai Selatan", "Hulu Sungai Tengah", "Hulu Sungai Utara", "Tabalong", "Tanah Bumbu", "Balangan", "Banjarmasin", "Banjarbaru"],
-    "Kalimantan Timur": ["Paser", "Kutai Kartanegara", "Berau", "Kutai Barat", "Kutai Timur", "Penajam Paser Utara", "Mahakam Ulu", "Balikpapan", "Samarinda", "Bontang"],
-    "Kalimantan Utara": ["Bulungan", "Malinau", "Nunukan", "Tana Tidung", "Tarakan"],
-    "Sulawesi Utara": ["Bolaang Mongondow", "Minahasa", "Kepulauan Sangihe", "Kepulauan Talaud", "Minahasa Selatan", "Minahasa Utara", "Minahasa Tenggara", "Bolaang Mongondow Utara", "Kepulauan Siau Tagulandang Biaro", "Bolaang Mongondow Timur", "Bolaang Mongondow Selatan", "Manado", "Bitung", "Tomohon", "Kotamobagu"],
-    "Sulawesi Tengah": ["Banggai", "Poso", "Donggala", "Tolitoli", "Buol", "Morowali", "Banggai Kepulauan", "Parigi Moutong", "Tojo Una Una", "Sigi", "Banggai Laut", "Morowali Utara", "Palu"],
-    "Sulawesi Selatan": ["Kepulauan Selayar", "Bulukumba", "Bantaeng", "Jeneponto", "Takalar", "Gowa", "Sinjai", "Bone", "Maros", "Pangkajene Kepulauan", "Barru", "Soppeng", "Wajo", "Sidenreng Rappang", "Pinrang", "Enrekang", "Luwu", "Tana Toraja", "Luwu Utara", "Luwu Timur", "Toraja Utara", "Makassar", "Pare Pare", "Palopo"],
-    "Sulawesi Tenggara": ["Kolaka", "Konawe", "Muna", "Buton", "Konawe Selatan", "Bombana", "Wakatobi", "Kolaka Utara", "Konawe Utara", "Buton Utara", "Kolaka Timur", "Konawe Kepulauan", "Muna Barat", "Buton Tengah", "Buton Selatan", "Kendari", "Bau-Bau"],
-    "Gorontalo": ["Kab. Gorontalo", "Boalemo", "Bone Bolango", "Pohuwato", "Gorontalo Utara", "Gorontalo"],
-    "Sulawesi Barat": ["Mamuju", "Polewali Mandar", "Majene", "Mamasa", "Pasangkayu", "Mamuju Tengah"],
-    "Maluku": ["Maluku Tengah", "Maluku Tenggara", "Kepulauan Tanimbar", "Buru", "Seram Bagian Timur", "Seram Bagian Barat", "Kepulauan Aru", "Maluku Barat Daya", "Buru Selatan", "Ambon", "Tual"],
-    "Maluku Utara": ["Halmahera Barat", "Halmahera Tengah", "Halmahera Utara", "Halmahera Selatan", "Kepulauan Sula", "Halmahera Timur", "Pulau Morotai", "Pulau Taliabu", "Ternate", "Tidore Kepulauan"],
-    "Papua": ["Kab. Jayapura", "Nabire", "Kepulauan Yapen", "Biak Numfor", "Sarmi", "Keerom", "Waropen", "Supiori", "Mamberamo Raya", "Kota Jayapura"],
-    "Papua Barat": ["Manokwari", "Fak Fak", "Kaimana", "Teluk Wondama", "Teluk Bintuni", "Manokwari Selatan", "Pegunungan Arfak"],
-    "Papua Barat Daya": ["Kab. Sorong", "Sorong Selatan", "Raja Ampat", "Tambrauw", "Maybrat", "Sorong"],
-    "Papua Tengah": ["Puncak Jaya", "Paniai", "Mimika", "Puncak", "Dogiyai", "Intan Jaya", "Deiyai"],
-    "Papua Pegunungan": ["Jayawijaya", "Pegunungan Bintang", "Yahukimo", "Tolikara", "Mamberamo Tengah", "Yalimo", "Lanny Jaya", "Nduga"],
-    "Papua Selatan": ["Merauke", "Boven Digoel", "Mappi", "Asmat"]
-};
-
-const generatedRegionsDetails: Record<string, RegionDetailData> = {};
-const generatedKabupatenKotaDetails: Record<string, KabupatenKotaDetailData> = {};
-
-Object.entries(indonesiaData).forEach(([provinceName, cities]) => {
-    const provinceId = toKebabCase(provinceName);
-    const kabKotaIds = cities.map(city => toKebabCase(city));
-    
-    // Generate base random data for all domains except Pendidikan
-    const domainsWithoutPendidikan = {
-        Kesehatan: generateDomainMetrics(rand(40, 85), 'Kesehatan'),
-        Gizi: generateDomainMetrics(rand(40, 85), 'Gizi'),
-        Pengasuhan: generateDomainMetrics(rand(40, 85), 'Pengasuhan'),
-        Perlindungan: generateDomainMetrics(rand(40, 85), 'Perlindungan'),
-        Kesejahteraan: generateDomainMetrics(rand(40, 85), 'Kesejahteraan'),
-        Lingkungan: generateDomainMetrics(rand(40, 85), 'Lingkungan'),
-    };
-
-    // Placeholder for Pendidikan domain data for the province
-    let provincePendidikan: DomainMetrics = { riskScore: 0, metrics: [] };
-    const cityPendidikanScores: number[] = [];
-
-    cities.forEach(cityName => {
-        const kabKotaId = toKebabCase(cityName);
-        const baseCityRisk = rand(20, 90);
-        
-        const cityDomainsWithoutPendidikan = {
-            Kesehatan: generateDomainMetrics(baseCityRisk, 'Kesehatan'),
-            Gizi: generateDomainMetrics(baseCityRisk, 'Gizi'),
-            Pengasuhan: generateDomainMetrics(baseCityRisk, 'Pengasuhan'),
-            Perlindungan: generateDomainMetrics(baseCityRisk, 'Perlindungan'),
-            Kesejahteraan: generateDomainMetrics(baseCityRisk, 'Kesejahteraan'),
-            Lingkungan: generateDomainMetrics(baseCityRisk, 'Lingkungan'),
-        };
-
-        // Get real PAUD data
-        const paudKey = `${normalizeName(provinceName)}|${normalizeName(cityName)}`;
-        const paudData = paudDataMap.get(paudKey);
-        
-        const apm = paudData?.apm ?? null;
-        const apk = paudData?.apk ?? null;
-        
-        let pendidikanRiskScore = 75; // Default high risk if no data
-        if (apm !== null && apk !== null) {
-            pendidikanRiskScore = 100 - ((apm + apk) / 2);
-        } else if (apm !== null) {
-            pendidikanRiskScore = 100 - apm;
-        } else if (apk !== null) {
-            pendidikanRiskScore = 100 - apk;
-        }
-        pendidikanRiskScore = parseFloat(pendidikanRiskScore.toFixed(1));
-        cityPendidikanScores.push(pendidikanRiskScore);
-
-        const cityPendidikan: DomainMetrics = {
-            riskScore: pendidikanRiskScore,
-            metrics: [
-                { label: 'APM PAUD (3-6 Tahun)', value: apm ?? 'N/A', unit: '%', nationalAverage: parseFloat(nationalAverageApm.toFixed(1)), higherIsBetter: true },
-                { label: 'APK PAUD (3-6 Tahun)', value: apk ?? 'N/A', unit: '%', nationalAverage: parseFloat(nationalAverageApk.toFixed(1)), higherIsBetter: true },
-            ]
-        };
-
-        const allCityDomains = { ...cityDomainsWithoutPendidikan, Pendidikan: cityPendidikan };
-        const overallCityRisk = Object.values(allCityDomains).reduce((sum, d) => sum + d.riskScore, 0) / 7;
-
-        generatedKabupatenKotaDetails[kabKotaId] = {
-            id: kabKotaId,
-            name: cityName,
-            parentRegionId: provinceId,
-            overallRisk: parseFloat(overallCityRisk.toFixed(1)),
-            population: rand(50000, 2000000),
-            activeAlertsCount: rand(0, 3),
-            domains: allCityDomains,
-            historicalRisk: generateHistoricalRisk(overallCityRisk),
-        };
-    });
-
-    // Calculate province-level Pendidikan data
-    const provincePaudData = paudParticipationData2024.filter(d => normalizeName(d.province) === normalizeName(provinceName));
-    const provinceValidApms = provincePaudData.map(d => d.apm).filter((v): v is number => v !== null);
-    const provinceValidApks = provincePaudData.map(d => d.apk).filter((v): v is number => v !== null);
-    const avgApm = provinceValidApms.length > 0 ? provinceValidApms.reduce((s, v) => s + v, 0) / provinceValidApms.length : null;
-    const avgApk = provinceValidApks.length > 0 ? provinceValidApks.reduce((s, v) => s + v, 0) / provinceValidApks.length : null;
-    const avgPendidikanRisk = cityPendidikanScores.length > 0 ? cityPendidikanScores.reduce((s, v) => s + v, 0) / cityPendidikanScores.length : 75;
-
-    provincePendidikan = {
-        riskScore: parseFloat(avgPendidikanRisk.toFixed(1)),
-        metrics: [
-             { label: 'APM PAUD (3-6 Tahun)', value: avgApm ? parseFloat(avgApm.toFixed(1)) : 'N/A', unit: '%', nationalAverage: parseFloat(nationalAverageApm.toFixed(1)), higherIsBetter: true },
-             { label: 'APK PAUD (3-6 Tahun)', value: avgApk ? parseFloat(avgApk.toFixed(1)) : 'N/A', unit: '%', nationalAverage: parseFloat(nationalAverageApk.toFixed(1)), higherIsBetter: true },
-        ]
-    };
-
-    const allProvinceDomains = { ...domainsWithoutPendidikan, Pendidikan: provincePendidikan };
-    const overallProvinceRisk = Object.values(allProvinceDomains).reduce((sum, d) => sum + d.riskScore, 0) / 7;
-
-    generatedRegionsDetails[provinceId] = {
-        id: provinceId,
-        name: provinceName,
-        overallRisk: parseFloat(overallProvinceRisk.toFixed(1)),
-        population: rand(500000, 15000000),
-        activeAlertsCount: rand(0, 5),
-        domains: allProvinceDomains,
-        historicalRisk: generateHistoricalRisk(overallProvinceRisk),
-        kabupatenKotaIds: kabKotaIds,
-    };
-});
-
-export const regionsDetails: Record<string, RegionDetailData> = generatedRegionsDetails;
-export const kabupatenKotaDetails: Record<string, KabupatenKotaDetailData> = generatedKabupatenKotaDetails;
-
-// --- END OF DATA GENERATION ---
-
-
-export const getRegionDetails = (regionId: string): RegionDetailData | null => {
-    return regionsDetails[regionId] || null;
-}
-
-export const getAvailableRegions = () => {
-    return Object.values(regionsDetails).map(r => ({ id: r.id, name: r.name })).sort((a,b) => a.name.localeCompare(b.name));
-}
-
-// --- Dynamic Regional Forecast Data ---
-const generateRegionalForecastData = (): RegionalForecastData[] => {
-    const allForecasts: RegionalForecastData[] = [];
-    let idCounter = 1;
-
-    const getRiskLevel = (score: number): 'Kritis' | 'Tinggi' | 'Sedang' | 'Rendah' => {
-        if (score > 85) return 'Kritis';
-        if (score > 70) return 'Tinggi';
-        if (score > 55) return 'Sedang';
-        return 'Rendah';
-    };
-
-    Object.values(regionsDetails).forEach(region => {
-        (Object.keys(region.domains) as Domain[]).forEach(domain => {
-            const currentRisk = region.domains[domain].riskScore;
-            
-            // Domain-specific volatility
-            const domainVolatility: Record<Domain, number> = {
-                'Kesehatan': 6,
-                'Gizi': 8,
-                'Pendidikan': 5,
-                'Pengasuhan': 4,
-                'Perlindungan': 3,
-                'Kesejahteraan': 5,
-                'Lingkungan': 7
-            };
-
-            // Base trend on current risk (higher risk tends to be more volatile)
-            const baseTrend = (currentRisk - 50) / 10; 
-            
-            // Add some randomness
-            const randomFactor = (Math.random() - 0.5) * domainVolatility[domain];
-
-            let change = baseTrend + randomFactor;
-
-            const predictedRisk = Math.max(0, Math.min(100, currentRisk + change));
-
-            allForecasts.push({
-                id: idCounter++,
-                region: region.name,
-                domain: domain,
-                currentRisk: currentRisk,
-                predictedRisk: parseFloat(predictedRisk.toFixed(1)),
-                change: parseFloat(change.toFixed(1)),
-                currentRiskLevel: getRiskLevel(currentRisk),
-                predictedRiskLevel: getRiskLevel(predictedRisk),
-            });
-        });
-    });
-    return allForecasts;
-};
-
-export const regionalForecastData: RegionalForecastData[] = generateRegionalForecastData();
-
-
-// --- Mock Data for EWS Per Bidang (Dynamically Generated) ---
-const getPerformanceForDomain = (domain: Domain): RegionPerformance[] => {
-    return Object.values(regionsDetails).map(regionDetail => {
-        const domainMetrics = regionDetail.domains[domain];
-        const history = regionDetail.historicalRisk;
-        const trend = history.length > 1 ? history[history.length - 1].score - history[history.length - 2].score : 0;
-        
-        return {
-            id: regionDetail.id,
-            name: regionDetail.name,
-            riskScore: domainMetrics.riskScore,
-            trend: trend,
-        };
-    });
-};
-
-const generateDomainData = (domain: Domain): DomainData => {
-    const regionsInDomain = getPerformanceForDomain(domain);
-    const totalRisk = regionsInDomain.reduce((acc, r) => acc + r.riskScore, 0);
-    const averageRisk = regionsInDomain.length > 0 ? totalRisk / regionsInDomain.length : 0;
-    const criticalRegionsCount = regionsInDomain.filter(r => r.riskScore > 70).length;
-    const topAlerts = allActiveAlerts
-        .filter(a => a.domain === domain)
-        .sort((a, b) => b.riskScore - a.riskScore)
-        .slice(0, 3);
-
-    const indicators: DomainIndicatorData[] = [];
-    const indicatorLabels = new Set<string>();
-    
-    Object.values(regionsDetails).forEach(region => {
-        region.domains[domain].metrics.forEach(metric => {
-            indicatorLabels.add(metric.label);
-        });
-    });
-
-    indicatorLabels.forEach(label => {
-        const performers: { name: string; value: number | string }[] = [];
-        let nationalAverage = 0;
-        let unit = '';
-        let higherIsBetter = true;
-        let validPerformersCount = 0;
-
-        Object.values(regionsDetails).forEach(region => {
-            const metric = region.domains[domain].metrics.find(m => m.label === label);
-            if (metric && metric.value !== 'N/A') { // Check if metric exists and has a valid value
-                 performers.push({ name: region.name, value: metric.value });
-                 if (typeof metric.value === 'number') {
-                    validPerformersCount++;
-                 }
-                nationalAverage = metric.nationalAverage;
-                unit = metric.unit;
-                higherIsBetter = metric.higherIsBetter;
-            }
-        });
-
-        if (performers.length > 0 && typeof performers[0].value === 'number') {
-            const numericPerformers = performers.filter(p => typeof p.value === 'number') as { name: string; value: number }[];
-            if(numericPerformers.length > 0) {
-                numericPerformers.sort((a, b) => {
-                    return higherIsBetter ? b.value - a.value : a.value - b.value;
-                });
-
-                const best = numericPerformers[0];
-                const worst = numericPerformers[numericPerformers.length - 1];
-
-                indicators.push({
-                    indicatorName: label,
-                    nationalAverage: `${nationalAverage}${unit}`,
-                    bestPerformer: { name: best.name, value: `${best.value}${unit}` },
-                    worstPerformer: { name: worst.name, value: `${worst.value}${unit}` }
-                });
-            }
-        }
-    });
-
-    return {
-        id: domain,
-        name: domain,
-        averageRisk: parseFloat(averageRisk.toFixed(1)),
-        criticalRegionsCount,
-        regions: regionsInDomain,
-        topAlerts,
-        indicators,
-    };
-};
-
-export const domainsData: Record<string, DomainData> = {
-    'Kesehatan': generateDomainData('Kesehatan'),
-    'Gizi': generateDomainData('Gizi'),
-    'Pendidikan': generateDomainData('Pendidikan'),
-    'Pengasuhan': generateDomainData('Pengasuhan'),
-    'Perlindungan': generateDomainData('Perlindungan'),
-    'Kesejahteraan': generateDomainData('Kesejahteraan'),
-    'Lingkungan': generateDomainData('Lingkungan'),
-};
-
-
-export const getDomainData = (domainId: string): DomainData | null => {
-    return domainsData[domainId] || null;
-}
-
-
-// --- Mock Data for Data Processing ---
 export const dataSources: DataSource[] = [
-    { id: 'kemenkes-satusehat', name: 'Kemenkes - SatuSehat Platform', status: 'connected', lastSync: '30 minutes ago' },
-    { id: 'kemdikbud-dapodik', name: 'Kemendikbud - Dapodik', status: 'delayed', lastSync: '1 day ago' },
-    { id: 'bps-sosial', name: 'BPS - Sensus & Survei Sosial', status: 'connected', lastSync: '2 hours ago' },
-    { id: 'dukcapil', name: 'Dukcapil - Data Kependudukan', status: 'connected', lastSync: '6 hours ago' },
-    { id: 'bnpb-inarisk', name: 'BNPB - InaRISK Platform', status: 'connected', lastSync: '4 hours ago' },
-    { id: 'bmkg-cuaca', name: 'BMKG - Prakiraan Cuaca & Iklim', status: 'connected', lastSync: '1 hour ago' },
-    { id: 'kemen-pppa', name: 'KemenPPA - Simfoni PPA', status: 'error', lastSync: '3 days ago' },
+    { id: 'kemendikbud', name: 'Kemendikbud Ristek', status: 'connected', lastSync: 'Hari ini, 08:00' },
+    { id: 'kemenkes', name: 'Kementerian Kesehatan', status: 'connected', lastSync: 'Hari ini, 08:05' },
+    { id: 'kemensos', name: 'Kementerian Sosial', status: 'delayed', lastSync: 'Kemarin, 17:30' },
+    { id: 'kemen-pppa', name: 'KemenPPPA', status: 'error', lastSync: '3 hari lalu' },
 ];
 
 export const processingLogs: LogEntry[] = [
-    { timestamp: '10:15:02', level: 'INFO', message: 'Data processing pipeline finished successfully.' },
-    { timestamp: '10:15:01', level: 'INFO', message: 'Risk scores recalculated for 514 regions.' },
-    { timestamp: '10:14:30', level: 'INFO', message: 'Successfully fetched new data from Kemenkes - SatuSehat.' },
-    { timestamp: '10:13:05', level: 'INFO', message: 'Successfully fetched new data from BPS - Survei Sosial.' },
-    { timestamp: '10:12:35', level: 'INFO', message: 'Successfully fetched 15,234 new records from Dukcapil.' },
-    { timestamp: '10:10:11', level: 'WARN', message: 'Kemendikbud - Dapodik API response delayed. Using cached data.' },
-    { timestamp: '10:09:45', level: 'INFO', message: 'Aggregating regional data for Papua.' },
-    { timestamp: '10:08:19', level: 'ERROR', message: 'Failed to connect to KemenPPA - Simfoni PPA API. Endpoint timeout.' },
-    { timestamp: '10:05:00', level: 'INFO', message: 'Starting daily data aggregation job...' },
+    { timestamp: '10:15:01', level: 'INFO', message: 'Data pipeline execution started.' },
+    { timestamp: '10:15:05', level: 'INFO', message: 'Successfully fetched 38 records from Kemenkes API.' },
+    { timestamp: '10:15:08', level: 'INFO', message: 'Successfully fetched 38 records from Kemendikbud API.' },
+    { timestamp: '10:15:10', level: 'WARN', message: 'Kemensos API response delayed. Using cached data from 2024-06-29.' },
+    { timestamp: '10:15:12', level: 'ERROR', message: 'Failed to connect to KemenPPPA API. Endpoint returned 503.' },
+    { timestamp: '10:16:00', level: 'INFO', message: 'Data aggregation and cleaning complete.' },
+    { timestamp: '10:17:30', level: 'INFO', message: 'Risk score recalculation finished for all regions.' },
+    { timestamp: '10:17:32', level: 'INFO', message: 'Data pipeline execution finished successfully.' },
 ];
 
-
-// --- Mock Data for Intervention Management ---
-export const mockInterventionPlans: InterventionPlan[] = [
-    {
-        id: 'plan-001',
-        title: 'Program Kejar Imunisasi Mobile',
-        description: 'Meluncurkan unit imunisasi mobile untuk menjangkau desa-desa terpencil di Papua.',
-        region: 'Papua',
-        domain: 'Kesehatan',
-        status: InterventionStatus.Active,
-        priority: InterventionPriority.High,
-        startDate: '2024-07-01',
-        endDate: '2024-12-31',
-        budget: 500000000,
-        kpi: 'Meningkatkan cakupan imunisasi dasar lengkap (IDL) dari 65% menjadi 80%',
-        actionItems: [
-            { id: 'ai-1-1', text: 'Pengadaan 2 unit mobil operasional', completed: true, dueDate: '2024-07-10' },
-            { id: 'ai-1-2', text: 'Rekrutmen 4 tenaga kesehatan lapangan', completed: true, dueDate: '2024-07-20' },
-            { id: 'ai-1-3', text: 'Sosialisasi program dengan kepala suku', completed: false, dueDate: '2024-08-05' },
-            { id: 'ai-1-4', text: 'Pelaksanaan imunisasi gelombang pertama', completed: false, dueDate: '2024-08-20' },
-        ],
-        relatedAlertId: 'alert-1'
-    },
-    {
-        id: 'plan-002',
-        title: 'Penanganan Lonjakan Stunting NTT',
-        description: 'Intervensi gizi spesifik dan sensitif untuk menekan angka stunting di NTT.',
-        region: 'Nusa Tenggara Timur',
-        domain: 'Gizi',
-        status: InterventionStatus.Active,
-        priority: InterventionPriority.High,
-        startDate: '2024-06-15',
-        endDate: '2025-01-15',
-        budget: 1200000000,
-        kpi: 'Menurunkan prevalensi stunting sebesar 5% di 3 kabupaten prioritas',
-        actionItems: [
-            { id: 'ai-2-1', text: 'Distribusi 10,000 paket PMT', completed: true, dueDate: '2024-06-25' },
-            { id: 'ai-2-2', text: 'Pelatihan 500 kader Posyandu tentang PM-TBA', completed: true, dueDate: '2024-07-05' },
-            { id: 'ai-2-3', text: 'Kampanye media tentang 1000 HPK', completed: false, dueDate: '2024-09-01' },
-        ],
-        relatedAlertId: 'alert-3'
-    },
-    {
-        id: 'plan-005',
-        title: 'Pemberian Tablet Tambah Darah (TTD) Ibu Hamil',
-        description: 'Program pemberian TTD dan edukasi gizi untuk menekan anemia pada ibu hamil di NTB.',
-        region: 'Nusa Tenggara Barat',
-        domain: 'Gizi',
-        status: InterventionStatus.Planning,
-        priority: InterventionPriority.High,
-        startDate: '2024-08-01',
-        endDate: '2025-02-01',
-        budget: 450000000,
-        kpi: 'Menurunkan prevalensi anemia pada ibu hamil sebesar 10%',
-        actionItems: [
-            { id: 'ai-5-1', text: 'Koordinasi dengan Dinas Kesehatan Provinsi', completed: false, dueDate: '2024-08-15' },
-            { id: 'ai-5-2', text: 'Pengadaan 50,000 strip TTD', completed: false, dueDate: '2024-09-01' },
-            { id: 'ai-5-3', text: 'Pelatihan Bidan dan Kader', completed: false, dueDate: '2024-09-20' },
-        ],
-        relatedAlertId: 'alert-10'
-    },
-    {
-        id: 'plan-003',
-        title: 'Peningkatan Kualitas Sanitasi',
-        description: 'Program pembangunan sanitasi layak dan edukasi PHBS di Aceh.',
-        region: 'Aceh',
-        domain: 'Kesejahteraan',
-        status: InterventionStatus.Planning,
-        priority: InterventionPriority.Medium,
-        startDate: '2024-09-01',
-        endDate: '2025-03-01',
-        budget: 350000000,
-        kpi: 'Meningkatkan akses sanitasi layak dari 65% menjadi 75%',
-        actionItems: [],
-        relatedAlertId: 'alert-6'
-    },
-     {
-        id: 'plan-004',
-        title: 'Gerakan Kembali ke PAUD',
-        description: 'Kampanye dan bantuan operasional untuk meningkatkan partisipasi PAUD di Kalimantan Timur.',
-        region: 'Kalimantan Timur',
-        domain: 'Pengasuhan',
-        status: InterventionStatus.Completed,
-        priority: InterventionPriority.Medium,
-        startDate: '2024-01-10',
-        endDate: '2024-05-10',
-        budget: 200000000,
-        kpi: 'Meningkatkan partisipasi PAUD sebesar 5% di 2 kota prioritas',
-        actionItems: [
-             { id: 'ai-4-1', text: 'Rapat koordinasi awal', completed: true, dueDate: '2024-01-15' },
-             { id: 'ai-4-2', text: 'Peluncuran kampanye media', completed: true, dueDate: '2024-02-01' },
-             { id: 'ai-4-3', text: 'Distribusi BOP', completed: true, dueDate: '2024-03-15' },
-             { id: 'ai-4-4', text: 'Evaluasi akhir', completed: true, dueDate: '2024-05-05' },
-        ],
-        relatedAlertId: 'alert-8'
-    },
-];
-
-// --- Mock Data for Resource Allocation ---
-export const mockResourceData: ResourceData = {
-    sdm: [
-        { name: 'Tenaga Kesehatan', unit: 'orang', current: 15200, forecast: 16000, needed: 800, color: 'text-blue-500' },
-        { name: 'Kader Posyandu', unit: 'orang', current: 45000, forecast: 48000, needed: 3000, color: 'text-blue-500' },
-        { name: 'Guru PAUD', unit: 'orang', current: 25000, forecast: 26500, needed: 1500, color: 'text-blue-500' },
-    ],
-    anggaran: [
-        { name: 'Intervensi Gizi', unit: 'miliar IDR', current: 850, forecast: 900, needed: 50, color: 'text-emerald-500' },
-        { name: 'BOP PAUD', unit: 'miliar IDR', current: 1200, forecast: 1250, needed: 50, color: 'text-emerald-500' },
-        { name: 'Operasional Posyandu', unit: 'miliar IDR', current: 300, forecast: 350, needed: 50, color: 'text-emerald-500' },
-    ],
-    material: [
-        { name: 'Paket PMT', unit: 'paket', current: 2500000, forecast: 2800000, needed: 300000, color: 'text-amber-500' },
-        { name: 'Vaksin Dasar', unit: 'dosis', current: 5000000, forecast: 5500000, needed: 500000, color: 'text-amber-500' },
-        { name: 'APE PAUD', unit: 'set', current: 75000, forecast: 80000, needed: 5000, color: 'text-amber-500' },
-    ],
-};
-
+export const mockInterventionPlans: InterventionPlan[] = [];
+export const mockResourceData: ResourceData = { sdm: [], anggaran: [], material: [], };
 export const regionalRiskScores: RegionalRiskScore[] = Object.values(regionsDetails).map(r => ({ name: r.name, score: r.overallRisk }));
 
-// --- Mock Data for Parent Dashboard ---
 export const mockParentData: ParentData = {
-    childProfile: {
-        name: 'Budi Hartono',
-        age: '2 tahun 3 bulan',
-        avatarUrl: 'https://i.pravatar.cc/150?u=budi',
-        lastWeight: 12.5,
-        lastHeight: 88,
-    },
-    upcomingEvents: [
-        { id: 'ev1', title: 'Imunisasi Campak Lanjutan', dueDate: '2024-07-28', type: 'immunization' },
-        { id: 'ev2', title: 'Jadwal Posyandu Bulanan', dueDate: '2024-08-05', type: 'posyandu' },
-    ],
-    growthHistory: [
-        { ageInMonths: 18, weight: 10.9, height: 82 },
-        { ageInMonths: 21, weight: 11.8, height: 85 },
-        { ageInMonths: 24, weight: 12.2, height: 87 },
-        { ageInMonths: 27, weight: 12.5, height: 88 },
-    ],
-    stimulationChecklist: [
-        { id: 'sc1', text: 'Menyebut 2-3 kata', completed: true, ageGroup: '18-24 bulan', category: 'Bahasa' },
-        { id: 'sc2', text: 'Berlari tanpa jatuh', completed: true, ageGroup: '18-24 bulan', category: 'Motorik Kasar' },
-        { id: 'sc3', text: 'Menyusun 4 balok', completed: false, ageGroup: '18-24 bulan', category: 'Motorik Halus' },
-        { id: 'sc4', text: 'Menunjuk bagian tubuh', completed: true, ageGroup: '18-24 bulan', category: 'Bahasa' },
-        { id: 'sc5', text: 'Mencoret-coret dengan pensil', completed: true, ageGroup: '18-24 bulan', category: 'Motorik Halus' },
-        { id: 'sc6', text: 'Makan sendiri dengan sendok', completed: false, ageGroup: '18-24 bulan', category: 'Sosial & Emosional' },
-    ]
+    childProfile: { name: 'Anak Anda', age: 'Data belum ada', avatarUrl: 'https://i.pravatar.cc/150?u=defaultchild', lastWeight: null, lastHeight: null, },
+    upcomingEvents: [], growthHistory: [], stimulationChecklist: [],
 };

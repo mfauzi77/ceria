@@ -1,8 +1,6 @@
-
-
 import React from 'react';
 import { NavItem, View, ResourceType } from './types';
-import { DashboardIcon, UsersIcon, ChartBarIcon, MapIcon, BellAlertIcon, LightBulbIcon, CircleStackIcon, BeakerIcon, BriefcaseIcon, DocumentChartBarIcon, FlagIcon, GlobeAltIcon, ScaleIcon, CubeIcon, WrenchScrewdriverIcon, HomeIcon, SunIcon, UserCircleIcon, DocumentPlusIcon, AcademicCapIcon } from './components/icons/Icons';
+import { DashboardIcon, UsersIcon, ChartBarIcon, MapIcon, BellAlertIcon, LightBulbIcon, CircleStackIcon, BeakerIcon, BriefcaseIcon, DocumentChartBarIcon, FlagIcon, GlobeAltIcon, ScaleIcon, CubeIcon, WrenchScrewdriverIcon, HomeIcon, SunIcon, UserCircleIcon, DocumentPlusIcon, AcademicCapIcon, SparklesIcon, ExclamationTriangleIcon } from './components/icons/Icons';
 
 export const NAVIGATION_ITEMS: NavItem[] = [
     { id: View.LandingPage, label: 'Landing Page', icon: <HomeIcon /> },
@@ -10,8 +8,9 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     { id: View.Forecasting, label: 'Forecasting & Prediction', icon: <ChartBarIcon /> },
     { id: View.DataPerWilayah, label: 'Data per Wilayah', icon: <MapIcon /> },
     { id: View.EWSPerBidang, label: 'Analisis per Bidang', icon: <BellAlertIcon /> },
-    { id: View.SmartRecommendations, label: 'Rekomendasi CERIA', icon: <LightBulbIcon /> },
+    // { id: View.AiAgentSelection, label: 'Asisten AI CERIA', icon: <SparklesIcon /> },
     { id: View.Intervensi, label: 'Manajemen Intervensi', icon: <BeakerIcon /> },
+    { id: View.Data, label: 'Data PAUD', icon: <CircleStackIcon /> },
     { id: View.DataProcessing, label: 'Manajemen Integrasi', icon: <WrenchScrewdriverIcon /> },
 ];
 
@@ -24,25 +23,6 @@ export const PERSONAL_NAVIGATION_ITEMS: NavItem[] = [
     // { id: View.ParentDashboard, label: 'Dashboard Orang Tua', icon: <UserCircleIcon /> },
 ];
 
-export const DATA_INTEGRATION_NAV: NavItem[] = [
-    { id: View.Import_Kemenkes_Imunisasi, label: 'Kemenkes - Imunisasi', icon: <DocumentPlusIcon /> },
-    { id: View.Import_Kemenkes_Gizi, label: 'Kemenkes - Gizi', icon: <DocumentPlusIcon /> },
-    { id: View.Import_Kemenkes_KIA, label: 'Kemenkes - KIA', icon: <DocumentPlusIcon /> },
-    { id: View.Import_Kemenkes_Penyakit, label: 'Kemenkes - Penyakit', icon: <DocumentPlusIcon /> },
-    { id: View.Import_Dapodik_APM_APK, label: 'Dapodik - APM & APK', icon: <DocumentPlusIcon /> },
-    { id: View.Import_Dapodik_SatuanPAUD, label: 'Dapodik - Satuan PAUD', icon: <DocumentPlusIcon /> },
-    { id: View.Import_Dapodik_KualitasGuru, label: 'Dapodik - Kualitas Guru', icon: <DocumentPlusIcon /> },
-    { id: View.Import_Dukcapil_IdentitasAnak, label: 'Dukcapil - Identitas Anak', icon: <DocumentPlusIcon /> },
-    { id: View.Import_KemenPPPA_Kekerasan, label: 'KemenPPPA - Kekerasan Anak', icon: <DocumentPlusIcon /> },
-    { id: View.Import_KemenPPPA_PerkawinanAnak, label: 'KemenPPPA - Perkawinan Anak', icon: <DocumentPlusIcon /> },
-    { id: View.Import_BPS_SosialEkonomi, label: 'BPS - Sosial Ekonomi', icon: <DocumentPlusIcon /> },
-    { id: View.Import_BPS_PerkawinanAnak, label: 'BPS - Perkawinan Anak', icon: <DocumentPlusIcon /> },
-    { id: View.Import_Kemensos_Bansos, label: 'Kemensos - Bansos', icon: <DocumentPlusIcon /> },
-    { id: View.Import_PUPR_Infrastruktur, label: 'PUPR/BPS - Infrastruktur Dasar', icon: <DocumentPlusIcon /> },
-    { id: View.Import_BNPB_RisikoBencana, label: 'BNPB - Risiko Bencana', icon: <DocumentPlusIcon /> },
-    { id: View.Import_BMKG_KualitasLingkungan, label: 'BMKG - Kualitas Lingkungan', icon: <DocumentPlusIcon /> },
-];
-
 export const DOMAIN_FILTER_ITEMS = [
     { id: 'Semua', name: 'Semua Domain', icon: <GlobeAltIcon className="w-5 h-5" /> },
     { id: 'Kesehatan', name: 'Kesehatan', icon: <FlagIcon color="text-red-500" /> },
@@ -51,7 +31,8 @@ export const DOMAIN_FILTER_ITEMS = [
     { id: 'Pengasuhan', name: 'Pengasuhan', icon: <FlagIcon color="text-green-500" /> },
     { id: 'Perlindungan', name: 'Perlindungan', icon: <FlagIcon color="text-blue-500" /> },
     { id: 'Kesejahteraan', name: 'Kesejahteraan', icon: <FlagIcon color="text-indigo-500" /> },
-    { id: 'Lingkungan', name: 'Lingkungan', icon: <SunIcon className="w-5 h-5 text-cyan-500" /> }
+    { id: 'Lingkungan', name: 'Lingkungan', icon: <SunIcon className="w-5 h-5 text-cyan-500" /> },
+    { id: 'Bencana', name: 'Bencana', icon: <ExclamationTriangleIcon className="w-5 h-5 text-orange-500" /> }
 ];
 
 export const DOMAIN_ITEMS = DOMAIN_FILTER_ITEMS.filter(item => item.id !== 'Semua');

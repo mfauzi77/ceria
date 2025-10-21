@@ -11,24 +11,6 @@ interface RegionalRiskTableProps {
 const RegionalRiskTable: React.FC<RegionalRiskTableProps> = ({ data, onCreatePlan }) => {
     const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: SortDirection } | null>({ key: 'change', direction: 'descending' });
 
-    // Handle empty data case
-    if (!data || data.length === 0) {
-        return (
-            <div>
-                <h3 className="text-lg font-bold text-slate-800 mb-4">Prediksi Risiko Detail per Wilayah</h3>
-                <div className="bg-white p-8 rounded-lg shadow-sm">
-                    <div className="flex items-center justify-center h-32">
-                        <div className="text-center">
-                            <div className="text-slate-400 text-3xl mb-3">📊</div>
-                            <p className="text-slate-600 font-medium mb-1">Data tidak tersedia</p>
-                            <p className="text-slate-500 text-sm">Fitur forecasting belum tersedia untuk data integration</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
     const sortedData = useMemo(() => {
         let sortableData = [...data];
         if (sortConfig !== null) {

@@ -7,21 +7,6 @@ interface TopMoversProps {
 }
 
 const TopMovers: React.FC<TopMoversProps> = ({ data }) => {
-    // Handle empty data case
-    if (!data || data.length === 0) {
-        return (
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-                <h3 className="text-lg font-bold text-slate-800 mb-4">Top Movers</h3>
-                <div className="flex items-center justify-center h-32">
-                    <div className="text-center">
-                        <div className="text-slate-400 text-2xl mb-2">📈</div>
-                        <p className="text-slate-500 text-sm">Data tidak tersedia</p>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
     const sortedByChange = [...data].sort((a, b) => b.change - a.change);
     const topIncreases = sortedByChange.slice(0, 3);
     const topDecreases = sortedByChange.slice(-3).reverse();

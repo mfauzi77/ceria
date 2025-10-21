@@ -1,19 +1,17 @@
-
-
 import React, { useState, useEffect, useRef } from 'react';
 import { GoogleGenAI, Chat } from "@google/genai";
-import { LightBulbIcon, SparklesIcon } from './icons/Icons';
+import { HeartIcon } from './icons/Icons';
 
 interface ChatMessage {
     role: 'user' | 'model';
     content: string;
 }
 
-interface SmartRecommendationsProps {
+interface ParentingAssistantProps {
     onBack: () => void;
 }
 
-const SmartRecommendations: React.FC<SmartRecommendationsProps> = ({ onBack }) => {
+const ParentingAssistant: React.FC<ParentingAssistantProps> = ({ onBack }) => {
     const [chat, setChat] = useState<Chat | null>(null);
     const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
     const [userInput, setUserInput] = useState('');
@@ -28,48 +26,47 @@ const SmartRecommendations: React.FC<SmartRecommendationsProps> = ({ onBack }) =
             const chatSession = ai.chats.create({
                 model: 'gemini-2.5-flash',
                 config: {
-                    systemInstruction: `Anda adalah asisten cerdas CERIA, sebuah sistem berbasis kecerdasan buatan untuk mendukung pengambilan keputusan dalam layanan PAUD Holistik Integratif (PAUD HI).
+                    systemInstruction: `Kamu adalah asisten AI yang ramah, empatik, dan profesional.
+Berperan sebagai konselor keluarga yang membantu orang tua, pendidik, dan pengasuh memahami serta menerapkan pengasuhan anak yang positif.
 
-Anda membantu pengguna dari berbagai latar belakang, termasuk:
-- Pemerintah pusat dan daerah
-- Kader lapangan
-- Akademisi dan peneliti
+Fokus utama kamu adalah memberikan panduan, dukungan emosional, dan wawasan praktis seputar:
 
-Sistem CERIA telah mengintegrasikan data lintas sektor (kesehatan, pendidikan, sosial, demografi, sanitasi) untuk menganalisis risiko anak usia dini di berbagai wilayah.
+Parenting dan pola asuh positif
 
-Tugas Anda sebagai chatbot adalah:
-1. Menjawab pertanyaan berbasis data PAUD HI per wilayah atau nasional.
-2. Memberikan ringkasan situasi dan rekomendasi intervensi berdasarkan data aktual.
-3. Menjelaskan istilah teknis atau indikator PAUD HI dengan bahasa sederhana.
-4. Menyesuaikan nada dan isi jawaban sesuai peran pengguna (misal: kader, peneliti, atau pembuat kebijakan).
+Tumbuh kembang anak usia dini
 
-Jawaban Anda harus:
-- Jelas dan ringkas (maksimal 150 kata)
-- Menggunakan bahasa Indonesia formal, informatif, dan komunikatif
-- Merujuk ke data atau tren (jika tersedia)
-- Tidak bersifat spekulatif. Bila data tidak tersedia, katakan dengan sopan.`,
+Komunikasi dalam keluarga
+
+Pengembangan anak usia dini (PAUD)
+
+Dukungan emosional dan kesejahteraan anak
+
+Gunakan bahasa yang hangat, mudah dipahami, dan tidak menggurui.
+Berikan saran yang konkret dan berbasis ilmu.
+Jika memungkinkan, sertakan contoh nyata dalam konteks kehidupan keluarga.
+
+Hindari topik di luar pengasuhan anak, seperti politik, agama, atau isu sosial yang tidak relevan.
+Jika ada pertanyaan di luar topik tersebut, tolak dengan sopan dan arahkan kembali ke tema pengasuhan anak.
+
+Tulis jawabannya tanpa format Markdown.
+Jangan gunakan tanda bintang (*) atau garis miring (/) untuk penekanan.
+Gunakan tanda strip (-) atau angka untuk daftar.
+
+Tujuan kamu adalah mendukung peran orang tua dalam membesarkan anak yang sehat, bahagia, dan berkembang optimal, melalui komunikasi yang penuh empati dan solusi yang bisa langsung diterapkan.`,
                 }
             });
             setChat(chatSession);
 
-            // Initial greeting from AI
             setChatHistory([{
                 role: 'model',
-                content: "Selamat datang di CERIA. Saya adalah asisten AI Anda, siap membantu menjawab pertanyaan, menganalisis data, dan memberikan rekomendasi seputar PAUD-HI. Apa yang bisa saya bantu untuk Anda hari ini?"
+                content: "Halo! Saya adalah Asisten Pengasuhan AI. Saya di sini untuk membantu Ayah/Bunda/Pendidik dengan pertanyaan seputar tumbuh kembang dan pola asuh anak. Ada yang bisa saya bantu?"
             }]);
         } catch (e) {
             console.error(e);
-            setError("Gagal menginisialisasi CERIA AI. Pastikan API Key sudah dikonfigurasi.");
+            setError("Gagal menginisialisasi Asisten AI. Pastikan API Key sudah dikonfigurasi.");
         }
     }, []);
-
-    // Auto-scroll to bottom of chat
-    useEffect(() => {
-        if (chatContainerRef.current) {
-            chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-        }
-    }, [chatHistory, isLoading]);
-
+    
     const handleSendMessage = async (messageText: string) => {
         if (isLoading || !messageText.trim() || !chat) return;
 
@@ -78,7 +75,6 @@ Jawaban Anda harus:
         setUserInput('');
 
         const userMessage: ChatMessage = { role: 'user', content: messageText };
-        // Add user message and a placeholder for model response
         setChatHistory(prev => [...prev, userMessage, { role: 'model', content: '' }]);
 
         try {
@@ -106,18 +102,24 @@ Jawaban Anda harus:
             setIsLoading(false);
         }
     };
-
+    
     const handleFormSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         handleSendMessage(userInput);
     };
 
+    useEffect(() => {
+        if (chatContainerRef.current) {
+            chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+        }
+    }, [chatHistory, isLoading]);
+    
     const starterPrompts = [
-        "Bantu saya analisis domain Gizi untuk wilayah risiko tinggi.",
-        "Buatkan program intervensi untuk stunting di Papua.",
-        "Apa saja praktik terbaik untuk meningkatkan partisipasi PAUD?",
+        "Bagaimana cara mengatasi anak tantrum?",
+        "Stimulasi apa yang cocok untuk anak usia 2 tahun?",
+        "Tips komunikasi positif dengan anak.",
     ];
-
+    
     const TypingIndicator = () => (
         <div className="flex items-center space-x-2">
             <div className="w-2 h-2 bg-slate-500 rounded-full animate-pulse [animation-delay:-0.3s]"></div>
@@ -130,25 +132,25 @@ Jawaban Anda harus:
         <div className="flex flex-col h-full bg-white rounded-lg shadow-sm">
             <div className="flex-shrink-0 p-4 border-b border-slate-200 flex items-center justify-between">
                 <div className="flex items-center">
-                    <LightBulbIcon className="w-6 h-6 mr-3 text-yellow-500"/>
-                    <h2 className="text-xl font-bold text-slate-800">Diskusi Rekomendasi CERIA</h2>
+                    <HeartIcon className="w-6 h-6 mr-3 text-pink-500"/>
+                    <h2 className="text-xl font-bold text-slate-800">Asisten Pengasuhan AI</h2>
                 </div>
-                 <button onClick={onBack} className="text-sm font-semibold text-indigo-600 hover:text-indigo-800">
+                <button onClick={onBack} className="text-sm font-semibold text-indigo-600 hover:text-indigo-800">
                     &larr; Kembali ke Pilihan
                 </button>
             </div>
-
+            
             <div ref={chatContainerRef} className="flex-grow p-6 overflow-y-auto space-y-6">
                 {chatHistory.map((msg, index) => (
                     <div key={index} className={`flex items-end gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                         {msg.role === 'model' && (
-                            <div className="flex-shrink-0 w-8 h-8 bg-indigo-500 text-white flex items-center justify-center rounded-full">
-                                <SparklesIcon className="w-5 h-5" />
+                            <div className="flex-shrink-0 w-8 h-8 bg-sky-500 text-white flex items-center justify-center rounded-full">
+                                <HeartIcon className="w-5 h-5" />
                             </div>
                         )}
-                        <div className={`w-full max-w-xl p-4 rounded-xl ${msg.role === 'user' ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-800'}`}>
+                        <div className={`w-full max-w-xl p-4 ${msg.role === 'user' ? 'bg-indigo-600 text-white rounded-2xl rounded-br-none' : 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-slate-200 rounded-2xl rounded-bl-none'}`}>
                              {msg.content ? (
-                                <div className="prose prose-sm max-w-none prose-p:my-2 prose-li:my-1" dangerouslySetInnerHTML={{ __html: msg.content.replace(/\n/g, '<br />') }} />
+                                <div className={`prose prose-sm max-w-none prose-p:my-2 prose-li:my-1 ${msg.role === 'user' ? 'prose-inverted-user' : ''}`} dangerouslySetInnerHTML={{ __html: msg.content.replace(/\n/g, '<br />') }} />
                              ) : (
                                 <TypingIndicator />
                              )}
@@ -184,7 +186,7 @@ Jawaban Anda harus:
                         }}
                         disabled={isLoading}
                         rows={1}
-                        placeholder="Ketik pesan Anda di sini atau ajukan pertanyaan..."
+                        placeholder="Tanyakan seputar pengasuhan anak..."
                         className="w-full p-3 pr-12 text-sm text-slate-800 border-slate-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 resize-none bg-white"
                     />
                     <button
@@ -198,10 +200,10 @@ Jawaban Anda harus:
                         </svg>
                     </button>
                 </form>
-                <p className="text-xs text-slate-400 text-center mt-2">CERIA AI dapat membuat kesalahan. Verifikasi informasi penting.</p>
+                <p className="text-xs text-slate-400 text-center mt-2">Asisten AI dapat membuat kesalahan. Selalu konsultasi dengan profesional untuk isu kesehatan.</p>
             </div>
         </div>
     );
 };
 
-export default SmartRecommendations;
+export default ParentingAssistant;

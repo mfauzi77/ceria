@@ -9,31 +9,15 @@ export enum View {
     DataPerWilayah = "Data per Wilayah",
     EWSPerBidang = "Analisis per Bidang",
     SmartRecommendations = "Rekomendasi CERIA",
+    AiAgentSelection = "Pilihan Asisten AI",
+    ParentingAssistant = "Asisten Pengasuhan AI",
     DataProcessing = "Manajemen Integrasi",
     InputData = "Input Data",
     Intervensi = "Manajemen Intervensi", // Updated Label
     ResourceAllocation = "Resource Allocation",
     Reports = "Reports & Analytics",
     ParentDashboard = "Dashboard Orang Tua",
-    Data = "Data",
-    Login = "Login",
-    AdminDashboard = "Admin Dashboard",
-    Import_Kemenkes_Imunisasi = "Import - Kemenkes: Imunisasi",
-    Import_Kemenkes_Gizi = "Import - Kemenkes: Gizi",
-    Import_Kemenkes_KIA = "Import - Kemenkes: KIA",
-    Import_Kemenkes_Penyakit = "Import - Kemenkes: Penyakit",
-    Import_Dapodik_APM_APK = "Import - Dapodik: APM & APK",
-    Import_Dapodik_SatuanPAUD = "Import - Dapodik: Satuan PAUD",
-    Import_Dapodik_KualitasGuru = "Import - Dapodik: Kualitas Guru",
-    Import_Dukcapil_IdentitasAnak = "Import - Dukcapil: Identitas Anak",
-    Import_KemenPPPA_Kekerasan = "Import - KemenPPPA: Kasus Kekerasan",
-    Import_KemenPPPA_PerkawinanAnak = "Import - KemenPPPA: Perkawinan Anak",
-    Import_BPS_SosialEkonomi = "Import - BPS: Sosial-Ekonomi",
-    Import_BPS_PerkawinanAnak = "Import - BPS: Perkawinan Anak",
-    Import_Kemensos_Bansos = "Import - Kemensos: Bansos",
-    Import_PUPR_Infrastruktur = "Import - PUPR/BPS: Infrastruktur Dasar",
-    Import_BNPB_RisikoBencana = "Import - BNPB: Risiko Bencana",
-    Import_BMKG_KualitasLingkungan = "Import - BMKG: Kualitas Lingkungan"
+    Data = "Data PAUD"
 }
 
 export interface NavItem {
@@ -70,7 +54,7 @@ export enum AlertLevel {
     Critical = "CRITICAL"
 }
 
-export type Domain = 'Kesehatan' | 'Gizi' | 'Pendidikan' | 'Pengasuhan' | 'Perlindungan' | 'Kesejahteraan' | 'Lingkungan';
+export type Domain = 'Kesehatan' | 'Gizi' | 'Pendidikan' | 'Pengasuhan' | 'Perlindungan' | 'Kesejahteraan' | 'Lingkungan' | 'Bencana';
 export type DomainFilter = Domain | 'Semua';
 
 
@@ -115,6 +99,7 @@ export interface DomainMetric {
     unit: string;
     nationalAverage: number;
     higherIsBetter: boolean;
+    maxValueForRisk?: number;
 }
 
 export interface DomainMetrics {
@@ -136,6 +121,7 @@ export interface RegionDetailData {
         Perlindungan: DomainMetrics;
         Kesejahteraan: DomainMetrics;
         Lingkungan: DomainMetrics;
+        Bencana: DomainMetrics;
     };
     historicalRisk: { month: string; score: number }[];
     kabupatenKotaIds?: string[];
@@ -156,6 +142,7 @@ export interface KabupatenKotaDetailData {
         Perlindungan: DomainMetrics;
         Kesejahteraan: DomainMetrics;
         Lingkungan: DomainMetrics;
+        Bencana: DomainMetrics;
     };
     historicalRisk: { month: string; score: number }[];
 }
@@ -188,7 +175,7 @@ export interface DomainIndicatorData {
 }
 
 export interface DomainData {
-    id: 'Kesehatan' | 'Gizi' | 'Pendidikan' | 'Pengasuhan' | 'Perlindungan' | 'Kesejahteraan' | 'Lingkungan';
+    id: 'Kesehatan' | 'Gizi' | 'Pendidikan' | 'Pengasuhan' | 'Perlindungan' | 'Kesejahteraan' | 'Lingkungan' | 'Bencana';
     name: string;
     averageRisk: number;
     criticalRegionsCount: number;
@@ -375,4 +362,16 @@ export interface GroundingSource {
         uri: string;
         title: string;
     }
+}
+
+// --- Types for Data Uploader ---
+export interface DataValidationResult {
+    status: 'success' | 'issues_found';
+    summary: string;
+    issues: {
+        row: number;
+        column: string;
+        value: string;
+        description: string;
+    }[];
 }

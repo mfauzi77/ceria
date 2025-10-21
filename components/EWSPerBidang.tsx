@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { getDomainData, domainsData as allDomains } from '../services/mockData';
-import { useTheme } from './ThemeContext';
 import { DomainData } from '../../types';
 import DomainTabs from './ewsperbidang/DomainTabs';
 import DomainSummary from './ewsperbidang/DomainSummary';
@@ -10,42 +9,14 @@ import DomainIndicatorTable from './ewsperbidang/DomainIndicatorTable';
 import RiskMomentumQuadrant from './ewsperbidang/RiskMomentumQuadrant';
 
 const EWSPerBidang: React.FC = () => {
-    const { useIntegration } = useTheme();
     const domainIds = Object.keys(allDomains);
     const [selectedDomainId, setSelectedDomainId] = useState<string>(domainIds[0]);
     const [domainData, setDomainData] = useState<DomainData | null>(null);
 
     useEffect(() => {
-        if (useIntegration) {
-            // For data integration, don't load mock data
-            setDomainData(null);
-            return;
-        }
-
         const data = getDomainData(selectedDomainId);
         setDomainData(data);
-    }, [selectedDomainId, useIntegration]);
-
-    // Handle empty state for data integration
-    if (useIntegration) {
-        return (
-            <div className="space-y-6">
-                <div className="bg-white p-4 rounded-lg shadow-sm">
-                    <h2 className="text-xl font-bold text-slate-800">Analisis per Bidang</h2>
-                    <p className="text-sm text-slate-500 mt-1">Fitur analisis per bidang belum tersedia untuk data integration.</p>
-                </div>
-                <div className="bg-white p-8 rounded-lg shadow-sm">
-                    <div className="flex items-center justify-center h-64">
-                        <div className="text-center">
-                            <div className="text-slate-400 text-4xl mb-4">📊</div>
-                            <p className="text-slate-600 font-medium mb-2">Data tidak tersedia</p>
-                            <p className="text-slate-500 text-sm">Fitur analisis per bidang belum tersedia untuk data integration</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
+    }, [selectedDomainId]);
 
     return (
         <div className="space-y-6">

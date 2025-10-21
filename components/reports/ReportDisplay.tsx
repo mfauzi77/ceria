@@ -1,5 +1,8 @@
+
+
 import React from 'react';
-import { DomainComparisonData, MonthlySummaryData, RegionPerformance, ReportData, RegionDetailData } from '../../types';
+// Fix: Import `Domain`, `DomainData`, and `DomainMetrics` to resolve type inference issues in the component.
+import { DomainComparisonData, MonthlySummaryData, RegionPerformance, ReportData, RegionDetailData, Domain, DomainData, DomainMetrics } from '../../types';
 import { DocumentChartBarIcon, DocumentArrowDownIcon, CalendarIcon, ChevronUpIcon, ChevronDownIcon, MinusIcon, TrendingUpIcon, TrendingDownIcon, TrophyIcon, ExclamationTriangleIcon } from '../icons/Icons';
 import RegionSummary from '../dataperwilayah/RegionSummary';
 import DomainBreakdown from '../dataperwilayah/DomainBreakdown';
@@ -131,7 +134,6 @@ const DomainComparisonContent: React.FC<{ data: DomainComparisonData }> = ({ dat
                                             <TrophyIcon className="w-4 h-4 mr-2 text-amber-500 flex-shrink-0" />
                                             <div className="truncate">
                                                 <span className="font-semibold">{stat.bestPerformer?.name}</span>
-                                                {/* Fix: Cast performer to RegionPerformance to access its properties safely. */}
                                                 <span className="text-slate-500"> ({stat.bestPerformer?.riskScore})</span>
                                             </div>
                                         </div>
@@ -139,8 +141,7 @@ const DomainComparisonContent: React.FC<{ data: DomainComparisonData }> = ({ dat
                                     <td className="px-2 sm:px-6 py-4">
                                         <div className="flex items-center text-xs">
                                             <ExclamationTriangleIcon className="w-4 h-4 mr-2 text-red-500 flex-shrink-0" />
-                                            <div className="truncate">
-                                                {/* FIX: Removed redundant and potentially problematic type assertion. Used optional chaining for safety. */}
+                                            <div>
                                                 <span className="font-semibold">{stat.worstPerformer?.name}</span>
                                                 <span className="text-slate-500"> ({stat.worstPerformer?.riskScore})</span>
                                             </div>
@@ -158,11 +159,12 @@ const DomainComparisonContent: React.FC<{ data: DomainComparisonData }> = ({ dat
 
 
 const ReportDisplay: React.FC<ReportDisplayProps> = ({ reportData, isLoading, error }) => {
+    // Fix: Add explicit casting inside `Object.entries` map to correct type inference issues that were causing errors downstream.
     const { regionalProfile, nationalProfile } = React.useMemo(() => {
         const regionData = reportData?.regionData;
         if (!regionData) return { regionalProfile: [], nationalProfile: [] };
-        const regional = Object.entries(regionData.domains).map(([key, value]) => ({ axis: key as any, value: value.riskScore }));
-        const national = Object.entries(domainsData).map(([key, value]) => ({ axis: key as any, value: value.averageRisk }));
+        const regional = Object.entries(regionData.domains).map(([key, value]) => ({ axis: key as Domain, value: (value as DomainMetrics).riskScore }));
+        const national = Object.entries(domainsData).map(([key, value]) => ({ axis: key as Domain, value: (value as DomainData).averageRisk }));
         return { regionalProfile: regional, nationalProfile: national };
     }, [reportData?.regionData]);
 

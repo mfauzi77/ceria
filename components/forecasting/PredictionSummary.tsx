@@ -7,21 +7,6 @@ interface PredictionSummaryProps {
 }
 
 const PredictionSummary: React.FC<PredictionSummaryProps> = ({ data }) => {
-    // Handle empty data case
-    if (!data || data.length === 0) {
-        return (
-            <div className="bg-white p-6 rounded-lg shadow-sm h-full">
-                <h3 className="text-lg font-bold text-slate-800 mb-4">Summary Prediksi</h3>
-                <div className="flex items-center justify-center h-32">
-                    <div className="text-center">
-                        <div className="text-slate-400 text-2xl mb-2">📊</div>
-                        <p className="text-slate-500 text-sm">Data tidak tersedia</p>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
     const overallPredictedRisk = data.length > 0 ? data.reduce((acc, item) => acc + item.predictedRisk, 0) / data.length : 0;
     const regionsIncreasing = data.filter(item => item.change > 0).length;
     const crossingThreshold = data.filter(item => 

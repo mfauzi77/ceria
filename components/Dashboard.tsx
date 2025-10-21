@@ -1,9 +1,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { DOMAIN_FILTER_ITEMS } from '../constants';
-import { fetchIndicators, fetchAlerts, fetchRegionalRisks } from '../services/dataService';
 import { allActiveAlerts, keyIndicatorsByDomain, regionsDetails } from '../services/mockData';
-import { useTheme } from './ThemeContext';
 import { getExecutiveBriefing } from '../services/geminiService';
 import NationalRiskOverview from './dashboard/RiskAssessment';
 import KeyHealthIndicators from './dashboard/KeyHealthIndicators';
@@ -25,43 +23,27 @@ const Dashboard: React.FC<DashboardProps> = ({ handleOpenInterventionModal }) =>
     const [isBriefingLoading, setIsBriefingLoading] = useState(true);
     const [briefingError, setBriefingError] = useState<string | null>(null);
 
-    const [filteredIndicators, setFilteredIndicators] = useState<KeyIndicatorData[]>([]);
-    const [filteredAlerts, setFilteredAlerts] = useState<ActiveAlertData[]>([]);
-    const [dynamicRegionalRiskScores, setDynamicRegionalRiskScores] = useState<{ name: string; score: number }[]>([]);
+    const filteredIndicators = useMemo((): KeyIndicatorData[] => {
+        return keyIndicatorsByDomain[activeDomain];
+    }, [activeDomain]);
 
-    const { useIntegration } = useTheme();
+    const filteredAlerts = useMemo((): ActiveAlertData[] => {
+        if (activeDomain === 'Semua') {
+            return allActiveAlerts;
+        }
+        return allActiveAlerts.filter(alert => alert.domain === activeDomain);
+    }, [activeDomain]);
 
-    useEffect(() => {
-        (async () => {
-            try {
-                if (useIntegration) {
-                    const [ind, alerts, risks] = await Promise.all([
-                        fetchIndicators(activeDomain),
-                        fetchAlerts(activeDomain),
-                        fetchRegionalRisks(activeDomain)
-                    ]);
-                    setFilteredIndicators(ind);
-                    setFilteredAlerts(alerts);
-                    setDynamicRegionalRiskScores(risks);
-                } else {
-                    // fallback to mock data
-                    setFilteredIndicators(keyIndicatorsByDomain[activeDomain]);
-                    const alerts = activeDomain === 'Semua' ? allActiveAlerts : allActiveAlerts.filter(a => a.domain === activeDomain);
-                    setFilteredAlerts(alerts);
-                    const allRegionsData = Object.values(regionsDetails);
-                    if (activeDomain === 'Semua') {
-                        setDynamicRegionalRiskScores(allRegionsData.map(r => ({ name: r.name, score: r.overallRisk })));
-                    } else {
-                        setDynamicRegionalRiskScores(allRegionsData.map(r => ({ name: r.name, score: r.domains[activeDomain].riskScore })));
-                    }
-                }
-            } catch (e) {
-                setFilteredIndicators([]);
-                setFilteredAlerts([]);
-                setDynamicRegionalRiskScores([]);
-            }
-        })();
-    }, [activeDomain, useIntegration]);
+    const dynamicRegionalRiskScores = useMemo(() => {
+        const allRegionsData = Object.values(regionsDetails);
+        if (activeDomain === 'Semua') {
+            return allRegionsData.map(r => ({ name: r.name, score: r.overallRisk }));
+        }
+        return allRegionsData.map(r => ({
+            name: r.name,
+            score: r.domains[activeDomain].riskScore
+        }));
+    }, [activeDomain]);
 
 
     const fetchBriefing = async () => {

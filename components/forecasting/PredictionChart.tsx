@@ -15,24 +15,6 @@ const PredictionChart: React.FC<PredictionChartProps> = ({ data, domain, horizon
     const padding = 40;
     const yMax = 100;
 
-    // Handle empty data case
-    if (!data || data.length === 0) {
-        return (
-            <div>
-                <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-4">
-                    <h3 className="text-lg font-bold text-slate-800 mb-2 sm:mb-0">Prediksi Risiko - {domain} ({horizon})</h3>
-                </div>
-                <div className="w-full h-64 flex items-center justify-center bg-slate-50 rounded-lg border-2 border-dashed border-slate-300">
-                    <div className="text-center">
-                        <div className="text-slate-500 text-lg mb-2">📊</div>
-                        <p className="text-slate-600 font-medium">Data tidak tersedia</p>
-                        <p className="text-slate-500 text-sm">Fitur forecasting belum tersedia untuk data integration</p>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
     const getX = (index: number) => padding + (index * (chartWidth - padding * 2)) / (data.length - 1);
     const getY = (value: number) => chartHeight - padding - ((value / yMax) * (chartHeight - padding * 2));
 

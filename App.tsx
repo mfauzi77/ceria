@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect, useMemo } from 'react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
@@ -22,39 +20,23 @@ import ParentDashboard from './components/ParentDashboard';
 import InputData from './components/InputData';
 import ToastNotification from './components/shared/ToastNotification';
 import Data from './components/Data';
-import { ImportKemenkesImunisasi, ImportKemenkesGizi, ImportKemenkesKIA, ImportKemenkesPenyakit, ImportDapodikAPM, ImportDapodikSatuan, ImportDapodikGuru, ImportDukcapilIdentitas, ImportKPPPAKekerasan, ImportKPPPPAPerkawinan, ImportBPSSosialEkonomi, ImportBPSPerkawinan, ImportKemensosBansos, ImportPUPRInfrastruktur, ImportBNPBRisiko, ImportBMKGKualitas } from './components/dataintegrations';
-import Login from './components/Login';
-import AdminDashboard from './components/AdminDashboard';
-import { useTheme } from './components/ThemeContext';
+import AiAgentSelection from './components/AiAgentSelection';
+import ParentingAssistant from './components/ParentingAssistant';
 
 const App: React.FC = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [showWelcome, setShowWelcome] = useState(false);
-
+  const [appMode, setAppMode] = useState<'dashboard' | 'ai' | null>(null);
   const [activeView, setActiveView] = useState<View>(View.Dashboard);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [interventionPlans, setInterventionPlans] = useState<InterventionPlan[]>([]);
+  const [interventionPlans, setInterventionPlans] = useState<InterventionPlan[]>(mockInterventionPlans);
   const [isInterventionModalOpen, setIsInterventionModalOpen] = useState(false);
   const [interventionInitialData, setInterventionInitialData] = useState<Partial<InterventionPlan> | null>(null);
   const [navigationContext, setNavigationContext] = useState<{ regionId: string; kabupatenKotaId?: string } | null>(null);
   const [toastAlert, setToastAlert] = useState<ActiveAlertData | null>(null);
 
-  // Get theme context
-  const { isAdmin, useIntegration } = useTheme();
-
   useEffect(() => {
-    // This check runs only once on component mount
-    if (sessionStorage.getItem('ceriaAppHasVisited')) {
-      setShowWelcome(false);
-    } else {
-      setShowWelcome(true);
-    }
-    setIsLoading(false);
-
-    // Simulate receiving a high-priority alert after a delay (only for mock data)
+    // Simulate receiving a high-priority alert after a delay
     const timer = setTimeout(() => {
-        // Only show toast notifications for mock data, not for data integration
-        if (!useIntegration) {
+        if (appMode === 'dashboard') { // Only show toast in dashboard mode
             const highPriorityAlerts = allActiveAlerts.filter(
                 a => a.level === AlertLevel.Critical || a.level === AlertLevel.High
             );
@@ -66,28 +48,21 @@ const App: React.FC = () => {
     }, 7000); // 7-second delay after app loads
 
     return () => clearTimeout(timer);
-  }, [useIntegration]);
+  }, [appMode]);
 
-  // Effect to manage intervention plans based on data source
-  useEffect(() => {
-    if (useIntegration) {
-      // For data integration, start with empty array
-      setInterventionPlans([]);
-    } else {
-      // For mock data, use mock intervention plans
-      setInterventionPlans(mockInterventionPlans);
-    }
-  }, [useIntegration]);
-
-  const handleWelcomeComplete = () => {
-    sessionStorage.setItem('ceriaAppHasVisited', 'true');
-    setShowWelcome(false);
+  const handleNavigateToDashboardApp = () => {
+    setAppMode('dashboard');
+    setActiveView(View.Dashboard);
   };
   
+  const handleNavigateToAiApp = () => {
+    setAppMode('ai');
+    setActiveView(View.AiAgentSelection);
+  };
+
   const handleLogout = () => {
-      sessionStorage.removeItem('ceriaAppHasVisited');
+      setAppMode(null); // Go back to welcome screen
       setActiveView(View.Dashboard); // Reset view to default for next login
-      setShowWelcome(true);
   };
 
   const handleOpenInterventionModal = (initialData: Partial<InterventionPlan> | null = null, navigateToInterventions: boolean = false) => {
@@ -137,15 +112,13 @@ const App: React.FC = () => {
 
   const handleSaveIntervention = (planData: Omit<InterventionPlan, 'id'> & { id?: string; actionItems: ActionItem[] }) => {
     setInterventionPlans(prevPlans => {
-        // Check if it's an update by looking for an existing ID
         if (planData.id && prevPlans.some(p => p.id === planData.id)) {
             return prevPlans.map(p => 
                 p.id === planData.id 
-                ? { ...p, ...planData, id: p.id } // Merge data, ensure ID remains constant
+                ? { ...p, ...planData, id: p.id }
                 : p
             );
         } else {
-            // It's a new plan, create it
             const newPlan: InterventionPlan = {
                 ...planData,
                 id: `plan-${Date.now()}`,
@@ -174,7 +147,7 @@ const App: React.FC = () => {
       handleCloseToast();
   };
 
-  const renderContent = () => {
+  const renderDashboardContent = () => {
     switch (activeView) {
       case View.LandingPage:
         return <LandingPage onNavigate={handleNavigateToDashboard} />;
@@ -190,9 +163,7 @@ const App: React.FC = () => {
                 />;
       case View.EWSPerBidang:
         return <EWSPerBidang />;
-      case View.SmartRecommendations:
-        return <SmartRecommendations />;
-       case View.Intervensi:
+      case View.Intervensi:
         return <InterventionManagement 
             plans={interventionPlans} 
             onOpenModal={handleOpenInterventionModal} 
@@ -210,51 +181,39 @@ const App: React.FC = () => {
         return <Reports />;
       case View.ParentDashboard:
         return <ParentDashboard />;
-      case View.Import_Kemenkes_Imunisasi:
-        return <ImportKemenkesImunisasi />;
-      case View.Import_Kemenkes_Gizi:
-        return <ImportKemenkesGizi />;
-      case View.Import_Kemenkes_KIA:
-        return <ImportKemenkesKIA />;
-      case View.Import_Kemenkes_Penyakit:
-        return <ImportKemenkesPenyakit />;
-      case View.Import_Dapodik_APM_APK:
-        return <ImportDapodikAPM />;
-      case View.Import_Dapodik_SatuanPAUD:
-        return <ImportDapodikSatuan />;
-      case View.Import_Dapodik_KualitasGuru:
-        return <ImportDapodikGuru />;
-      case View.Import_Dukcapil_IdentitasAnak:
-        return <ImportDukcapilIdentitas />;
-      case View.Import_KemenPPPA_Kekerasan:
-        return <ImportKPPPAKekerasan />;
-      case View.Import_KemenPPPA_PerkawinanAnak:
-        return <ImportKPPPPAPerkawinan />;
-      case View.Import_BPS_SosialEkonomi:
-        return <ImportBPSSosialEkonomi />;
-      case View.Import_BPS_PerkawinanAnak:
-        return <ImportBPSPerkawinan />;
-      case View.Import_Kemensos_Bansos:
-        return <ImportKemensosBansos />;
-      case View.Import_PUPR_Infrastruktur:
-        return <ImportPUPRInfrastruktur />;
-      case View.Import_BNPB_RisikoBencana:
-        return <ImportBNPBRisiko />;
-      case View.Import_BMKG_KualitasLingkungan:
-        return <ImportBMKGKualitas />;
       default:
+        // If an AI view is selected somehow, default to dashboard
+        if ([View.AiAgentSelection, View.SmartRecommendations, View.ParentingAssistant].includes(activeView)) {
+            setActiveView(View.Dashboard);
+            return <Dashboard handleOpenInterventionModal={handleOpenInterventionModal} />;
+        }
         return <Placeholder title={activeView} />;
     }
   };
   
-  if (isLoading) {
-    return <div className="fixed inset-0 bg-white dark:bg-slate-900" />; // Prevent flash of unstyled content
+  if (!appMode) {
+    return <WelcomeScreen onDashboardNavigate={handleNavigateToDashboardApp} onAiAgentNavigate={handleNavigateToAiApp} />;
   }
 
-  if (showWelcome) {
-    return <WelcomeScreen onComplete={handleWelcomeComplete} />;
+  if (appMode === 'ai') {
+      const handleExitAi = () => setAppMode(null);
+
+      switch (activeView) {
+          case View.SmartRecommendations:
+              return <SmartRecommendations onBack={() => setActiveView(View.AiAgentSelection)} />;
+          case View.ParentingAssistant:
+              return <ParentingAssistant onBack={() => setActiveView(View.AiAgentSelection)} />;
+          case View.AiAgentSelection:
+          default:
+              return <AiAgentSelection 
+                          onNavigateToCeria={() => setActiveView(View.SmartRecommendations)}
+                          onNavigateToParenting={() => setActiveView(View.ParentingAssistant)}
+                          onExit={handleExitAi}
+                      />;
+      }
   }
 
+  // Render Dashboard Mode
   return (
     <div className={`relative flex h-screen bg-slate-100 dark:bg-slate-900 font-sans transition-opacity duration-500 ease-in-out opacity-100`}>
       <Sidebar 
@@ -271,13 +230,7 @@ const App: React.FC = () => {
               onNavigateToRegion={handleNavigateToRegion}
           />
           <main className="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 dark:bg-black/20 p-4 sm:p-6 print:bg-white print:p-0">
-          {activeView === View.Login ? (
-            <Login onSuccess={() => setActiveView(View.AdminDashboard)} />
-          ) : activeView === View.AdminDashboard ? (
-            <AdminDashboard setActiveView={setActiveView} />
-          ) : (
-            renderContent()
-          )}
+          {renderDashboardContent()}
           </main>
       </div>
       <InterventionFormModal
