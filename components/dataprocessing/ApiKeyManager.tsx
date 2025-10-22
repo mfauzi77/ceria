@@ -1,9 +1,15 @@
+
 import React, { useState } from 'react';
 import { DataSource } from '../../types';
 import { KeyIcon } from '../icons/Icons';
-import { dataSources } from '../../services/mockData';
+// FIX: Remove direct import and use DataContext instead.
+import { useData } from '../../context/DataContext';
 
 const ApiKeyManager: React.FC = () => {
+    // FIX: Get data from the useData context hook.
+    const { appData } = useData();
+    const dataSources = appData?.dataSources || [];
+    
     // In a real app, keys would be fetched from a secure store, not kept in local state.
     // This state simulates which key is being edited.
     const [editingId, setEditingId] = useState<string | null>(null);

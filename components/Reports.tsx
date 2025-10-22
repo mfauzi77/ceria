@@ -2,13 +2,17 @@ import React, { useState } from 'react';
 import ReportGenerator from './reports/ReportGenerator';
 import ReportDisplay from './reports/ReportDisplay';
 import { ReportParams, ReportData, RegionDetailData, MonthlySummaryData, DomainComparisonData, Domain, DomainData } from '../types';
-import { getRegionDetails, keyIndicatorsByDomain, domainsData, regionalForecastData } from '../services/mockData';
 import { getRegionalAnalysisInsight, getMonthlyPerformanceInsight, getDomainComparisonInsight } from '../services/geminiService';
+import { useData } from '../context/DataContext';
 
 const Reports: React.FC = () => {
     const [reportData, setReportData] = useState<ReportData | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    const { appData } = useData();
+    if (!appData) return null;
+    const { getRegionDetails, keyIndicatorsByDomain, domainsData, regionalForecastData } = appData;
 
     const handleGenerateReport = async (params: ReportParams) => {
         setIsLoading(true);

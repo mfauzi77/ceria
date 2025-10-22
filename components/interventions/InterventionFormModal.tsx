@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { InterventionPlan, InterventionStatus, InterventionPriority, Domain, ActionItem } from '../../types';
-import { getAvailableRegions } from '../../services/mockData';
 import { DOMAIN_ITEMS } from '../../constants';
 import { BeakerIcon, ChevronDownIcon, ChevronUpIcon, SwitchVerticalIcon, DocumentPlusIcon } from '../icons/Icons';
+import { useData } from '../../context/DataContext';
 
 type SortKey = 'default' | 'completed' | 'dueDate';
 type SortDirection = 'asc' | 'desc';
@@ -15,6 +15,9 @@ interface InterventionFormModalProps {
 }
 
 const InterventionFormModal: React.FC<InterventionFormModalProps> = ({ isOpen, onClose, onSave, initialData }) => {
+    const { appData } = useData();
+    const getAvailableRegions = appData?.getAvailableRegions || (() => []);
+    
     const [formData, setFormData] = useState({
         title: '',
         description: '',
@@ -34,7 +37,7 @@ const InterventionFormModal: React.FC<InterventionFormModalProps> = ({ isOpen, o
     const [newActionItemDueDate, setNewActionItemDueDate] = useState('');
     const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: SortDirection }>({ key: 'default', direction: 'asc' });
     
-    const availableRegions = getAvailableRegions();
+    const availableRegions = useMemo(() => getAvailableRegions(), [getAvailableRegions]);
 
     useEffect(() => {
         if (isOpen) {
@@ -71,7 +74,7 @@ const InterventionFormModal: React.FC<InterventionFormModalProps> = ({ isOpen, o
             }
             setSortConfig({ key: 'default', direction: 'asc' }); // Reset sort on open
         }
-    }, [isOpen, initialData]);
+    }, [isOpen, initialData, availableRegions]);
 
     const sortedActionItems = useMemo(() => {
         let sortableItems = [...actionItems];

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { getDomainData, domainsData as allDomains } from '../services/mockData';
 import { DomainData } from '../../types';
 import DomainTabs from './ewsperbidang/DomainTabs';
 import DomainSummary from './ewsperbidang/DomainSummary';
@@ -7,16 +6,21 @@ import RegionRankingList from './ewsperbidang/RegionRankingList';
 import DomainTopAlerts from './ewsperbidang/DomainTopAlerts';
 import DomainIndicatorTable from './ewsperbidang/DomainIndicatorTable';
 import RiskMomentumQuadrant from './ewsperbidang/RiskMomentumQuadrant';
+import { useData } from '../context/DataContext';
 
 const EWSPerBidang: React.FC = () => {
-    const domainIds = Object.keys(allDomains);
+    const { appData } = useData();
+    if (!appData) return null;
+    const { getDomainData, domainsData } = appData;
+
+    const domainIds = Object.keys(domainsData);
     const [selectedDomainId, setSelectedDomainId] = useState<string>(domainIds[0]);
     const [domainData, setDomainData] = useState<DomainData | null>(null);
 
     useEffect(() => {
         const data = getDomainData(selectedDomainId);
         setDomainData(data);
-    }, [selectedDomainId]);
+    }, [selectedDomainId, getDomainData]);
 
     return (
         <div className="space-y-6">

@@ -1,10 +1,14 @@
 
 import React from 'react';
-import { dataSources } from '../../services/mockData';
+// FIX: Remove direct import from mockData and use the DataContext instead.
+import { useData } from '../../context/DataContext';
 import { DataSource, DataSourceStatus } from '../../types';
 import { CircleStackIcon, DocumentPlusIcon } from '../icons/Icons';
 
 const DataSources: React.FC = () => {
+    // FIX: Get data from the useData context hook.
+    const { appData } = useData();
+    const dataSources = appData?.dataSources || [];
 
     const getStatusStyles = (status: DataSourceStatus): { badge: string, dot: string } => {
         switch (status) {

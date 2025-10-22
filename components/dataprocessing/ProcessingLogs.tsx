@@ -1,9 +1,14 @@
+
 import React from 'react';
-import { processingLogs } from '../../services/mockData';
+// FIX: Remove direct import from mockData and use the DataContext instead.
+import { useData } from '../../context/DataContext';
 import { LogEntry, LogLevel } from '../../types';
 import { CommandLineIcon } from '../icons/Icons';
 
 const ProcessingLogs: React.FC = () => {
+    // FIX: Get data from the useData context hook.
+    const { appData } = useData();
+    const processingLogs = appData?.processingLogs || [];
 
     const getLevelColor = (level: LogLevel): string => {
         switch (level) {

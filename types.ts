@@ -402,3 +402,28 @@ export interface AirQualityData {
     level: 'Baik' | 'Sedang' | 'Tidak Sehat' | 'Sangat Tidak Sehat' | 'Berbahaya';
     time: string;
 }
+
+// --- Type for Loaded Application Data ---
+export interface AppData {
+    regionsDetails: Record<string, RegionDetailData>;
+    kabupatenKotaDetails: Record<string, KabupatenKotaDetailData>;
+    allActiveAlerts: ActiveAlertData[];
+    nationalHistoricalRisk: { month: string; score: number }[];
+    regionalForecastData: RegionalForecastData[];
+    domainsData: Record<string, DomainData>;
+    keyIndicatorsByDomain: Record<DomainFilter, KeyIndicatorData[]>;
+    paudParticipationData2024: any[];
+    paudAccreditationData: any[];
+    paudTeacherQualificationData: any[];
+    riskAssessmentData: RiskAssessmentData[];
+    forecastChartData: ForecastDataPoint[];
+    dataSources: DataSource[];
+    processingLogs: LogEntry[];
+    mockInterventionPlans: InterventionPlan[];
+    mockResourceData: ResourceData;
+    regionalRiskScores: RegionalRiskScore[];
+    mockParentData: ParentData;
+    getRegionDetails: (regionId: string) => RegionDetailData | null;
+    getAvailableRegions: () => { id: string; name: string }[];
+    getDomainData: (domainId: string) => DomainData | null;
+}

@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import { domainsData, getAvailableRegions } from '../../services/mockData';
+
+import React, { useState, useEffect } from 'react';
+// FIX: Remove direct import and use DataContext instead.
+import { useData } from '../../context/DataContext';
 import { RecommendationParams, RiskLevelSelection } from '../../types';
 import { LightBulbIcon } from '../icons/Icons';
 
@@ -9,10 +11,25 @@ interface RecommendationGeneratorProps {
 }
 
 const RecommendationGenerator: React.FC<RecommendationGeneratorProps> = ({ onGenerate, isLoading }) => {
-    const [domain, setDomain] = useState(Object.keys(domainsData)[0]);
-    const [region, setRegion] = useState(getAvailableRegions()[0].name);
+    // FIX: Get data from the useData context hook.
+    const { appData } = useData();
+    const domainsData = appData?.domainsData || {};
+    const availableRegions = appData?.getAvailableRegions() || [];
+
+    const [domain, setDomain] = useState('');
+    const [region, setRegion] = useState('');
     const [riskLevel, setRiskLevel] = useState<RiskLevelSelection>('high-critical');
     const [customPrompt, setCustomPrompt] = useState('');
+    
+    // FIX: Use useEffect to set initial state once data is loaded.
+    useEffect(() => {
+        if (availableRegions.length > 0 && !region) {
+            setRegion(availableRegions[0].name);
+        }
+        if (Object.keys(domainsData).length > 0 && !domain) {
+            setDomain(Object.keys(domainsData)[0]);
+        }
+    }, [availableRegions, domainsData, region, domain]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -46,7 +63,7 @@ const RecommendationGenerator: React.FC<RecommendationGeneratorProps> = ({ onGen
                             className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-slate-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md bg-white text-slate-900"
                         >
                             <option>All Regions</option>
-                             {getAvailableRegions().map(r => <option key={r.id}>{r.name}</option>)}
+                             {availableRegions.map(r => <option key={r.id}>{r.name}</option>)}
                         </select>
                     </div>
                     <div>

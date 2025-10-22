@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { ReportParams, ReportType } from '../../types';
-import { getAvailableRegions } from '../../services/mockData';
 import { DocumentChartBarIcon, ArrowPathIcon } from '../icons/Icons';
+import { useData } from '../../context/DataContext';
 
 interface ReportGeneratorProps {
     onGenerate: (params: ReportParams) => void;
@@ -15,14 +15,17 @@ const reportTypes: { id: ReportType, label: string }[] = [
 ];
 
 const ReportGenerator: React.FC<ReportGeneratorProps> = ({ onGenerate, isLoading }) => {
+    const { appData } = useData();
+    const getAvailableRegions = appData?.getAvailableRegions || (() => []);
+    
+    const availableRegions = useMemo(() => getAvailableRegions(), [getAvailableRegions]);
+
     const [params, setParams] = useState<ReportParams>({
         type: 'regional-deep-dive',
-        regionId: getAvailableRegions()[0]?.id || '',
+        regionId: availableRegions[0]?.id || '',
         month: new Date().toISOString().slice(0, 7),
         year: new Date().getFullYear(),
     });
-
-    const availableRegions = getAvailableRegions();
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -38,7 +41,7 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ onGenerate, isLoading
         setParams(prev => {
             const newParams = { ...prev, [name]: value };
             if (name === 'type') {
-                newParams.regionId = getAvailableRegions()[0]?.id || '';
+                newParams.regionId = availableRegions[0]?.id || '';
                 newParams.month = new Date().toISOString().slice(0, 7);
                 newParams.year = new Date().getFullYear();
             }

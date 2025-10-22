@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { getAvailableRegions, getRegionDetails, nationalHistoricalRisk, allActiveAlerts, domainsData } from '../services/mockData';
 import { getRegionalAnalysisInsight } from '../services/geminiService';
 import { RegionDetailData, ActiveAlertData, InterventionPlan, InterventionPriority, InterventionStatus, Domain, KabupatenKotaDetailData } from '../types';
 import RegionSummary from './dataperwilayah/RegionSummary';
@@ -9,6 +8,7 @@ import RecommendationModal from './dashboard/RecommendationModal';
 import RegionalAnalysisInsight from './dataperwilayah/RegionalAnalysisInsight';
 import RegionalProfileRadarChart from './dataperwilayah/RegionalProfileRadarChart';
 import RegionalForecastTrendChart, { ForecastTrendPoint } from './dataperwilayah/RegionalForecastTrendChart';
+import { useData } from '../context/DataContext';
 
 interface DataPerWilayahProps {
     handleOpenInterventionModal: (initialData?: Partial<InterventionPlan>, navigate?: boolean) => void;
@@ -17,6 +17,10 @@ interface DataPerWilayahProps {
 }
 
 const DataPerWilayah: React.FC<DataPerWilayahProps> = ({ handleOpenInterventionModal, navigationContext, onContextHandled }) => {
+    const { appData } = useData();
+    if (!appData) return null; // Should be handled by loading screen
+    const { getAvailableRegions, getRegionDetails, nationalHistoricalRisk, allActiveAlerts, domainsData } = appData;
+
     const [regions, setRegions] = useState<{id: string, name: string}[]>([]);
     const [selectedRegionId, setSelectedRegionId] = useState<string>('');
     const [regionData, setRegionData] = useState<RegionDetailData | null>(null);
@@ -36,7 +40,7 @@ const DataPerWilayah: React.FC<DataPerWilayahProps> = ({ handleOpenInterventionM
             window.scrollTo(0, 0);
             onContextHandled();
         }
-    }, [navigationContext]);
+    }, [navigationContext, onContextHandled]);
 
     // Effect for initializing component and loading regions list
     useEffect(() => {
@@ -46,7 +50,7 @@ const DataPerWilayah: React.FC<DataPerWilayahProps> = ({ handleOpenInterventionM
             const defaultRegion = availableRegions.find(r => r.id === 'jawa-barat') || availableRegions[0];
             setSelectedRegionId(defaultRegion.id);
         }
-    }, []);
+    }, [getAvailableRegions, selectedRegionId]);
 
     const fetchInsight = async (data: RegionDetailData) => {
         if (!data) return;
@@ -76,7 +80,7 @@ const DataPerWilayah: React.FC<DataPerWilayahProps> = ({ handleOpenInterventionM
                 setRegionalAlerts([]);
             }
         }
-    }, [selectedRegionId]);
+    }, [selectedRegionId, getRegionDetails, allActiveAlerts]);
     
     const { regionalProfile, nationalProfile } = useMemo(() => {
         const regional: { axis: Domain; value: number }[] = [];
@@ -89,7 +93,7 @@ const DataPerWilayah: React.FC<DataPerWilayahProps> = ({ handleOpenInterventionM
             });
         }
         return { regionalProfile: regional, nationalProfile: national };
-    }, [regionData]);
+    }, [regionData, domainsData]);
     
     const forecastTrendData = useMemo((): ForecastTrendPoint[] => {
         if (!regionData) return [];
@@ -114,7 +118,7 @@ const DataPerWilayah: React.FC<DataPerWilayahProps> = ({ handleOpenInterventionM
             };
         });
         return [...historicalData, ...predictedData];
-    }, [regionData]);
+    }, [regionData, nationalHistoricalRisk]);
     
     const handleAnalyzeClick = (alert: ActiveAlertData) => {
         setSelectedAlert(alert);

@@ -6,8 +6,8 @@ import RegionSummary from '../dataperwilayah/RegionSummary';
 import DomainBreakdown from '../dataperwilayah/DomainBreakdown';
 import RegionalAnalysisInsight from '../dataperwilayah/RegionalAnalysisInsight';
 import RegionalProfileRadarChart from '../dataperwilayah/RegionalProfileRadarChart';
-import { domainsData } from '../../services/mockData';
 import { DOMAIN_ITEMS } from '../../constants';
+import { useData } from '../../context/DataContext';
 
 interface ReportDisplayProps {
     reportData: ReportData | null;
@@ -157,14 +157,16 @@ const DomainComparisonContent: React.FC<{ data: DomainComparisonData }> = ({ dat
 
 
 const ReportDisplay: React.FC<ReportDisplayProps> = ({ reportData, isLoading, error }) => {
-    // Fix: Add explicit casting inside `Object.entries` map to correct type inference issues that were causing errors downstream.
+    const { appData } = useData();
+    const domainsData = appData?.domainsData || {};
+
     const { regionalProfile, nationalProfile } = React.useMemo(() => {
         const regionData = reportData?.regionData;
         if (!regionData) return { regionalProfile: [], nationalProfile: [] };
         const regional = Object.entries(regionData.domains).map(([key, value]) => ({ axis: key as Domain, value: (value as DomainMetrics).riskScore }));
         const national = Object.entries(domainsData).map(([key, value]) => ({ axis: key as Domain, value: (value as DomainData).averageRisk }));
         return { regionalProfile: regional, nationalProfile: national };
-    }, [reportData?.regionData]);
+    }, [reportData?.regionData, domainsData]);
 
     const handlePrint = () => {
         window.print();

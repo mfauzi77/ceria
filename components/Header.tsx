@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { UserCircleIcon, ArrowLeftOnRectangleIcon, CalendarIcon, BellAlertIcon } from './icons/Icons';
 import { View, ActiveAlertData, AlertLevel } from '../types';
-import { allActiveAlerts } from '../services/mockData';
 import NotificationDropdown from './header/NotificationDropdown';
+import { useData } from '../context/DataContext';
 
 
 interface HeaderProps {
@@ -19,6 +18,9 @@ const Header: React.FC<HeaderProps> = ({ setIsSidebarOpen, onLogout, setActiveVi
   
   const profileMenuRef = useRef<HTMLDivElement>(null);
   const notificationsRef = useRef<HTMLDivElement>(null);
+
+  const { appData } = useData();
+  const allActiveAlerts = appData?.allActiveAlerts || [];
 
   const highPriorityAlerts = allActiveAlerts.filter(
     alert => alert.level === AlertLevel.Critical || alert.level === AlertLevel.High

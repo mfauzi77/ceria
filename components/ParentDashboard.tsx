@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
-import { mockParentData } from '../services/mockData';
 import ChildProfileCard from './parent/ChildProfileCard';
 import UpcomingSchedule from './parent/UpcomingSchedule';
 import GrowthChart from './parent/GrowthChart';
 import StimulationChecklist from './parent/StimulationChecklist';
 import PersonalizedInsight from './parent/PersonalizedInsight';
+import { useData } from '../context/DataContext';
 
 const ParentDashboard: React.FC = () => {
+    const { appData } = useData();
+    if (!appData) return null;
+    const { mockParentData } = appData;
+
     const [data] = useState(mockParentData);
 
     return (

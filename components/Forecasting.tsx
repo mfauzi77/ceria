@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { regionalForecastData, nationalHistoricalRisk, domainsData } from '../services/mockData';
 import { getForecastingInsight } from '../services/geminiService';
 import PredictionChart from './forecasting/PredictionChart';
 import PredictionSummary from './forecasting/PredictionSummary';
@@ -8,6 +7,7 @@ import TopMovers from './forecasting/TopMovers';
 import ForecastingInsight from './forecasting/ForecastingInsight';
 import { ArrowPathIcon } from './icons/Icons';
 import { Domain, ForecastDataPoint, InterventionPlan, InterventionPriority, InterventionStatus, RegionalForecastData } from '../types';
+import { useData } from '../context/DataContext';
 
 
 interface ForecastingProps {
@@ -21,6 +21,10 @@ const Forecasting: React.FC<ForecastingProps> = ({ handleOpenInterventionModal }
     const [insight, setInsight] = useState<string | null>(null);
     const [isInsightLoading, setIsInsightLoading] = useState(true);
     const [insightError, setInsightError] = useState<string | null>(null);
+    
+    const { appData } = useData();
+    if (!appData) return null;
+    const { regionalForecastData, nationalHistoricalRisk, domainsData } = appData;
 
     const domains: Domain[] = ['Kesehatan', 'Gizi', 'Pengasuhan', 'Perlindungan', 'Kesejahteraan', 'Lingkungan'];
     const horizons = ['3 Bulan', '6 Bulan'];
@@ -47,7 +51,7 @@ const Forecasting: React.FC<ForecastingProps> = ({ handleOpenInterventionModal }
                 predictedRiskLevel: getRiskLevel(adjustedPredictedRisk),
             };
         });
-    }, [activeDomain, activeHorizon]);
+    }, [activeDomain, activeHorizon, regionalForecastData]);
 
     const { topIncreases, topDecreases, overallTrend } = useMemo(() => {
         const sortedByChange = [...processedForecastData].sort((a, b) => b.change - a.change);
@@ -102,7 +106,7 @@ const Forecasting: React.FC<ForecastingProps> = ({ handleOpenInterventionModal }
         }
 
         return [...actualData, ...predictedData];
-    }, [activeDomain, overallTrend, activeHorizon]);
+    }, [activeDomain, overallTrend, activeHorizon, nationalHistoricalRisk, domainsData]);
 
 
     const fetchInsight = async () => {
@@ -132,7 +136,7 @@ const Forecasting: React.FC<ForecastingProps> = ({ handleOpenInterventionModal }
             return;
         }
         fetchInsight();
-    }, [activeDomain, activeHorizon, processedForecastData]);
+    }, [activeDomain, activeHorizon, topIncreases, topDecreases, overallTrend]);
 
     const handleRefresh = () => {
         fetchInsight();

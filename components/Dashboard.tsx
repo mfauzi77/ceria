@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { DOMAIN_FILTER_ITEMS } from '../constants';
-import { allActiveAlerts, keyIndicatorsByDomain, regionsDetails } from '../services/mockData';
 import { getExecutiveBriefing } from '../services/geminiService';
 import NationalRiskOverview from './dashboard/RiskAssessment';
 import KeyHealthIndicators from './dashboard/KeyHealthIndicators';
@@ -8,6 +7,7 @@ import ActiveAlerts from './dashboard/ActiveAlerts';
 import ExecutiveBriefing from './dashboard/ExecutiveBriefing';
 import RecommendationModal from './dashboard/RecommendationModal';
 import { ActiveAlertData, DomainFilter, KeyIndicatorData, InterventionPlan, InterventionPriority, InterventionStatus, Domain } from '../types';
+import { useData } from '../context/DataContext';
 
 // Simple debounce hook to prevent excessive API calls
 function useDebounce<T>(value: T, delay: number): T {
@@ -41,16 +41,20 @@ const Dashboard: React.FC<DashboardProps> = ({
     
     const debouncedActiveDomain = useDebounce(activeDomain, 500);
 
+    const { appData } = useData();
+    if (!appData) return null; // Should be handled by loading screen in App.tsx
+    const { allActiveAlerts, keyIndicatorsByDomain, regionsDetails } = appData;
+
     const filteredIndicators = useMemo((): KeyIndicatorData[] => {
         return keyIndicatorsByDomain[activeDomain];
-    }, [activeDomain]);
+    }, [activeDomain, keyIndicatorsByDomain]);
 
     const filteredAlerts = useMemo((): ActiveAlertData[] => {
         if (activeDomain === 'Semua') {
             return allActiveAlerts;
         }
         return allActiveAlerts.filter(alert => alert.domain === activeDomain);
-    }, [activeDomain]);
+    }, [activeDomain, allActiveAlerts]);
 
     const dynamicRegionalRiskScores = useMemo(() => {
         const allRegionsData = Object.values(regionsDetails);
@@ -61,7 +65,7 @@ const Dashboard: React.FC<DashboardProps> = ({
             name: r.name,
             score: r.domains[activeDomain as Domain]?.riskScore || 0
         }));
-    }, [activeDomain]);
+    }, [activeDomain, regionsDetails]);
 
 
     const fetchBriefing = async () => {
@@ -80,7 +84,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 
     useEffect(() => {
         fetchBriefing();
-    }, [debouncedActiveDomain]);
+    }, [debouncedActiveDomain, filteredIndicators, filteredAlerts]);
 
 
     const handleAnalyzeClick = (alert: ActiveAlertData) => {

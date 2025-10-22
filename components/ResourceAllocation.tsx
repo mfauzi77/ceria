@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { mockResourceData, regionalRiskScores } from '../services/mockData';
 import { ResourceData, ResourceItem, ResourceType, ScenarioParams, GroundingSource } from '../types';
 import { RESOURCE_TYPES } from '../constants';
 import { BriefcaseIcon, CubeIcon, LightBulbIcon, ScaleIcon, UsersIcon, WrenchScrewdriverIcon, ArrowPathIcon, LinkIcon } from './icons/Icons';
 import { generateAllocationSuggestion, generateScenarioAnalysis } from '../services/geminiService';
+import { useData } from '../context/DataContext';
 
 const AllocationSummary: React.FC<{ data: ResourceData }> = ({ data }) => {
     const renderResourceList = (items: ResourceItem[]) => (
@@ -213,7 +213,10 @@ const ScenarioPlanner: React.FC = () => {
 
 
 const ResourceAllocation: React.FC = () => {
-    const [resourceData] = useState<ResourceData>(mockResourceData);
+    const { appData } = useData();
+    if (!appData) return null;
+    const { mockResourceData, regionalRiskScores } = appData;
+
     const highestRiskRegions = regionalRiskScores
         .sort((a, b) => b.score - a.score)
         .slice(0, 3)
@@ -230,11 +233,11 @@ const ResourceAllocation: React.FC = () => {
             </div>
 
             <h3 className="text-base font-bold text-slate-600 uppercase tracking-wider border-b pb-2">Demand Forecasting Summary</h3>
-            <AllocationSummary data={resourceData} />
+            <AllocationSummary data={mockResourceData} />
             
             <h3 className="text-base font-bold text-slate-600 uppercase tracking-wider border-b pb-2 pt-4">Decision Support Tools</h3>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <AllocationOptimizer resourceData={resourceData} riskRegions={highestRiskRegions} />
+                <AllocationOptimizer resourceData={mockResourceData} riskRegions={highestRiskRegions} />
                 <ScenarioPlanner />
             </div>
         </div>

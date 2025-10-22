@@ -1,6 +1,10 @@
+
 import React, { useState, useMemo } from 'react';
-import { regionsDetails, kabupatenKotaDetails } from '../services/mockData';
+// FIX: Remove direct import from mockData and use the DataContext instead.
+import { useData } from '../context/DataContext';
 import { DocumentPlusIcon, ArrowPathIcon } from './icons/Icons';
+// FIX: Import types for type annotations.
+import { RegionDetailData, KabupatenKotaDetailData } from '../types';
 
 const initialFormData = {
     level: 'provinsi',
@@ -19,17 +23,24 @@ const initialFormData = {
 };
 
 const InputData: React.FC = () => {
+    // FIX: Get data from the useData context hook.
+    const { appData } = useData();
+    const regionsDetails = appData?.regionsDetails || {};
+    const kabupatenKotaDetails = appData?.kabupatenKotaDetails || {};
+    
     const [formData, setFormData] = useState(initialFormData);
 
-    const provinces = useMemo(() => Object.values(regionsDetails).sort((a,b) => a.name.localeCompare(b.name)), []);
+    // FIX: Add explicit types for sort callback parameters to resolve 'unknown' type error.
+    const provinces = useMemo(() => Object.values(regionsDetails).sort((a: RegionDetailData, b: RegionDetailData) => a.name.localeCompare(b.name)), [regionsDetails]);
     const cities = useMemo(() => {
         if (formData.level !== 'kabupaten' || !formData.provinceId) return [];
         const selectedProvince = regionsDetails[formData.provinceId];
         return selectedProvince?.kabupatenKotaIds
             ?.map(id => kabupatenKotaDetails[id])
-            .filter(Boolean)
+            // FIX: Use a type guard to ensure correct typing after filtering.
+            .filter((c): c is KabupatenKotaDetailData => !!c)
             .sort((a,b) => a.name.localeCompare(b.name)) || [];
-    }, [formData.level, formData.provinceId]);
+    }, [formData.level, formData.provinceId, regionsDetails, kabupatenKotaDetails]);
 
     const handleLevelChange = (level: string) => {
         setFormData(prev => ({ ...prev, level, kabKotaId: '' }));
