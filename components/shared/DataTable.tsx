@@ -12,12 +12,12 @@ const formatHeader = (key: string) => {
 
 const DataTable: React.FC<DataTableProps> = ({ data, headers }) => {
     if (!Array.isArray(data) || data.length === 0) {
-        return <p className="text-center text-slate-500 dark:text-slate-400 py-8">No data available to display.</p>;
+        return <p className="text-center text-slate-500 py-8">No data available to display.</p>;
     }
 
     const renderCell = (value: any) => {
         if (value === null || value === undefined) {
-            return <span className="text-slate-400 dark:text-slate-500">N/A</span>;
+            return <span className="text-slate-400">N/A</span>;
         }
         if (typeof value === 'boolean') {
             return value ? <span className="text-emerald-600 font-semibold">Yes</span> : <span className="text-red-600 font-semibold">No</span>;
@@ -26,7 +26,7 @@ const DataTable: React.FC<DataTableProps> = ({ data, headers }) => {
             const jsonString = JSON.stringify(value);
             const displayString = jsonString.length > 50 ? `${jsonString.substring(0, 50)}...` : jsonString;
             return (
-                <pre className="text-xs bg-slate-100 dark:bg-slate-700 p-1 rounded max-w-xs overflow-x-auto" title={jsonString}>
+                <pre className="text-xs bg-slate-100 p-1 rounded max-w-xs overflow-x-auto" title={jsonString}>
                     <code>{displayString}</code>
                 </pre>
             );
@@ -35,8 +35,8 @@ const DataTable: React.FC<DataTableProps> = ({ data, headers }) => {
     };
 
     return (
-        <table className="w-full text-sm text-left text-slate-500 dark:text-slate-400">
-            <thead className="text-xs text-slate-700 dark:text-slate-300 uppercase bg-slate-100 dark:bg-slate-800 sticky top-0">
+        <table className="w-full text-sm text-left text-slate-500">
+            <thead className="text-xs text-slate-700 uppercase bg-slate-100 sticky top-0">
                 <tr>
                     {headers.map(header => (
                         <th key={header} scope="col" className="px-6 py-3 whitespace-nowrap">
@@ -47,7 +47,7 @@ const DataTable: React.FC<DataTableProps> = ({ data, headers }) => {
             </thead>
             <tbody>
                 {data.map((row, rowIndex) => (
-                    <tr key={rowIndex} className="bg-white dark:bg-slate-900 border-b dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                    <tr key={rowIndex} className="bg-white border-b hover:bg-slate-50">
                         {headers.map(header => (
                             <td key={`${rowIndex}-${header}`} className="px-6 py-4 align-top">
                                 <div className="max-w-md">{renderCell(row[header])}</div>

@@ -148,7 +148,7 @@ const InterventionFormModal: React.FC<InterventionFormModalProps> = ({ isOpen, o
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 p-4" onClick={onClose}>
-            <div className="bg-white dark:bg-slate-900 rounded-lg shadow-2xl w-full max-w-2xl transform transition-all flex flex-col" onClick={e => e.stopPropagation()}>
+            <div className="bg-white rounded-lg shadow-2xl w-full max-w-2xl transform transition-all flex flex-col" onClick={e => e.stopPropagation()}>
                 <form onSubmit={handleSubmit} className="flex flex-col h-full max-h-[90vh]">
                     <div className="p-6 flex-shrink-0">
                         <div className="flex items-center">
@@ -156,107 +156,107 @@ const InterventionFormModal: React.FC<InterventionFormModalProps> = ({ isOpen, o
                                 <BeakerIcon className="h-6 w-6 text-indigo-600" />
                             </div>
                             <div className="ml-4">
-                                <h3 className="text-lg font-bold text-gray-900 dark:text-slate-100">
+                                <h3 className="text-lg font-bold text-gray-900">
                                     {initialData?.id ? 'Edit Rencana Intervensi' : 'Buat Rencana Intervensi Baru'}
                                 </h3>
-                                <p className="text-sm text-gray-500 dark:text-slate-400">Isi detail rencana program intervensi Anda.</p>
+                                <p className="text-sm text-gray-500">Isi detail rencana program intervensi Anda.</p>
                             </div>
                         </div>
                     </div>
                     <div className="px-6 pb-4 space-y-4 overflow-y-auto flex-grow">
                         <div>
-                            <label htmlFor="title" className="block text-sm font-medium text-slate-700 dark:text-slate-300">Judul Rencana</label>
-                            <input type="text" name="title" id="title" value={formData.title} onChange={handleChange} required className="mt-1 block w-full shadow-sm sm:text-sm border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-200" />
+                            <label htmlFor="title" className="block text-sm font-medium text-slate-700">Judul Rencana</label>
+                            <input type="text" name="title" id="title" value={formData.title} onChange={handleChange} required className="mt-1 block w-full shadow-sm sm:text-sm border-slate-300 rounded-md bg-white text-slate-900" />
                         </div>
                          <div>
-                            <label htmlFor="description" className="block text-sm font-medium text-slate-700 dark:text-slate-300">Deskripsi</label>
-                            <textarea name="description" id="description" value={formData.description} onChange={handleChange} rows={2} className="mt-1 block w-full shadow-sm sm:text-sm border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-200" />
+                            <label htmlFor="description" className="block text-sm font-medium text-slate-700">Deskripsi</label>
+                            <textarea name="description" id="description" value={formData.description} onChange={handleChange} rows={2} className="mt-1 block w-full shadow-sm sm:text-sm border-slate-300 rounded-md bg-white text-slate-900" />
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label htmlFor="region" className="block text-sm font-medium text-slate-700 dark:text-slate-300">Wilayah</label>
-                                <select name="region" id="region" value={formData.region} onChange={handleChange} required className="mt-1 block w-full py-2 px-3 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-200 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <label htmlFor="region" className="block text-sm font-medium text-slate-700">Wilayah</label>
+                                <select name="region" id="region" value={formData.region} onChange={handleChange} required className="mt-1 block w-full py-2 px-3 border border-slate-300 bg-white text-slate-900 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                     {availableRegions.map(r => <option key={r.id} value={r.name}>{r.name}</option>)}
                                 </select>
                             </div>
                             <div>
-                                <label htmlFor="domain" className="block text-sm font-medium text-slate-700 dark:text-slate-300">Domain</label>
-                                <select name="domain" id="domain" value={formData.domain} onChange={handleChange} required className="mt-1 block w-full py-2 px-3 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-200 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <label htmlFor="domain" className="block text-sm font-medium text-slate-700">Domain</label>
+                                <select name="domain" id="domain" value={formData.domain} onChange={handleChange} required className="mt-1 block w-full py-2 px-3 border border-slate-300 bg-white text-slate-900 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                     {DOMAIN_ITEMS.map(d => <option key={d.id} value={d.name}>{d.name}</option>)}
                                 </select>
                             </div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label htmlFor="priority" className="block text-sm font-medium text-slate-700 dark:text-slate-300">Prioritas</label>
-                                <select name="priority" id="priority" value={formData.priority} onChange={handleChange} required className="mt-1 block w-full py-2 px-3 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-200 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <label htmlFor="priority" className="block text-sm font-medium text-slate-700">Prioritas</label>
+                                <select name="priority" id="priority" value={formData.priority} onChange={handleChange} required className="mt-1 block w-full py-2 px-3 border border-slate-300 bg-white text-slate-900 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                     {Object.values(InterventionPriority).map(p => <option key={p} value={p}>{p}</option>)}
                                 </select>
                             </div>
                             <div>
-                                <label htmlFor="status" className="block text-sm font-medium text-slate-700 dark:text-slate-300">Status</label>
-                                <select name="status" id="status" value={formData.status} onChange={handleChange} required className="mt-1 block w-full py-2 px-3 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-200 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <label htmlFor="status" className="block text-sm font-medium text-slate-700">Status</label>
+                                <select name="status" id="status" value={formData.status} onChange={handleChange} required className="mt-1 block w-full py-2 px-3 border border-slate-300 bg-white text-slate-900 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                     {Object.values(InterventionStatus).map(s => <option key={s} value={s}>{s}</option>)}
                                 </select>
                             </div>
                         </div>
                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label htmlFor="startDate" className="block text-sm font-medium text-slate-700 dark:text-slate-300">Tanggal Mulai</label>
-                                <input type="date" name="startDate" id="startDate" value={formData.startDate} onChange={handleChange} required className="mt-1 block w-full shadow-sm sm:text-sm border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-200" />
+                                <label htmlFor="startDate" className="block text-sm font-medium text-slate-700">Tanggal Mulai</label>
+                                <input type="date" name="startDate" id="startDate" value={formData.startDate} onChange={handleChange} required className="mt-1 block w-full shadow-sm sm:text-sm border-slate-300 rounded-md bg-white text-slate-900" />
                             </div>
                             <div>
-                                <label htmlFor="endDate" className="block text-sm font-medium text-slate-700 dark:text-slate-300">Tanggal Selesai</label>
-                                <input type="date" name="endDate" id="endDate" value={formData.endDate} onChange={handleChange} className="mt-1 block w-full shadow-sm sm:text-sm border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-200" />
+                                <label htmlFor="endDate" className="block text-sm font-medium text-slate-700">Tanggal Selesai</label>
+                                <input type="date" name="endDate" id="endDate" value={formData.endDate} onChange={handleChange} className="mt-1 block w-full shadow-sm sm:text-sm border-slate-300 rounded-md bg-white text-slate-900" />
                             </div>
                         </div>
                          <div>
-                            <label htmlFor="budget" className="block text-sm font-medium text-slate-700 dark:text-slate-300">Anggaran (IDR)</label>
-                            <input type="number" name="budget" id="budget" value={formData.budget} onChange={handleChange} required className="mt-1 block w-full shadow-sm sm:text-sm border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-200" placeholder="500000000" />
+                            <label htmlFor="budget" className="block text-sm font-medium text-slate-700">Anggaran (IDR)</label>
+                            <input type="number" name="budget" id="budget" value={formData.budget} onChange={handleChange} required className="mt-1 block w-full shadow-sm sm:text-sm border-slate-300 rounded-md bg-white text-slate-900" placeholder="500000000" />
                         </div>
                          <div>
-                            <label htmlFor="kpi" className="block text-sm font-medium text-slate-700 dark:text-slate-300">Key Performance Indicator (KPI)</label>
-                            <input type="text" name="kpi" id="kpi" value={formData.kpi} onChange={handleChange} required className="mt-1 block w-full shadow-sm sm:text-sm border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-200" placeholder="e.g., Menurunkan stunting sebesar 5%"/>
+                            <label htmlFor="kpi" className="block text-sm font-medium text-slate-700">Key Performance Indicator (KPI)</label>
+                            <input type="text" name="kpi" id="kpi" value={formData.kpi} onChange={handleChange} required className="mt-1 block w-full shadow-sm sm:text-sm border-slate-300 rounded-md bg-white text-slate-900" placeholder="e.g., Menurunkan stunting sebesar 5%"/>
                         </div>
                         {/* ACTION ITEMS SECTION */}
-                        <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
+                        <div className="pt-4 border-t border-slate-200">
                             <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-2">
-                                <label className="text-base font-semibold text-slate-800 dark:text-slate-200">Daftar Aksi</label>
+                                <label className="text-base font-semibold text-slate-800">Daftar Aksi</label>
                                 <div className="flex items-center space-x-2 mt-2 sm:mt-0">
-                                    <button type="button" onClick={() => requestSort('completed')} className="flex items-center text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 p-1 rounded-md">
+                                    <button type="button" onClick={() => requestSort('completed')} className="flex items-center text-xs font-semibold text-slate-600 hover:text-indigo-600 p-1 rounded-md">
                                         Status {getSortIcon('completed')}
                                     </button>
-                                    <button type="button" onClick={() => requestSort('dueDate')} className="flex items-center text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 p-1 rounded-md">
+                                    <button type="button" onClick={() => requestSort('dueDate')} className="flex items-center text-xs font-semibold text-slate-600 hover:text-indigo-600 p-1 rounded-md">
                                         Tenggat {getSortIcon('dueDate')}
                                     </button>
                                 </div>
                             </div>
                             <div className="space-y-2">
                                 {sortedActionItems.map(item => (
-                                    <div key={item.id} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 p-2 bg-slate-50 dark:bg-slate-800/50 rounded-md">
+                                    <div key={item.id} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 p-2 bg-slate-50 rounded-md">
                                         <div className="flex items-center flex-grow">
-                                            <input type="checkbox" checked={item.completed} onChange={(e) => handleActionItemChange(item.id, 'completed', e.target.checked)} className="h-4 w-4 rounded border-gray-300 dark:border-slate-500 text-indigo-600 focus:ring-indigo-500 bg-white dark:bg-slate-700" />
-                                            <input type="text" value={item.text} onChange={(e) => handleActionItemChange(item.id, 'text', e.target.value)} className={`flex-grow text-sm border-transparent bg-white dark:bg-slate-700 dark:focus:bg-slate-700 dark:text-slate-200 focus:bg-white focus:border-indigo-300 rounded-md ml-2 ${item.completed ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-800 dark:text-slate-200'}`} />
+                                            <input type="checkbox" checked={item.completed} onChange={(e) => handleActionItemChange(item.id, 'completed', e.target.checked)} className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 bg-white" />
+                                            <input type="text" value={item.text} onChange={(e) => handleActionItemChange(item.id, 'text', e.target.value)} className={`flex-grow text-sm border-transparent bg-white focus:bg-white focus:border-indigo-300 rounded-md ml-2 ${item.completed ? 'line-through text-slate-400' : 'text-slate-800'}`} />
                                         </div>
                                         <div className="flex items-center gap-2">
-                                            <input type="date" value={item.dueDate || ''} onChange={(e) => handleActionItemChange(item.id, 'dueDate', e.target.value)} className="text-sm w-full sm:w-32 border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 dark:text-slate-200 rounded-md" />
-                                            <button type="button" onClick={() => setActionItems(items => items.filter(i => i.id !== item.id))} className="text-slate-400 dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400 p-1">&times;</button>
+                                            <input type="date" value={item.dueDate || ''} onChange={(e) => handleActionItemChange(item.id, 'dueDate', e.target.value)} className="text-sm w-full sm:w-32 border-slate-200 bg-white rounded-md" />
+                                            <button type="button" onClick={() => setActionItems(items => items.filter(i => i.id !== item.id))} className="text-slate-400 hover:text-red-500 p-1">&times;</button>
                                         </div>
                                     </div>
                                 ))}
-                                {sortedActionItems.length === 0 && <p className="text-center text-sm text-slate-400 dark:text-slate-500 py-4">Belum ada daftar aksi.</p>}
+                                {sortedActionItems.length === 0 && <p className="text-center text-sm text-slate-400 py-4">Belum ada daftar aksi.</p>}
                             </div>
                             <div className="mt-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-                                <input type="text" value={newActionItemText} onChange={(e) => setNewActionItemText(e.target.value)} placeholder="Tugas baru..." className="flex-grow text-sm border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-200" />
-                                <input type="date" value={newActionItemDueDate} onChange={(e) => setNewActionItemDueDate(e.target.value)} className="w-full sm:w-32 text-sm border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-200" />
-                                <button type="button" onClick={handleAddActionItem} className="p-2 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-200 dark:hover:bg-indigo-900 rounded-md flex-shrink-0">
+                                <input type="text" value={newActionItemText} onChange={(e) => setNewActionItemText(e.target.value)} placeholder="Tugas baru..." className="flex-grow text-sm border-slate-300 rounded-md bg-white text-slate-900" />
+                                <input type="date" value={newActionItemDueDate} onChange={(e) => setNewActionItemDueDate(e.target.value)} className="w-full sm:w-32 text-sm border-slate-300 rounded-md bg-white text-slate-900" />
+                                <button type="button" onClick={handleAddActionItem} className="p-2 bg-indigo-100 text-indigo-600 hover:bg-indigo-200 rounded-md flex-shrink-0">
                                     <DocumentPlusIcon className="w-5 h-5" />
                                 </button>
                             </div>
                         </div>
                     </div>
-                    <div className="bg-slate-50 dark:bg-slate-800 px-6 py-4 flex flex-col-reverse sm:flex-row justify-end gap-3 flex-shrink-0">
-                        <button type="button" onClick={onClose} className="w-full sm:w-auto px-4 py-2 text-sm font-semibold text-gray-700 dark:text-slate-200 bg-white dark:bg-slate-700 rounded-lg border border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-600">
+                    <div className="bg-slate-50 px-6 py-4 flex flex-col-reverse sm:flex-row justify-end gap-3 flex-shrink-0">
+                        <button type="button" onClick={onClose} className="w-full sm:w-auto px-4 py-2 text-sm font-semibold text-gray-700 bg-white rounded-lg border border-gray-300 hover:bg-gray-50">
                             Batal
                         </button>
                         <button type="submit" className="w-full sm:w-auto px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg shadow-sm hover:bg-indigo-700">

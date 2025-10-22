@@ -85,45 +85,45 @@ export const DataIntegrationItem: React.FC<DataIntegrationItemProps> = ({ kement
     };
 
     return (
-        <div className="bg-white dark:bg-slate-800/50 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+        <div className="bg-white p-4 rounded-lg border border-slate-200">
             <div className="flex justify-between items-center">
                 <div>
-                    <h4 className="font-semibold text-slate-800 dark:text-slate-100">{dataName}</h4>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">{kementerian} • {platform}</p>
+                    <h4 className="font-semibold text-slate-800">{dataName}</h4>
+                    <p className="text-xs text-slate-500">{kementerian} • {platform}</p>
                 </div>
                 {!isExpanded ? (
                      <button onClick={() => setIsExpanded(true)} className="px-3 py-1.5 text-xs font-semibold text-indigo-700 bg-indigo-100 rounded-md hover:bg-indigo-200 transition-colors">
                         Tambah Data
                     </button>
                 ) : (
-                    <button onClick={handleClear} className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-full">
+                    <button onClick={handleClear} className="p-1.5 text-slate-400 hover:text-slate-600 rounded-full">
                         <XCircleIcon className="w-6 h-6"/>
                     </button>
                 )}
             </div>
 
             {isExpanded && (
-                <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+                <div className="mt-4 pt-4 border-t border-slate-200">
                     {!tableData ? (
                         <div>
                              {!file ? (
                                 <div
                                     onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} onDragOver={handleDragOver} onDrop={handleDrop}
-                                    className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${isDragging ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800'}`}
+                                    className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${isDragging ? 'border-indigo-500 bg-indigo-50' : 'border-slate-300 bg-slate-50'}`}
                                 >
                                     <DocumentArrowDownIcon className="mx-auto h-10 w-10 text-slate-400" />
-                                    <p className="mt-2 text-sm font-semibold text-slate-900 dark:text-slate-200">Drag & drop file Excel atau PDF</p>
-                                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">atau</p>
+                                    <p className="mt-2 text-sm font-semibold text-slate-900">Drag & drop file Excel atau PDF</p>
+                                    <p className="mt-1 text-xs text-slate-500">atau</p>
                                     <label htmlFor={`file-${dataName}`} className="relative cursor-pointer rounded-md font-semibold text-indigo-600 hover:text-indigo-500">
                                         <span>pilih dari perangkat Anda</span>
                                         <input id={`file-${dataName}`} name={`file-${dataName}`} type="file" className="sr-only" accept=".csv,.xlsx,.xls,.pdf" onChange={e => e.target.files && handleFile(e.target.files[0])} />
                                     </label>
                                 </div>
                             ) : (
-                                <div className="p-3 bg-slate-100 dark:bg-slate-700 rounded-lg flex flex-col sm:flex-row items-center justify-between gap-4">
+                                <div className="p-3 bg-slate-100 rounded-lg flex flex-col sm:flex-row items-center justify-between gap-4">
                                     <div className="text-sm">
-                                        <p className="font-semibold text-slate-800 dark:text-slate-200">{file.name}</p>
-                                        <p className="text-xs text-slate-500 dark:text-slate-400">{(file.size / 1024).toFixed(2)} KB</p>
+                                        <p className="font-semibold text-slate-800">{file.name}</p>
+                                        <p className="text-xs text-slate-500">{(file.size / 1024).toFixed(2)} KB</p>
                                     </div>
                                     <div className="flex items-center gap-2 w-full sm:w-auto">
                                         <button onClick={() => setFile(null)} className="flex-1 sm:flex-none text-xs font-semibold text-slate-600 hover:text-slate-800">Ganti</button>
@@ -137,16 +137,16 @@ export const DataIntegrationItem: React.FC<DataIntegrationItemProps> = ({ kement
                         </div>
                     ) : (
                         <div>
-                             <h5 className="text-sm font-bold text-slate-800 dark:text-slate-200 mb-2 flex items-center">
+                             <h5 className="text-sm font-bold text-slate-800 mb-2 flex items-center">
                                 <CircleStackIcon className="w-5 h-5 mr-2 text-emerald-500"/>
                                 Data Berhasil Diekstrak
                             </h5>
-                             <div className="max-h-64 overflow-auto border border-slate-200 dark:border-slate-700 rounded-lg">
+                             <div className="max-h-64 overflow-auto border border-slate-200 rounded-lg">
                                 <DataTable headers={tableData.headers} data={tableData.rows} />
                             </div>
                             <div className="mt-4">
                                 {isSaved ? (
-                                    <div className="p-3 text-center bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 rounded-lg text-sm font-semibold flex items-center justify-center">
+                                    <div className="p-3 text-center bg-emerald-50 text-emerald-700 rounded-lg text-sm font-semibold flex items-center justify-center">
                                         <ShieldCheckIcon className="w-5 h-5 mr-2"/>
                                         Data berhasil disimpan!
                                     </div>
@@ -163,7 +163,7 @@ export const DataIntegrationItem: React.FC<DataIntegrationItemProps> = ({ kement
                     )}
 
                     {error && (
-                        <div className="mt-3 p-3 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 text-sm rounded-lg flex items-start">
+                        <div className="mt-3 p-3 bg-red-50 text-red-700 text-sm rounded-lg flex items-start">
                             <ExclamationTriangleIcon className="w-5 h-5 mr-2 flex-shrink-0" />
                             <span>{error}</span>
                         </div>

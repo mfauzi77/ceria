@@ -42,21 +42,45 @@ const DomainBreakdown: React.FC<DomainBreakdownProps> = ({ domains }) => {
                                 </div>
                             </div>
                             <div className="space-y-2 text-sm">
-                                {domainData.metrics.map(metric => (
-                                    <div key={metric.label}>
-                                        <div className="flex justify-between text-slate-600">
-                                            <span>{metric.label}</span>
-                                            <span className="font-semibold text-slate-800">{metric.value}{metric.unit}</span>
+                                {domainData.metrics.map(metric => {
+                                    let numericValue = 0;
+                                    if (typeof metric.value === 'number') {
+                                        numericValue = metric.value;
+                                    } else if (typeof metric.value === 'string') {
+                                        if (metric.value.includes(':')) {
+                                            numericValue = parseInt(metric.value.split(':')[1], 10) || 0;
+                                        } else {
+                                            numericValue = parseFloat(metric.value.replace(',', '.')) || 0;
+                                        }
+                                    }
+
+                                    let widthPercentage;
+                                    if (metric.unit === '%') {
+                                        widthPercentage = numericValue;
+                                    } else {
+                                        const benchmark = metric.nationalAverage * 1.5;
+                                        widthPercentage = benchmark > 0 ? (numericValue / benchmark) * 100 : 0;
+                                    }
+                                    
+                                    const cappedWidth = Math.min(widthPercentage, 100);
+                                    const colorValue = metric.nationalAverage > 0 ? (numericValue / metric.nationalAverage * 50) : 50;
+
+                                    return (
+                                        <div key={metric.label}>
+                                            <div className="flex justify-between text-slate-600">
+                                                <span>{metric.label}</span>
+                                                <span className="font-semibold text-slate-800">{metric.value}{metric.unit}</span>
+                                            </div>
+                                            <div className="w-full bg-slate-200 rounded-full h-1.5 mt-1">
+                                                <div 
+                                                    className={`h-1.5 rounded-full ${getRiskBgColor(colorValue)}`} 
+                                                    style={{width: `${cappedWidth}%`}}
+                                                ></div>
+                                            </div>
+                                             <p className="text-xs text-slate-400 text-right">Nat. Avg: {metric.nationalAverage}{metric.unit}</p>
                                         </div>
-                                        <div className="w-full bg-slate-200 rounded-full h-1.5 mt-1">
-                                            <div 
-                                                className={`h-1.5 rounded-full ${getRiskBgColor( (typeof metric.value === 'number' ? metric.value : 0) / metric.nationalAverage * 50)}`} 
-                                                style={{width: `${(typeof metric.value === 'number' ? metric.value : 0) / (metric.nationalAverage*1.5) * 100}%`}}
-                                            ></div>
-                                        </div>
-                                         <p className="text-xs text-slate-400 text-right">Nat. Avg: {metric.nationalAverage}{metric.unit}</p>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         </div>
                     );

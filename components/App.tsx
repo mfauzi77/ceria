@@ -9,7 +9,8 @@ import SmartRecommendations from './components/SmartRecommendations';
 import DataProcessing from './components/DataProcessing';
 import InterventionManagement from './components/InterventionManagement';
 import Placeholder from './components/Placeholder';
-import { View, AlertLevel, RegionDetailData, InterventionPlan, ActiveAlertData, InterventionStatus, ActionItem } from './types';
+// FIX: Import RegionDetailData to add type annotations and resolve TS errors.
+import { View, AlertLevel, RegionDetailData } from './types';
 import ResourceAllocation from './components/ResourceAllocation';
 import InterventionFormModal from './components/interventions/InterventionFormModal';
 import { mockInterventionPlans, regionsDetails, kabupatenKotaDetails, allActiveAlerts } from './services/mockData';
@@ -22,16 +23,17 @@ import ToastNotification from './components/shared/ToastNotification';
 import UploadData from './components/UploadData';
 import AiAgentSelection from './components/AiAgentSelection';
 import ParentingAssistant from './components/ParentingAssistant';
+import { ExclamationTriangleIcon } from './components/icons/Icons';
 
 const App = () => {
-  const [appMode, setAppMode] = useState<string | null>(null);
-  const [activeView, setActiveView] = useState<View>(View.Dashboard);
+  const [appMode, setAppMode] = useState(null);
+  const [activeView, setActiveView] = useState(View.Dashboard);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [interventionPlans, setInterventionPlans] = useState(mockInterventionPlans);
   const [isInterventionModalOpen, setIsInterventionModalOpen] = useState(false);
-  const [interventionInitialData, setInterventionInitialData] = useState<Partial<InterventionPlan> | null>(null);
-  const [navigationContext, setNavigationContext] = useState<any>(null);
-  const [toastAlert, setToastAlert] = useState<ActiveAlertData | null>(null);
+  const [interventionInitialData, setInterventionInitialData] = useState(null);
+  const [navigationContext, setNavigationContext] = useState(null);
+  const [toastAlert, setToastAlert] = useState(null);
 
   useEffect(() => {
     // Simulate receiving a high-priority alert after a delay
@@ -65,7 +67,7 @@ const App = () => {
       setActiveView(View.Dashboard); // Reset view to default for next login
   };
 
-  const handleOpenInterventionModal = (initialData: Partial<InterventionPlan> | null = null, navigateToInterventions = false) => {
+  const handleOpenInterventionModal = (initialData = null, navigateToInterventions = false) => {
     setInterventionInitialData(initialData);
     setIsInterventionModalOpen(true);
     if (navigateToInterventions) {
@@ -83,14 +85,21 @@ const App = () => {
   };
 
   const regionNameToIdMap = useMemo(() => {
+    // FIX: Add types for the Map and the 'prov' parameter to resolve errors.
     const map = new Map<string, { regionId: string; kabKotaId?: string; }>();
     Object.values(regionsDetails).forEach((prov: RegionDetailData) => {
       map.set(prov.name.toLowerCase(), { regionId: prov.id });
+      prov.kabupatenKotaIds?.forEach(kabKotaId => {
+        const kabKota = kabupatenKotaDetails[kabKotaId];
+        if (kabKota) {
+          map.set(kabKota.name.toLowerCase(), { regionId: prov.id, kabKotaId: kabKota.id });
+        }
+      });
     });
     return map;
   }, []);
 
-  const handleNavigateToRegion = (regionName: string) => {
+  const handleNavigateToRegion = (regionName) => {
     const locationInfo = regionNameToIdMap.get(regionName.toLowerCase());
     if (locationInfo) {
       setNavigationContext({
@@ -104,20 +113,19 @@ const App = () => {
     }
   };
 
-  const handleSaveIntervention = (planData: Omit<InterventionPlan, 'id'> & { id?: string }) => {
+  const handleSaveIntervention = (planData) => {
     setInterventionPlans(prevPlans => {
         if (planData.id && prevPlans.some(p => p.id === planData.id)) {
-            // Update existing plan
             return prevPlans.map(p => 
                 p.id === planData.id 
-                ? { ...p, ...planData }
+                ? { ...p, ...planData, id: p.id }
                 : p
             );
         } else {
-            // Create new plan
-            const newPlan: InterventionPlan = {
+            const newPlan = {
                 ...planData,
                 id: `plan-${Date.now()}`,
+                actionItems: planData.actionItems || [],
             };
             return [newPlan, ...prevPlans];
         }
@@ -125,7 +133,7 @@ const App = () => {
     handleCloseInterventionModal();
 };
 
- const handleUpdatePlanStatus = (planId: string, newStatus: InterventionStatus) => {
+ const handleUpdatePlanStatus = (planId, newStatus) => {
     setInterventionPlans(prevPlans =>
         prevPlans.map(p =>
             p.id === planId ? { ...p, status: newStatus } : p
@@ -137,7 +145,7 @@ const App = () => {
     setToastAlert(null);
   };
 
-  const handleToastNavigate = (regionName: string) => {
+  const handleToastNavigate = (regionName) => {
       handleNavigateToRegion(regionName);
       handleCloseToast();
   };
@@ -147,9 +155,7 @@ const App = () => {
       case View.LandingPage:
         return <LandingPage onNavigate={handleNavigateToDashboard} />;
       case View.Dashboard:
-        return <Dashboard 
-                    handleOpenInterventionModal={handleOpenInterventionModal} 
-                />;
+        return <Dashboard handleOpenInterventionModal={handleOpenInterventionModal} />;
       case View.Forecasting:
         return <Forecasting handleOpenInterventionModal={handleOpenInterventionModal} />;
       case View.DataPerWilayah:
@@ -182,9 +188,7 @@ const App = () => {
         // If an AI view is selected somehow, default to dashboard
         if ([View.AiAgentSelection, View.SmartRecommendations, View.ParentingAssistant].includes(activeView)) {
             setActiveView(View.Dashboard);
-            return <Dashboard 
-                      handleOpenInterventionModal={handleOpenInterventionModal} 
-                    />;
+            return <Dashboard handleOpenInterventionModal={handleOpenInterventionModal} />;
         }
         return <Placeholder title={activeView} />;
     }
@@ -214,7 +218,7 @@ const App = () => {
 
   // Render Dashboard Mode
   return (
-    <div className={`relative flex h-screen bg-slate-100 font-sans transition-opacity duration-500 ease-in-out opacity-100`}>
+    <div className={`relative flex h-screen bg-slate-100 dark:bg-slate-900 font-sans transition-opacity duration-500 ease-in-out opacity-100`}>
       <Sidebar 
           activeView={activeView} 
           setActiveView={setActiveView} 
@@ -228,7 +232,7 @@ const App = () => {
               setActiveView={setActiveView}
               onNavigateToRegion={handleNavigateToRegion}
           />
-          <main className="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 p-4 sm:p-6 print:bg-white print:p-0">
+          <main className="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 dark:bg-black/20 p-4 sm:p-6 print:bg-white print:p-0">
           {renderDashboardContent()}
           </main>
       </div>

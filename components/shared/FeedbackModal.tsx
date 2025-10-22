@@ -29,14 +29,14 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({ isOpen, onClose, onSubmit
       aria-labelledby="feedback-modal-title"
     >
       <div
-        className="bg-white dark:bg-slate-800 rounded-lg shadow-2xl w-full max-w-lg mx-auto p-6 transform transition-all"
+        className="bg-white rounded-lg shadow-2xl w-full max-w-lg mx-auto p-6 transform transition-all"
         onClick={(e) => e.stopPropagation()}
       >
         <form onSubmit={handleSubmit}>
-          <h3 id="feedback-modal-title" className="text-lg font-bold text-gray-900 dark:text-slate-100">
+          <h3 id="feedback-modal-title" className="text-lg font-bold text-gray-900">
             Bantu Kami Menyempurnakan Analisis
           </h3>
-          <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">
+          <p className="text-sm text-gray-500 mt-1">
             Apa yang membuat analisis sebelumnya kurang tepat? Masukan Anda akan digunakan untuk analisis ulang.
           </p>
           
@@ -47,7 +47,7 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({ isOpen, onClose, onSubmit
               rows={4}
               value={feedback}
               onChange={(e) => setFeedback(e.target.value)}
-              className="w-full p-2 text-sm text-slate-800 dark:text-slate-200 border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-slate-700"
+              className="w-full p-2 text-sm text-slate-800 border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 bg-white"
               placeholder="Contoh: Analisis tidak mempertimbangkan adanya program bantuan pangan lokal yang baru dimulai bulan lalu."
               required
             />
@@ -57,7 +57,7 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({ isOpen, onClose, onSubmit
             <button
               type="button"
               onClick={onClose}
-              className="w-full sm:w-auto mt-2 sm:mt-0 px-4 py-2 text-sm font-semibold text-gray-700 dark:text-slate-200 bg-white dark:bg-slate-600 rounded-lg border border-gray-300 dark:border-slate-500 hover:bg-gray-50 dark:hover:bg-slate-500"
+              className="w-full sm:w-auto mt-2 sm:mt-0 px-4 py-2 text-sm font-semibold text-gray-700 bg-white rounded-lg border border-gray-300 hover:bg-gray-50"
             >
               Batal
             </button>

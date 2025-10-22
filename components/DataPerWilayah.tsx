@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { getAvailableRegions, getRegionDetails, nationalHistoricalRisk, allActiveAlerts, domainsData, kabupatenKotaDetails } from '../services/mockData';
+import { getAvailableRegions, getRegionDetails, nationalHistoricalRisk, allActiveAlerts, domainsData } from '../services/mockData';
 import { getRegionalAnalysisInsight } from '../services/geminiService';
 import { RegionDetailData, ActiveAlertData, InterventionPlan, InterventionPriority, InterventionStatus, Domain, KabupatenKotaDetailData } from '../types';
 import RegionSummary from './dataperwilayah/RegionSummary';
@@ -9,8 +9,6 @@ import RecommendationModal from './dashboard/RecommendationModal';
 import RegionalAnalysisInsight from './dataperwilayah/RegionalAnalysisInsight';
 import RegionalProfileRadarChart from './dataperwilayah/RegionalProfileRadarChart';
 import RegionalForecastTrendChart, { ForecastTrendPoint } from './dataperwilayah/RegionalForecastTrendChart';
-import KabupatenKotaList from './dataperwilayah/KabupatenKotaList';
-import { ArrowRightIcon } from './icons/Icons';
 
 interface DataPerWilayahProps {
     handleOpenInterventionModal: (initialData?: Partial<InterventionPlan>, navigate?: boolean) => void;
@@ -21,10 +19,8 @@ interface DataPerWilayahProps {
 const DataPerWilayah: React.FC<DataPerWilayahProps> = ({ handleOpenInterventionModal, navigationContext, onContextHandled }) => {
     const [regions, setRegions] = useState<{id: string, name: string}[]>([]);
     const [selectedRegionId, setSelectedRegionId] = useState<string>('');
-    const [selectedKabupatenKotaId, setSelectedKabupatenKotaId] = useState<string | null>(null);
     const [regionData, setRegionData] = useState<RegionDetailData | null>(null);
     const [regionalAlerts, setRegionalAlerts] = useState<ActiveAlertData[]>([]);
-    const [kabupatenKotaData, setKabupatenKotaData] = useState<KabupatenKotaDetailData[]>([]);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedAlert, setSelectedAlert] = useState<ActiveAlertData | null>(null);
@@ -36,10 +32,7 @@ const DataPerWilayah: React.FC<DataPerWilayahProps> = ({ handleOpenInterventionM
     // Effect for handling external navigation context
     useEffect(() => {
         if (navigationContext) {
-            if (selectedRegionId !== navigationContext.regionId) {
-                setSelectedRegionId(navigationContext.regionId);
-            }
-            setSelectedKabupatenKotaId(navigationContext.kabupatenKotaId || null);
+            setSelectedRegionId(navigationContext.regionId);
             window.scrollTo(0, 0);
             onContextHandled();
         }
@@ -55,12 +48,12 @@ const DataPerWilayah: React.FC<DataPerWilayahProps> = ({ handleOpenInterventionM
         }
     }, []);
 
-    const fetchInsight = async (data: RegionDetailData | KabupatenKotaDetailData) => {
+    const fetchInsight = async (data: RegionDetailData) => {
         if (!data) return;
         setIsInsightLoading(true);
         setInsightError(null);
         try {
-            const result = await getRegionalAnalysisInsight(data as RegionDetailData);
+            const result = await getRegionalAnalysisInsight(data);
             setInsight(result);
         } catch (err) {
             setInsightError('Gagal memuat analisis AI.');
@@ -75,86 +68,31 @@ const DataPerWilayah: React.FC<DataPerWilayahProps> = ({ handleOpenInterventionM
             const data = getRegionDetails(selectedRegionId);
             setRegionData(data);
             
-            // Check if the current city is valid for the new province, reset if not
-            const currentCityIsValid = data?.kabupatenKotaIds?.includes(selectedKabupatenKotaId || '');
-            if (!currentCityIsValid) {
-                setSelectedKabupatenKotaId(null);
-            }
-            
             if (data) {
-                const subRegionNames = data.kabupatenKotaIds?.map(id => kabupatenKotaDetails[id]?.name).filter(Boolean) || [];
-                const alerts = allActiveAlerts.filter(a => a.region === data.name || subRegionNames.includes(a.region));
+                const alerts = allActiveAlerts.filter(a => a.region === data.name);
                 setRegionalAlerts(alerts);
-
-                const subRegionData = data.kabupatenKotaIds
-                    ?.map(id => kabupatenKotaDetails[id])
-                    .filter((d): d is KabupatenKotaDetailData => !!d) || [];
-                setKabupatenKotaData(subRegionData);
+                fetchInsight(data);
             } else {
                 setRegionalAlerts([]);
-                setKabupatenKotaData([]);
             }
         }
     }, [selectedRegionId]);
     
-    // --- START: DERIVED STATE & HANDLERS FOR KABUPATEN/KOTA VIEW ---
-    const handleSelectKabupatenKota = (id: string) => {
-        window.scrollTo(0, 0); // Scroll to top for better UX
-        setSelectedKabupatenKotaId(id);
-    };
-
-    const handleBackToProvince = () => {
-        setSelectedKabupatenKotaId(null);
-    };
-
-    const selectedKabupatenKota = useMemo(() => {
-        if (!selectedKabupatenKotaId) return null;
-        return kabupatenKotaData.find(k => k.id === selectedKabupatenKotaId) ?? null;
-    }, [selectedKabupatenKotaId, kabupatenKotaData]);
-
-    // Effect for fetching INSIGHT when the view changes (province or city)
-    useEffect(() => {
-        if (selectedKabupatenKota) {
-            fetchInsight(selectedKabupatenKota);
-        } else if (regionData) {
-            fetchInsight(regionData);
-        }
-    }, [selectedKabupatenKota, regionData]);
-
-
-    const kabupatenKotaAlerts = useMemo(() => {
-        if (!selectedKabupatenKota) return [];
-        return allActiveAlerts.filter(a => a.region === selectedKabupatenKota.name);
-    }, [selectedKabupatenKota]);
-
-    const { regionalProfile: provinceProfile, nationalProfile } = useMemo(() => {
+    const { regionalProfile, nationalProfile } = useMemo(() => {
         const regional: { axis: Domain; value: number }[] = [];
         const national: { axis: Domain; value: number }[] = [];
 
         if (regionData) {
             (Object.keys(regionData.domains) as Domain[]).forEach(domainKey => {
                 regional.push({ axis: domainKey, value: regionData.domains[domainKey].riskScore });
-                national.push({ axis: domainKey, value: domainsData[domainKey].averageRisk });
+                national.push({ axis: domainKey, value: domainsData[domainKey]?.averageRisk || 0 });
             });
         }
         return { regionalProfile: regional, nationalProfile: national };
     }, [regionData]);
     
-    const { regionalProfile: kabKotaProfile, nationalProfile: provinceProfileForKabKota } = useMemo(() => {
-        const regional: { axis: Domain; value: number }[] = [];
-        const national: { axis: Domain; value: number }[] = [];
-        if (selectedKabupatenKota && regionData) {
-            (Object.keys(selectedKabupatenKota.domains) as Domain[]).forEach(domainKey => {
-                regional.push({ axis: domainKey, value: selectedKabupatenKota.domains[domainKey].riskScore });
-                national.push({ axis: domainKey, value: regionData.domains[domainKey].riskScore });
-            });
-        }
-        return { regionalProfile: regional, nationalProfile: national };
-    }, [selectedKabupatenKota, regionData]);
-
     const forecastTrendData = useMemo((): ForecastTrendPoint[] => {
         if (!regionData) return [];
-        // [Existing logic]
         const regionHistory = regionData.historicalRisk;
         const nationalHistory = nationalHistoricalRisk;
         const regionalTrend = regionHistory.length > 1 ? regionHistory[regionHistory.length - 1].score - regionHistory[regionHistory.length - 2].score : 0;
@@ -178,32 +116,6 @@ const DataPerWilayah: React.FC<DataPerWilayahProps> = ({ handleOpenInterventionM
         return [...historicalData, ...predictedData];
     }, [regionData]);
     
-    const kabKotaForecastTrendData = useMemo((): ForecastTrendPoint[] => {
-        if (!selectedKabupatenKota || !regionData) return [];
-        const cityHistory = selectedKabupatenKota.historicalRisk;
-        const provinceHistory = regionData.historicalRisk;
-        const cityTrend = cityHistory.length > 1 ? cityHistory[cityHistory.length - 1].score - cityHistory[cityHistory.length - 2].score : 0;
-        const provinceTrend = provinceHistory.length > 1 ? provinceHistory[provinceHistory.length - 1].score - provinceHistory[provinceHistory.length - 2].score : 0;
-        const historicalData: ForecastTrendPoint[] = cityHistory.map((ch, index) => ({
-            month: ch.month, regionalActual: ch.score, regionalPredicted: ch.score,
-            nationalActual: provinceHistory.find(ph => ph.month === ch.month)?.score || null,
-            nationalPredicted: provinceHistory.find(ph => ph.month === ch.month)?.score || 0,
-        }));
-        const lastCityPoint = cityHistory[cityHistory.length - 1];
-        const lastProvincePoint = provinceHistory.find(p => p.month === lastCityPoint.month) || provinceHistory[provinceHistory.length - 1];
-        const predictionMonths = ['Jul', 'Agu', 'Sep'];
-        const predictedData: ForecastTrendPoint[] = predictionMonths.map((month, i) => {
-            const nextCityScore = Math.max(0, Math.min(100, lastCityPoint.score + (cityTrend * (i + 1))));
-            const nextProvinceScore = Math.max(0, Math.min(100, lastProvincePoint.score + (provinceTrend * (i + 1))));
-            return {
-                month: month, regionalActual: null, regionalPredicted: parseFloat(nextCityScore.toFixed(1)),
-                nationalActual: null, nationalPredicted: parseFloat(nextProvinceScore.toFixed(1)),
-            };
-        });
-        return [...historicalData, ...predictedData];
-    }, [selectedKabupatenKota, regionData]);
-     // --- END: DERIVED STATE & HANDLERS ---
-
     const handleAnalyzeClick = (alert: ActiveAlertData) => {
         setSelectedAlert(alert);
         setIsModalOpen(true);
@@ -234,10 +146,7 @@ const DataPerWilayah: React.FC<DataPerWilayahProps> = ({ handleOpenInterventionM
                     <select
                         id="region-select"
                         value={selectedRegionId}
-                        onChange={(e) => {
-                            setSelectedRegionId(e.target.value);
-                            setSelectedKabupatenKotaId(null); // Reset city when user manually changes province
-                        }}
+                        onChange={(e) => setSelectedRegionId(e.target.value)}
                         className="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:w-64 p-2.5"
                     >
                         {regions.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
@@ -245,53 +154,14 @@ const DataPerWilayah: React.FC<DataPerWilayahProps> = ({ handleOpenInterventionM
                 </div>
             </div>
 
-            {selectedKabupatenKota && regionData ? (
-                // --- KABUPATEN/KOTA DETAIL VIEW ---
-                <div className="space-y-6">
-                    <div className="flex items-center text-sm font-semibold text-slate-600 bg-slate-100 p-2 rounded-md">
-                        <button onClick={handleBackToProvince} className="hover:underline text-indigo-600">
-                           {regionData.name}
-                        </button>
-                        <svg className="w-4 h-4 mx-2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                        <span className="text-slate-800">{selectedKabupatenKota.name}</span>
-                    </div>
-
-                    <RegionSummary data={selectedKabupatenKota} />
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div className="bg-white p-6 rounded-lg shadow-sm">
-                           <RegionalProfileRadarChart 
-                                regionName={selectedKabupatenKota.name}
-                                regionalProfile={kabKotaProfile}
-                                nationalProfile={provinceProfileForKabKota}
-                           />
-                        </div>
-                        <div className="bg-white p-6 rounded-lg shadow-sm">
-                            <RegionalForecastTrendChart 
-                                regionName={selectedKabupatenKota.name}
-                                parentRegionName={regionData.name}
-                                data={kabKotaForecastTrendData}
-                            />
-                        </div>
-                    </div>
-                    <DomainBreakdown domains={selectedKabupatenKota.domains} />
-                    <RegionalAnalysisInsight
-                        isLoading={isInsightLoading} insight={insight} error={insightError}
-                        onRegenerate={() => fetchInsight(selectedKabupatenKota)}
-                    />
-                    <ActiveAlerts 
-                        data={kabupatenKotaAlerts} onAnalyze={handleAnalyzeClick} 
-                        onCreatePlan={() => handleOpenInterventionModal(undefined, true)} 
-                    />
-                </div>
-            ) : regionData ? (
-                // --- PROVINCE VIEW (Original) ---
+            {regionData ? (
                 <div className="space-y-6">
                     <RegionSummary data={regionData} alertsCount={regionalAlerts.length} />
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <div className="bg-white p-6 rounded-lg shadow-sm">
                            <RegionalProfileRadarChart 
                                 regionName={regionData.name}
-                                regionalProfile={provinceProfile}
+                                regionalProfile={regionalProfile}
                                 nationalProfile={nationalProfile}
                            />
                         </div>
@@ -302,9 +172,6 @@ const DataPerWilayah: React.FC<DataPerWilayahProps> = ({ handleOpenInterventionM
                             />
                         </div>
                     </div>
-                    {kabupatenKotaData.length > 0 && (
-                        <KabupatenKotaList data={kabupatenKotaData} onSelectKabupatenKota={handleSelectKabupatenKota} />
-                    )}
                     <DomainBreakdown domains={regionData.domains} />
                     <RegionalAnalysisInsight
                         isLoading={isInsightLoading} insight={insight} error={insightError}
@@ -321,7 +188,6 @@ const DataPerWilayah: React.FC<DataPerWilayahProps> = ({ handleOpenInterventionM
                 </div>
             )}
             
-            {/* This modal serves both views */}
             {selectedAlert && (
                  <RecommendationModal 
                     isOpen={isModalOpen} 

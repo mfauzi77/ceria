@@ -1,6 +1,3 @@
-
-
-
 import React, { useState, useEffect } from 'react';
 import { getSmartRecommendations } from '../../services/geminiService';
 import { ActiveAlertData, SmartRecommendationResponse } from '../../types';

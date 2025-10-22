@@ -121,6 +121,21 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                     </div>
                 </SectionCard>
 
+                <SectionCard icon={<CpuChipIcon className="w-8 h-8" />} title="Di Balik Layar: Otak Cerdas CERIA">
+                    <p>
+                        Sistem ini tidak hanya memberikan peringatan, tapi juga memberikan analisis dan rekomendasi intervensi yang tepat berbasis bukti. Untuk melakukan ini, kami menggunakan pendekatan <strong>ensemble learning</strong>, di mana tiga model utama bekerja bersama untuk menghasilkan prediksi yang akurat dan adaptif.
+                    </p>
+                    <ul className="mt-4 space-y-2">
+                        <li><strong>Random Forest:</strong> Model ini bertugas untuk menyisir data dan menemukan variabel-variabel paling penting yang mempengaruhi risiko anak, seperti akses sanitasi atau tingkat partisipasi PAUD.</li>
+                        <li><strong>Gradient Boosting:</strong> Bekerja untuk memperkuat akurasi prediksi dengan terus-menerus belajar dari kesalahan prediksi sebelumnya, memastikan skor risiko yang dihasilkan semakin presisi.</li>
+                        <li><strong>Neural Network:</strong> Digunakan untuk mengenali pola-pola non-linear yang kompleks dan tersembunyi di dalam data yang mungkin tidak terlihat oleh model lain.</li>
+                    </ul>
+                    <p className="mt-4">
+                        Gabungan ketiga model ini membuat sistem CERIA bisa memprediksi dengan tingkat akurasi tinggi dan tetap adaptif pada pola baru. Hasilnya kemudian disintesis oleh <strong>Generative AI (Google Gemini)</strong> untuk memberikan justifikasi naratif dan rekomendasi yang kontekstual. Karena anak-anak tak bisa menunggu.
+                    </p>
+                </SectionCard>
+
+
                 <SectionCard icon={<CircleStackIcon className="w-8 h-8" />} title="📊 Sumber Data & Proses Kami">
                     <p>
                         CERIA mengintegrasikan data dari berbagai sumber resmi untuk menciptakan pandangan holistik. Proses kami memastikan data diolah secara aman dan akurat untuk menghasilkan insight yang dapat diandalkan.

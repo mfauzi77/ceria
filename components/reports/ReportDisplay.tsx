@@ -1,5 +1,3 @@
-
-
 import React from 'react';
 // Fix: Import `Domain`, `DomainData`, and `DomainMetrics` to resolve type inference issues in the component.
 import { DomainComparisonData, MonthlySummaryData, RegionPerformance, ReportData, RegionDetailData, Domain, DomainData, DomainMetrics } from '../../types';

@@ -126,8 +126,13 @@ const Forecasting: React.FC<ForecastingProps> = ({ handleOpenInterventionModal }
     };
     
     useEffect(() => {
+        if (processedForecastData.length === 0) {
+            setIsInsightLoading(false);
+            setInsight("Data historis tidak cukup untuk menghasilkan prediksi atau insight.");
+            return;
+        }
         fetchInsight();
-    }, [activeDomain, activeHorizon, processedForecastData]); // Add processedForecastData dependency
+    }, [activeDomain, activeHorizon, processedForecastData]);
 
     const handleRefresh = () => {
         fetchInsight();
@@ -178,24 +183,24 @@ const Forecasting: React.FC<ForecastingProps> = ({ handleOpenInterventionModal }
             </div>
             
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2 bg-white p-4 sm:p-6 rounded-lg shadow-sm">
-                    <PredictionChart data={dynamicChartData} domain={activeDomain} horizon={activeHorizon} />
+                <div className="lg:col-span-2 space-y-6">
+                    <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm">
+                        <PredictionChart data={dynamicChartData} domain={activeDomain} horizon={activeHorizon} />
+                    </div>
+                    <ForecastingInsight 
+                        isLoading={isInsightLoading}
+                        insight={insight}
+                        error={insightError}
+                        onRegenerate={fetchInsight}
+                    />
                 </div>
                 <div className="lg:col-span-1 space-y-6">
                     <PredictionSummary data={processedForecastData} />
                     <TopMovers data={processedForecastData} />
                 </div>
-            </div>
-
-            <ForecastingInsight 
-                isLoading={isInsightLoading}
-                insight={insight}
-                error={insightError}
-                onRegenerate={fetchInsight}
-            />
-
-            <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm">
-                <RegionalRiskTable data={processedForecastData} onCreatePlan={handleCreatePlanFromForecast} />
+                <div className="lg:col-span-3 bg-white p-4 sm:p-6 rounded-lg shadow-sm">
+                    <RegionalRiskTable data={processedForecastData} onCreatePlan={handleCreatePlanFromForecast} />
+                </div>
             </div>
         </div>
     );

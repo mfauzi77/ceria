@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavItem, View, ResourceType } from './types';
-import { DashboardIcon, UsersIcon, ChartBarIcon, MapIcon, BellAlertIcon, LightBulbIcon, CircleStackIcon, BeakerIcon, BriefcaseIcon, DocumentChartBarIcon, FlagIcon, GlobeAltIcon, ScaleIcon, CubeIcon, WrenchScrewdriverIcon, HomeIcon, SunIcon, UserCircleIcon, DocumentPlusIcon, AcademicCapIcon, SparklesIcon, ExclamationTriangleIcon } from './components/icons/Icons';
+import { DashboardIcon, UsersIcon, ChartBarIcon, MapIcon, BellAlertIcon, LightBulbIcon, CircleStackIcon, BeakerIcon, BriefcaseIcon, DocumentChartBarIcon, FlagIcon, GlobeAltIcon, ScaleIcon, CubeIcon, WrenchScrewdriverIcon, HomeIcon, SunIcon, UserCircleIcon, DocumentPlusIcon, AcademicCapIcon, SparklesIcon, ExclamationTriangleIcon, DocumentArrowDownIcon } from './components/icons/Icons';
 
 export const NAVIGATION_ITEMS: NavItem[] = [
     { id: View.LandingPage, label: 'Landing Page', icon: <HomeIcon /> },
@@ -9,9 +9,9 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     { id: View.DataPerWilayah, label: 'Data per Wilayah', icon: <MapIcon /> },
     { id: View.EWSPerBidang, label: 'Analisis per Bidang', icon: <BellAlertIcon /> },
     // { id: View.AiAgentSelection, label: 'Asisten AI CERIA', icon: <SparklesIcon /> },
-    { id: View.Intervensi, label: 'Manajemen Intervensi', icon: <BeakerIcon /> },
-    { id: View.Data, label: 'Data PAUD', icon: <CircleStackIcon /> },
-    { id: View.DataProcessing, label: 'Manajemen Integrasi', icon: <WrenchScrewdriverIcon /> },
+    // { id: View.Intervensi, label: 'Manajemen Intervensi', icon: <BeakerIcon /> },
+    { id: View.UploadData, label: 'Upload Data', icon: <DocumentArrowDownIcon /> },
+    // { id: View.DataProcessing, label: 'Manajemen Integrasi', icon: <WrenchScrewdriverIcon /> },
 ];
 
 export const SUB_NAVIGATION_ITEMS: NavItem[] = [

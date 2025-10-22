@@ -2,7 +2,7 @@ import {
     RiskAssessmentData, KeyIndicatorData, ActiveAlertData, ForecastDataPoint, 
     RegionalForecastData, RegionDetailData, DomainData, DataSource, LogEntry, 
     InterventionPlan, RegionalRiskScore, DomainFilter, ResourceData, ParentData, 
-    KabupatenKotaDetailData, AlertLevel, Domain, DomainMetrics, DomainMetric, DomainIndicatorData 
+    KabupatenKotaDetailData, AlertLevel, Domain, DomainMetrics, DomainMetric, DomainIndicatorData
 } from '../types';
 
 // --- UTILITY FUNCTIONS ---
@@ -12,6 +12,13 @@ const parseValue = (val: string | undefined): number | null => {
   }
   return parseFloat(val.replace(',', '.'));
 };
+
+const parsePopulation = (val: string | undefined): number => {
+    if (!val) return 0;
+    // Removes ~, dots, and then parses as integer.
+    return parseInt(val.replace(/[~.]/g, ''), 10) || 0;
+};
+
 
 const generateId = (name: string): string => {
     return name.toLowerCase().replace(/ /g, '-').replace(/\./g, '');
@@ -27,45 +34,86 @@ const generateHistoricalData = (baseScore: number, length: number = 6): { month:
 
 // --- RAW DATA FROM USER CSVs ---
 
-const bencanaRawData = {
-    "Aceh": { BANJIR: 47, "CUACA EKSTREM": 14, "KEBAKARAN HUTAN DAN LAHAN": 35, KEKERINGAN: 1, "TANAH LONGSOR": 2 },
-    "Sumatera Utara": { BANJIR: 120, "CUACA EKSTREM": 43, "KEBAKARAN HUTAN DAN LAHAN": 170, KEKERINGAN: 2, "TANAH LONGSOR": 15 },
-    "Sumatera Barat": { BANJIR: 64, "CUACA EKSTREM": 10, "ERUPSI GUNUNG API": 3, "GELOMBANG PASANG DAN ABRASI": 3, "KEBAKARAN HUTAN DAN LAHAN": 7, KEKERINGAN: 1, "TANAH LONGSOR": 10 },
-    "Riau": { BANJIR: 53, "CUACA EKSTREM": 2, "GELOMBANG PASANG DAN ABRASI": 2, "KEBAKARAN HUTAN DAN LAHAN": 10, "TANAH LONGSOR": 1 },
-    "Jambi": { BANJIR: 44, "CUACA EKSTREM": 7, "KEBAKARAN HUTAN DAN LAHAN": 79, "TANAH LONGSOR": 2 },
-    "Sumatera Selatan": { BANJIR: 69, "CUACA EKSTREM": 9, "KEBAKARAN HUTAN DAN LAHAN": 192, "TANAH LONGSOR": 1 },
-    "Bengkulu": { BANJIR: 9, "CUACA EKSTREM": 3, GEMPABUMI: 1, "KEBAKARAN HUTAN DAN LAHAN": 1, KEKERINGAN: 1, "TANAH LONGSOR": 4 },
-    "Lampung": { BANJIR: 28, "CUACA EKSTREM": 24, "KEBAKARAN HUTAN DAN LAHAN": 7, KEKERINGAN: 1 },
-    "Kep. Bangka Belitung": { BANJIR: 2, "CUACA EKSTREM": 3, "KEBAKARAN HUTAN DAN LAHAN": 19 },
-    "Kepulauan Riau": { BANJIR: 4, "CUACA EKSTREM": 16, "KEBAKARAN HUTAN DAN LAHAN": 58, "TANAH LONGSOR": 1 },
-    "DKI Jakarta": { BANJIR: 17, "CUACA EKSTREM": 5, "TANAH LONGSOR": 1 },
-    "Jawa Barat": { BANJIR: 140, "CUACA EKSTREM": 193, "GELOMBANG PASANG DAN ABRASI": 1, GEMPABUMI: 5, "KEBAKARAN HUTAN DAN LAHAN": 16, KEKERINGAN: 25, "TANAH LONGSOR": 77 },
-    "Jawa Tengah": { BANJIR: 78, "CUACA EKSTREM": 71, GEMPABUMI: 3, "KEBAKARAN HUTAN DAN LAHAN": 38, KEKERINGAN: 22, "TANAH LONGSOR": 19 },
-    "DI Yogyakarta": { "CUACA EKSTREM": 38, GEMPABUMI: 1, "KEBAKARAN HUTAN DAN LAHAN": 15, KEKERINGAN: 3, "TANAH LONGSOR": 5 },
-    "Jawa Timur": { BANJIR: 121, "CUACA EKSTREM": 141, "GELOMBANG PASANG DAN ABRASI": 2, GEMPABUMI: 2, "KEBAKARAN HUTAN DAN LAHAN": 145, KEKERINGAN: 11, "TANAH LONGSOR": 14 },
-    "Banten": { BANJIR: 66, "CUACA EKSTREM": 17, "GELOMBANG PASANG DAN ABRASI": 1, GEMPABUMI: 1, "KEBAKARAN HUTAN DAN LAHAN": 4, KEKERINGAN: 2, "TANAH LONGSOR": 7 },
-    "Bali": { BANJIR: 2, "CUACA EKSTREM": 17, GEMPABUMI: 1, "KEBAKARAN HUTAN DAN LAHAN": 11, "TANAH LONGSOR": 4 },
-    "Nusa Tenggara Barat": { BANJIR: 44, "CUACA EKSTREM": 17, "GELOMBANG PASANG DAN ABRASI": 2, GEMPABUMI: 1, "KEBAKARAN HUTAN DAN LAHAN": 3, KEKERINGAN: 9, "TANAH LONGSOR": 1 },
-    "Nusa Tenggara Timur": { BANJIR: 13, "CUACA EKSTREM": 13, "ERUPSI GUNUNG API": 3, "GELOMBANG PASANG DAN ABRASI": 4, "KEBAKARAN HUTAN DAN LAHAN": 14, KEKERINGAN: 1, "TANAH LONGSOR": 5 },
-    "Kalimantan Barat": { BANJIR: 56, "CUACA EKSTREM": 3, "KEBAKARAN HUTAN DAN LAHAN": 10 },
-    "Kalimantan Tengah": { BANJIR: 39, "KEBAKARAN HUTAN DAN LAHAN": 17 },
-    "Kalimantan Selatan": { BANJIR: 15, "CUACA EKSTREM": 4, "KEBAKARAN HUTAN DAN LAHAN": 6, "TANAH LONGSOR": 1 },
-    "Kalimantan Timur": { BANJIR: 29, "CUACA EKSTREM": 4, "GELOMBANG PASANG DAN ABRASI": 1, "KEBAKARAN HUTAN DAN LAHAN": 107, "TANAH LONGSOR": 3 },
-    "Kalimantan Utara": { BANJIR: 5, "KEBAKARAN HUTAN DAN LAHAN": 3, "TANAH LONGSOR": 2 },
-    "Sulawesi Utara": { BANJIR: 17, "CUACA EKSTREM": 3, "ERUPSI GUNUNG API": 1, "GELOMBANG PASANG DAN ABRASI": 1, "TANAH LONGSOR": 1 },
-    "Sulawesi Tengah": { BANJIR: 85, "CUACA EKSTREM": 4, GEMPABUMI: 2, "KEBAKARAN HUTAN DAN LAHAN": 2, "TANAH LONGSOR": 1 },
-    "Sulawesi Selatan": { BANJIR: 91, "CUACA EKSTREM": 45, "GELOMBANG PASANG DAN ABRASI": 2, "KEBAKARAN HUTAN DAN LAHAN": 3, KEKERINGAN: 10, "TANAH LONGSOR": 14 },
-    "Sulawesi Tenggara": { BANJIR: 17, "CUACA EKSTREM": 3 },
-    "Gorontalo": { BANJIR: 31, "CUACA EKSTREM": 1, KEKERINGAN: 1, "TANAH LONGSOR": 2 },
-    "Sulawesi Barat": { BANJIR: 15, "CUACA EKSTREM": 4, "TANAH LONGSOR": 3 },
-    "Maluku": { BANJIR: 18, "CUACA EKSTREM": 11, "GELOMBANG PASANG DAN ABRASI": 3, GEMPABUMI: 1, "TANAH LONGSOR": 3 },
-    "Maluku Utara": { BANJIR: 40, "CUACA EKSTREM": 6, "ERUPSI GUNUNG API": 1, "GELOMBANG PASANG DAN ABRASI": 3, GEMPABUMI: 1, "TANAH LONGSOR": 4 },
-    "Papua": { BANJIR: 15, "CUACA EKSTREM": 2, "GELOMBANG PASANG DAN ABRASI": 2 },
-    "Papua Barat": { BANJIR: 15, "GELOMBANG PASANG DAN ABRASI": 2, "TANAH LONGSOR": 1 },
-    "Papua Selatan": { BANJIR: 2, "GELOMBANG PASANG DAN ABRASI": 1 },
-    "Papua Tengah": { BANJIR: 5 },
-    "Papua Pegunungan": { "TANAH LONGSOR": 3 },
-    "Papua Barat Daya": { BANJIR: 4 },
+const kesehatanLingkunganRawData = {
+    "Aceh": { sanitasi: 79.41, keluhan: 36.02, kesakitan: 20.34 },
+    "Sumatera Utara": { sanitasi: 84.54, keluhan: 34.23, kesakitan: 19.37 },
+    "Sumatera Barat": { sanitasi: 71.11, keluhan: 39.55, kesakitan: 22.80 },
+    "Riau": { sanitasi: 85.07, keluhan: 30.32, kesakitan: 19.78 },
+    "Jambi": { sanitasi: 83.40, keluhan: 32.43, kesakitan: 18.99 },
+    "Sumatera Selatan": { sanitasi: 82.87, keluhan: 39.51, kesakitan: 20.75 },
+    "Bengkulu": { sanitasi: 82.37, keluhan: 38.69, kesakitan: 20.12 },
+    "Lampung": { sanitasi: 86.04, keluhan: 44.91, kesakitan: 19.70 },
+    "Kep. Bangka Belitung": { sanitasi: 95.56, keluhan: 42.85, kesakitan: 20.12 },
+    "Kepulauan Riau": { sanitasi: 92.33, keluhan: 41.02, kesakitan: 18.53 },
+    "DKI Jakarta": { sanitasi: 93.91, keluhan: 38.38, kesakitan: 20.83 },
+    "Jawa Barat": { sanitasi: 74.51, keluhan: 40.60, kesakitan: 19.83 },
+    "Jawa Tengah": { sanitasi: 85.67, keluhan: 46.75, kesakitan: 20.23 },
+    "DI Yogyakarta": { sanitasi: 97.51, keluhan: 45.13, kesakitan: 20.34 },
+    "Jawa Timur": { sanitasi: 86.63, keluhan: 42.12, kesakitan: 18.63 },
+    "Banten": { sanitasi: 85.49, keluhan: 39.71, kesakitan: 21.83 },
+    "Bali": { sanitasi: 97.72, keluhan: 32.37, kesakitan: 17.14 },
+    "Nusa Tenggara Barat": { sanitasi: 88.22, keluhan: 47.44, kesakitan: 20.75 },
+    "Nusa Tenggara Timur": { sanitasi: 76.06, keluhan: 38.71, kesakitan: 17.02 },
+    "Kalimantan Barat": { sanitasi: 82.37, keluhan: 33.63, kesakitan: 19.29 },
+    "Kalimantan Tengah": { sanitasi: 78.70, keluhan: 27.96, kesakitan: 16.19 },
+    "Kalimantan Selatan": { sanitasi: 83.17, keluhan: 39.58, kesakitan: 19.36 },
+    "Kalimantan Timur": { sanitasi: 91.53, keluhan: 28.18, kesakitan: 16.17 },
+    "Kalimantan Utara": { sanitasi: 83.37, keluhan: 30.83, kesakitan: 17.62 },
+    "Sulawesi Utara": { sanitasi: 87.00, keluhan: 30.17, kesakitan: 16.22 },
+    "Sulawesi Tengah": { sanitasi: 75.99, keluhan: 28.94, kesakitan: 16.71 },
+    "Sulawesi Selatan": { sanitasi: 94.12, keluhan: 38.16, kesakitan: 18.88 },
+    "Sulawesi Tenggara": { sanitasi: 90.61, keluhan: 36.20, kesakitan: 17.45 },
+    "Gorontalo": { sanitasi: 83.41, keluhan: 39.00, kesakitan: 18.73 },
+    "Sulawesi Barat": { sanitasi: 81.90, keluhan: 40.69, kesakitan: 16.02 },
+    "Maluku": { sanitasi: 79.24, keluhan: 31.72, kesakitan: 16.63 },
+    "Maluku Utara": { sanitasi: 81.54, keluhan: 23.88, kesakitan: 12.42 },
+    "Papua Barat": { sanitasi: 75.63, keluhan: 18.53, kesakitan: 13.40 },
+    "Papua Barat Daya": { sanitasi: 75.53, keluhan: 22.15, kesakitan: 16.98 },
+    "Papua": { sanitasi: 80.69, keluhan: 19.42, kesakitan: 14.65 },
+    "Papua Selatan": { sanitasi: 56.59, keluhan: 16.15, kesakitan: 11.24 },
+    "Papua Tengah": { sanitasi: 58.78, keluhan: 13.88, kesakitan: 3.83 },
+    "Papua Pegunungan": { sanitasi: 14.39, keluhan: 5.19, kesakitan: 2.76 },
+};
+
+const perkawinanAnakRawData = {
+    "Aceh": 2.62,
+    "Sumatera Utara": 1.81,
+    "Sumatera Barat": 3.49,
+    "Riau": 4.13,
+    "Jambi": 7.8,
+    "Sumatera Selatan": 8.45,
+    "Bengkulu": 6.3,
+    "Lampung": 4.87,
+    "Kep. Bangka Belitung": 8.05,
+    "Kepulauan Riau": 2.89,
+    "DKI Jakarta": 1.68,
+    "Jawa Barat": 5.78,
+    "Jawa Tengah": 6.13,
+    "DI Yogyakarta": 0.64,
+    "Jawa Timur": 7.78,
+    "Banten": 3.73,
+    "Bali": 3.37,
+    "Nusa Tenggara Barat": 14.96,
+    "Nusa Tenggara Timur": 4.7,
+    "Kalimantan Barat": 10.05,
+    "Kalimantan Tengah": 9.89,
+    "Kalimantan Selatan": 7.8,
+    "Kalimantan Timur": 4.29,
+    "Kalimantan Utara": 6.94,
+    "Sulawesi Utara": 8.96,
+    "Sulawesi Tengah": 9.06,
+    "Sulawesi Selatan": 8.09,
+    "Sulawesi Tenggara": 9.4,
+    "Gorontalo": 7.34,
+    "Sulawesi Barat": 10.71,
+    "Maluku": 4.82,
+    "Maluku Utara": 6.88,
+    "Papua Barat": 4.9,
+    "Papua Barat Daya": 3.4,
+    "Papua": 2.7,
+    "Papua Selatan": 14.4,
+    "Papua Tengah": 9.05,
+    "Papua Pegunungan": 6.6,
 };
 
 const kasusPerlindunganAnakRawData = {
@@ -364,46 +412,47 @@ const sanitasiData = {
     "Papua Pegunungan": { air: "32,62", sanitasi: "14,39", cuci: "3,66" }
 };
 
-const populationData = {
-    "Papua Selatan": 4555551,
-    "Nusa Tenggara Timur": 4063059,
-    "Papua Barat": 3891888,
-    "Sulawesi Tenggara": 3858855,
-    "Kepulauan Riau": 3849846,
-    "Sulawesi Barat": 3828825,
-    "Papua Barat Daya": 3777774,
-    "Nusa Tenggara Barat": 3774771,
-    "Aceh": 3774771,
-    "Maluku": 3717714,
-    "Sumatera Barat": 3672669,
-    "Riau": 3657654,
-    "Sumatera Utara": 3630627,
-    "Maluku Utara": 3606603,
-    "Sulawesi Tengah": 3588585,
-    "Sumatera Selatan": 3561558,
-    "Kalimantan Utara": 3465462,
-    "Jambi": 3456453,
-    "Kalimantan Barat": 3414411,
-    "Banten": 3399396,
-    "Kalimantan Selatan": 3381378,
-    "Bengkulu": 3363366,
-    "Kep. Bangka Belitung": 3321318,
-    "Kalimantan Tengah": 3303300,
-    "Lampung": 3300297,
-    "Kalimantan Timur": 3291288,
-    "Papua": 3276273,
-    "Jawa Barat": 3219216,
-    "Sulawesi Selatan": 3216213,
-    "Gorontalo": 3183180,
-    "DKI Jakarta": 3180177,
-    "Sulawesi Utara": 3039036,
-    "Jawa Tengah": 2900898,
-    "Jawa Timur": 2840838,
-    "Bali": 2831829,
-    "DI Yogyakarta": 2828826,
-    "Papua Tengah": 2468466,
-    "Papua Pegunungan": 2120118
+const anakUsiaDiniPopulationRawData = {
+    "Papua Selatan": "42.621.811",
+    "Nusa Tenggara Timur": "38.014.048",
+    "Papua Barat": "36.412.569",
+    "Sulawesi Tenggara": "36.103.512",
+    "Kepulauan Riau": "36.019.224",
+    "Sulawesi Barat": "35.822.551",
+    "Papua Barat Daya": "35.344.917",
+    "Nusa Tenggara Barat": "35.316.821",
+    "Aceh": "35.316.821",
+    "Maluku": "34.782.994",
+    "Sumatera Barat": "34.361.738",
+    "Riau": "34.221.178",
+    "Sumatera Utara": "33.970.699",
+    "Maluku Utara": "33.745.836",
+    "Sulawesi Tengah": "33.577.418",
+    "Sumatera Selatan": "33.326.939",
+    "Kalimantan Utara": "32.524.953",
+    "Jambi": "32.440.665",
+    "Kalimantan Barat": "32.049.504",
+    "Banten": "31.908.943",
+    "Kalimantan Selatan": "31.740.525",
+    "Bengkulu": "31.572.108",
+    "Kep. Bangka Belitung": "31.180.947",
+    "Kalimantan Tengah": "30.984.274",
+    "Lampung": "30.984.274",
+    "Kalimantan Timur": "30.899.986",
+    "Papua": "30.759.425",
+    "Jawa Barat": "30.119.809",
+    "Sulawesi Selatan": "30.091.713",
+    "Gorontalo": "29.782.656",
+    "DKI Jakarta": "29.754.560",
+    "Sulawesi Utara": "28.471.018",
+    "Jawa Tengah": "27.186.347",
+    "Jawa Timur": "26.626.712",
+    "Bali": "26.542.424",
+    "DI Yogyakarta": "26.514.328",
+    "Papua Tengah": "23.139.630",
+    "Papua Pegunungan": "19.876.653",
 };
+
 
 const paudParticipationRawData = {
     "Aceh": { "partisipasi_0_6": "26,60", "partisipasi_pra_sd": "96,89" },
@@ -446,10 +495,10 @@ const paudParticipationRawData = {
     "Papua Pegunungan": { "partisipasi_0_6": "2,62", "partisipasi_pra_sd": "39,54" }
 };
 
-
 const allProvinceNames = new Set([
     ...Object.keys(aktaData),
-    ...Object.keys(bencanaRawData)
+    ...Object.keys(kesehatanLingkunganRawData),
+    ...Object.keys(perkawinanAnakRawData)
 ]);
 const provinces = Array.from(allProvinceNames);
 
@@ -476,34 +525,14 @@ paudTeacherQualificationRawData.forEach(d => {
 provinces.forEach(provName => {
     const id = generateId(provName);
     
-    // Derive child population from existing PAUD data
-    const accreditationData = paudAccreditationMap.get(provName);
-    const teacherData = paudTeacherQualificationMap.get(provName);
-    const participationData = paudParticipationRawData[provName as keyof typeof paudParticipationRawData];
-
-    let childPopulation = 0; // Default to 0 if data is incomplete
-
-    if (accreditationData && teacherData && participationData) {
-        try {
-            const numTeachers = teacherData.jumlah;
-            const ratioString = accreditationData.rasio; // e.g., "1:12"
-            const ratio = parseInt(ratioString.split(':')[1], 10);
-            const participationString = participationData.partisipasi_0_6; // e.g., "26,60"
-            const participation = parseFloat(participationString.replace(',', '.'));
-
-            if (numTeachers && !isNaN(ratio) && !isNaN(participation) && participation > 0) {
-                const studentsInPaud = numTeachers * ratio;
-                childPopulation = Math.round(studentsInPaud / (participation / 100));
-            }
-        } catch (e) {
-            console.warn(`Could not derive child population for ${provName}`, e);
-            childPopulation = 0;
-        }
-    }
-
     // Helper to create metrics and calculate domain risk
     const createDomainMetrics = (metrics: (DomainMetric | null)[]): DomainMetrics => {
         const validMetrics = metrics.filter((m): m is DomainMetric => m !== null);
+        
+        if (validMetrics.length === 0) {
+            return { riskScore: 0, metrics: [] };
+        }
+
         let totalRisk = 0;
         // Only calculate risk based on main indicators, not sub-components
         const riskContributingMetrics = validMetrics.filter(m => !m.label.trim().startsWith('-'));
@@ -519,11 +548,19 @@ provinces.forEach(provName => {
             }
             totalRisk += risk;
         });
-        const riskScore = riskContributingMetrics.length > 0 ? parseFloat((totalRisk / riskContributingMetrics.length).toFixed(1)) : 50;
+        const riskScore = riskContributingMetrics.length > 0 ? parseFloat((totalRisk / riskContributingMetrics.length).toFixed(1)) : 0;
         return { riskScore, metrics: validMetrics };
     };
     
     // --- Parse real data ---
+    let lookupKey = provName;
+    if (provName === 'Kep. Riau') lookupKey = 'Kepulauan Riau';
+    if (provName === 'Kep. Bangka Belitung') lookupKey = 'Kepulauan Bangka Belitung';
+
+    const newHealthData = kesehatanLingkunganRawData[lookupKey as keyof typeof kesehatanLingkunganRawData];
+    const vKeluhan = newHealthData ? newHealthData.keluhan : null;
+    const vKesakitan = newHealthData ? newHealthData.kesakitan : null;
+    
     const provNutrition = nutritionData[provName as keyof typeof nutritionData];
     
     // Calculate totals from components
@@ -544,6 +581,7 @@ provinces.forEach(provName => {
     const vPersalinan = provAnc ? provAnc.persalinan : null;
 
     const vAkta = parseValue(aktaData[provName as keyof typeof aktaData]);
+    const vPerkawinanAnak = perkawinanAnakRawData[provName as keyof typeof perkawinanAnakRawData] ?? null;
     
     let provKasusName = provName;
     if (provName === 'Kepulauan Riau') provKasusName = 'Kep. Riau';
@@ -552,32 +590,26 @@ provinces.forEach(provName => {
     const vIdl = parseValue(idlData[provName as keyof typeof idlData]);
     const vKemiskinan = parseValue(kemiskinanData[provName as keyof typeof kemiskinanData]);
     const vPkh = parseValue(pkhData[provName as keyof typeof pkhData]);
+    
     const sanData = sanitasiData[provName as keyof typeof sanitasiData];
     const vAir = parseValue(sanData?.air);
-    const vSanitasi = parseValue(sanData?.sanitasi);
+    let vSanitasi = newHealthData?.sanitasi ?? parseValue(sanData?.sanitasi);
     const vCuci = parseValue(sanData?.cuci);
+
     const paudProvData = paudParticipationRawData[provName as keyof typeof paudParticipationRawData];
     const vPaud06 = parseValue(paudProvData?.partisipasi_0_6);
     const vPaudPraSD = parseValue(paudProvData?.partisipasi_pra_sd);
-
-    // FIX: Add explicit type to provBencanaData to prevent property access error on empty object.
-    const provBencanaData: { [key: string]: number } = bencanaRawData[provName as keyof typeof bencanaRawData] || {};
-    const totalBencana = Object.values(provBencanaData).reduce((sum, count) => sum + count, 0);
-    const vBanjir = provBencanaData.BANJIR || 0;
-    const vCuacaEkstrem = provBencanaData["CUACA EKSTREM"] || 0;
-    const vTanahLongsor = provBencanaData["TANAH LONGSOR"] || 0;
-
-    // --- Mock missing data with plausible values ---
-    const mockImunisasi = 70 + Math.random() * 25;
-
-    // --- Create domain structures ---
+    
+    // --- Create domain structures (without mock data) ---
     const kesehatan = createDomainMetrics([
-        { label: 'Cakupan Imunisasi Dasar', value: parseFloat(mockImunisasi.toFixed(1)), unit: '%', nationalAverage: 85, higherIsBetter: true },
         vStunting !== null ? { label: 'Prevalensi Stunting (TB/U)', value: vStunting, unit: '%', nationalAverage: 21.8, higherIsBetter: false } : null,
         vSeverelyStunted !== null ? { label: '   - Sangat Pendek', value: vSeverelyStunted, unit: '%', nationalAverage: 7.0, higherIsBetter: false } : null,
         vStunted !== null ? { label: '   - Pendek', value: vStunted, unit: '%', nationalAverage: 14.8, higherIsBetter: false } : null,
+        vIdl !== null ? { label: 'Cakupan Imunisasi Dasar (IDL)', value: vIdl, unit: '%', nationalAverage: 63.7, higherIsBetter: true } : null,
         vAnc !== null ? { label: 'Kunjungan ANC K4', value: vAnc, unit: '%', nationalAverage: 93.5, higherIsBetter: true } : null,
-        vPersalinan !== null ? { label: 'Persalinan oleh Nakes', value: vPersalinan, unit: '%', nationalAverage: 90.3, higherIsBetter: true } : null
+        vPersalinan !== null ? { label: 'Persalinan oleh Nakes', value: vPersalinan, unit: '%', nationalAverage: 90.3, higherIsBetter: true } : null,
+        vKeluhan !== null ? { label: 'Tingkat Keluhan Kesehatan', value: vKeluhan, unit: '%', nationalAverage: 38.71, higherIsBetter: false } : null,
+        vKesakitan !== null ? { label: 'Angka Kesakitan', value: vKesakitan, unit: '%', nationalAverage: 20.20, higherIsBetter: false } : null
     ]);
     const gizi = createDomainMetrics([
         vWasting !== null ? { label: 'Gizi Buruk (Wasting, BB/TB)', value: vWasting, unit: '%', nationalAverage: 7.7, higherIsBetter: false } : null,
@@ -588,15 +620,13 @@ provinces.forEach(provName => {
         vUnderweightComponent !== null ? { label: '   - Berat Badan Kurang', value: vUnderweightComponent, unit: '%', nationalAverage: 12.7, higherIsBetter: false } : null,
     ]);
     const pendidikan = createDomainMetrics([
-        vIdl !== null ? { label: 'Indeks Literasi Dini (IDL)', value: vIdl, unit: '%', nationalAverage: 65, higherIsBetter: true } : null,
         vPaud06 !== null ? { label: 'Partisipasi PAUD (0–6 th)', value: vPaud06, unit: '%', nationalAverage: 27.3, higherIsBetter: true } : null,
         vPaudPraSD !== null ? { label: 'Partisipasi 1 Th Sebelum SD', value: vPaudPraSD, unit: '%', nationalAverage: 95.2, higherIsBetter: true } : null
     ]);
-    const pengasuhan = createDomainMetrics([
-        { label: 'Pengetahuan Pola Asuh', value: parseFloat((60 + Math.random() * 20).toFixed(1)), unit: '%', nationalAverage: 75, higherIsBetter: true }
-    ]);
+    const pengasuhan = createDomainMetrics([]);
     const perlindungan = createDomainMetrics([
         vAkta !== null ? { label: 'Kepemilikan Akta Lahir', value: vAkta, unit: '%', nationalAverage: 88, higherIsBetter: true } : null,
+        vPerkawinanAnak !== null ? { label: 'Perkawinan Usia Anak (<18 th)', value: vPerkawinanAnak, unit: '%', nationalAverage: 5.9, higherIsBetter: false } : null,
         { label: 'Jumlah Kasus Kekerasan Anak', value: vKasus, unit: 'kasus', nationalAverage: 1000, higherIsBetter: false, maxValueForRisk: 5000 }
     ]);
     const kesejahteraan = createDomainMetrics([
@@ -605,15 +635,10 @@ provinces.forEach(provName => {
     ]);
     const lingkungan = createDomainMetrics([
         vAir !== null ? { label: 'Akses Air Minum Layak', value: vAir, unit: '%', nationalAverage: 91, higherIsBetter: true } : null,
-        vSanitasi !== null ? { label: 'Akses Sanitasi Layak', value: vSanitasi, unit: '%', nationalAverage: 85, higherIsBetter: true } : null,
+        vSanitasi !== null ? { label: 'Akses Sanitasi Layak', value: vSanitasi, unit: '%', nationalAverage: 83.22, higherIsBetter: true } : null,
         vCuci !== null ? { label: 'Fasilitas Cuci Tangan', value: vCuci, unit: '%', nationalAverage: 78, higherIsBetter: true } : null
     ]);
-    const bencana = createDomainMetrics([
-        { label: 'Total Kejadian Bencana', value: totalBencana, unit: 'kejadian', nationalAverage: 100, higherIsBetter: false, maxValueForRisk: 500 },
-        { label: 'Banjir', value: vBanjir, unit: 'kejadian', nationalAverage: 40, higherIsBetter: false },
-        { label: 'Cuaca Ekstrem', value: vCuacaEkstrem, unit: 'kejadian', nationalAverage: 20, higherIsBetter: false },
-        { label: 'Tanah Longsor', value: vTanahLongsor, unit: 'kejadian', nationalAverage: 10, higherIsBetter: false },
-    ]);
+    const bencana = createDomainMetrics([]);
 
 
     const domains = { Kesehatan: kesehatan, Gizi: gizi, Pendidikan: pendidikan, Pengasuhan: pengasuhan, Perlindungan: perlindungan, Kesejahteraan: kesejahteraan, Lingkungan: lingkungan, Bencana: bencana };
@@ -625,11 +650,10 @@ provinces.forEach(provName => {
         id,
         name: provName,
         overallRisk,
-        population: childPopulation,
+        population: parsePopulation(anakUsiaDiniPopulationRawData[provName as keyof typeof anakUsiaDiniPopulationRawData]),
         activeAlertsCount: 0, // will be calculated later
         domains,
         historicalRisk: generateHistoricalData(overallRisk),
-        kabupatenKotaIds: id === 'jawa-barat' ? ['kota-bandung', 'kab-bogor'] : (id === 'papua' ? ['kab-jayapura'] : [])
     };
 });
 
@@ -774,27 +798,7 @@ paudTeacherQualificationRawData.forEach(teacherData => {
 
 
 // --- DERIVED & OTHER MOCK DATA ---
-export const kabupatenKotaDetails: Record<string, KabupatenKotaDetailData> = {
-    'kota-bandung': {
-        id: 'kota-bandung', name: 'Kota Bandung', parentRegionId: 'jawa-barat', overallRisk: 48.2, population: 945000, activeAlertsCount: 2,
-        domains: JSON.parse(JSON.stringify(regionsDetails['jawa-barat'].domains)), // Deep copy and modify
-        historicalRisk: generateHistoricalData(48.2)
-    },
-    'kab-bogor': {
-        id: 'kab-bogor', name: 'Kab. Bogor', parentRegionId: 'jawa-barat', overallRisk: 61.5, population: 1995000, activeAlertsCount: 4,
-        domains: JSON.parse(JSON.stringify(regionsDetails['jawa-barat'].domains)),
-        historicalRisk: generateHistoricalData(61.5)
-    },
-    'kab-jayapura': {
-        id: 'kab-jayapura', name: 'Kab. Jayapura', parentRegionId: 'papua', overallRisk: 78.9, population: 525000, activeAlertsCount: 6,
-        domains: JSON.parse(JSON.stringify(regionsDetails['papua'].domains)),
-        historicalRisk: generateHistoricalData(78.9)
-    }
-};
-// Adjustments for specific kabupaten/kota data
-kabupatenKotaDetails['kota-bandung'].domains.Pendidikan.riskScore = 35;
-kabupatenKotaDetails['kab-bogor'].domains.Kesehatan.riskScore = 68;
-kabupatenKotaDetails['kab-jayapura'].domains.Lingkungan.riskScore = 85;
+export const kabupatenKotaDetails: Record<string, KabupatenKotaDetailData> = {};
 
 
 export const allActiveAlerts: ActiveAlertData[] = Object.values(regionsDetails).flatMap(region => {
@@ -819,22 +823,39 @@ export const nationalHistoricalRisk = generateHistoricalData(
     6
 );
 
-export const regionalForecastData: RegionalForecastData[] = Object.values(regionsDetails).flatMap(region => 
-    Object.entries(region.domains).map(([domainName, domainData]) => {
-        const change = parseFloat(((Math.random() - 0.5) * 10).toFixed(1));
-        const predictedRisk = Math.max(0, Math.min(100, domainData.riskScore + change));
-        return {
-            id: Math.random(),
-            region: region.name,
-            domain: domainName,
-            currentRisk: domainData.riskScore,
-            predictedRisk: predictedRisk,
-            change: change,
-            currentRiskLevel: domainData.riskScore > 70 ? 'Tinggi' : domainData.riskScore > 55 ? 'Sedang' : 'Rendah',
-            predictedRiskLevel: predictedRisk > 70 ? 'Tinggi' : predictedRisk > 55 ? 'Sedang' : 'Rendah',
+export const regionalForecastData: RegionalForecastData[] = [];
+
+const getRiskLevel = (score: number): 'Kritis' | 'Tinggi' | 'Sedang' | 'Rendah' => {
+    if (score > 85) return 'Kritis';
+    if (score > 70) return 'Tinggi';
+    if (score > 55) return 'Sedang';
+    return 'Rendah';
+};
+
+let forecastId = 1;
+const relevantDomainsForForecast: Domain[] = ['Kesehatan', 'Gizi', 'Pendidikan', 'Pengasuhan', 'Perlindungan', 'Kesejahteraan', 'Lingkungan'];
+
+Object.values(regionsDetails).forEach(region => {
+    relevantDomainsForForecast.forEach(domain => {
+        const currentRisk = region.domains[domain].riskScore;
+        // Don't generate forecasts for domains with no data
+        if (currentRisk > 0) {
+            const change = parseFloat(((Math.random() - 0.5) * 10).toFixed(1)); // Random change between -5.0 and +5.0
+            const predictedRisk = Math.max(0, Math.min(100, parseFloat((currentRisk + change).toFixed(1))));
+
+            regionalForecastData.push({
+                id: forecastId++,
+                region: region.name,
+                domain: domain,
+                currentRisk: currentRisk,
+                predictedRisk: predictedRisk,
+                change: change,
+                currentRiskLevel: getRiskLevel(currentRisk),
+                predictedRiskLevel: getRiskLevel(predictedRisk),
+            });
         }
-    })
-);
+    });
+});
 
 export const domainsData: Record<string, DomainData> = {};
 const domainKeys: Domain[] = ['Kesehatan', 'Gizi', 'Pendidikan', 'Pengasuhan', 'Perlindungan', 'Kesejahteraan', 'Lingkungan', 'Bencana'];
@@ -846,7 +867,10 @@ domainKeys.forEach(domain => {
         trend: parseFloat(((Math.random() - 0.5) * 5).toFixed(1))
     })).sort((a,b) => b.riskScore - a.riskScore);
 
-    const indicators: DomainIndicatorData[] = regionsDetails['aceh'].domains[domain].metrics.map(metric => {
+    const firstRegionWithMetrics = Object.values(regionsDetails).find(r => r.domains[domain]?.metrics.length > 0);
+    const sampleMetrics = firstRegionWithMetrics ? firstRegionWithMetrics.domains[domain].metrics : [];
+
+    const indicators: DomainIndicatorData[] = sampleMetrics.map(metric => {
         const allValuesRaw = Object.values(regionsDetails).map(r => r.domains[domain]?.metrics.find(m => m.label === metric.label)?.value).filter(v => v !== undefined);
         
         // FIX: Improved logic to correctly parse different types of metric values (numbers, ratios, and numeric strings).
@@ -878,14 +902,16 @@ domainKeys.forEach(domain => {
             if (typeof val === 'string' && val.includes(':')) {
                 return parseInt(val.split(':')[1], 10) === best;
             }
-            return val === best;
+            const numericVal = typeof val === 'number' ? val : parseFloat(String(val).replace(',', '.'));
+            return numericVal === best;
         });
         const worstPerformer = Object.values(regionsDetails).find(r => {
             const val = r.domains[domain]?.metrics.find(m => m.label === metric.label)?.value;
             if (typeof val === 'string' && val.includes(':')) {
                 return parseInt(val.split(':')[1], 10) === worst;
             }
-            return val === worst;
+            const numericVal = typeof val === 'number' ? val : parseFloat(String(val).replace(',', '.'));
+            return numericVal === worst;
         });
 
         const formatValue = (v: number | string) => {
@@ -912,37 +938,9 @@ domainKeys.forEach(domain => {
     };
 });
 
-const calculateWeightedNationalStunting = (): number => {
-    let totalStuntingCases = 0;
-    let totalPopulation = 0;
-
-    Object.values(regionsDetails).forEach(region => {
-        const stuntingMetric = region.domains.Kesehatan.metrics.find(m => m.label === 'Prevalensi Stunting (TB/U)');
-        // The population is child population for the region
-        if (stuntingMetric && typeof stuntingMetric.value === 'number' && region.population) {
-            const stuntingPercentage = stuntingMetric.value;
-            const population = region.population;
-            
-            // Calculate number of stunting cases in the region
-            const stuntingCases = (stuntingPercentage / 100) * population;
-            
-            totalStuntingCases += stuntingCases;
-            totalPopulation += population;
-        }
-    });
-
-    if (totalPopulation === 0) {
-        return 0; // Avoid division by zero
-    }
-
-    // Calculate national prevalence
-    const nationalPrevalence = (totalStuntingCases / totalPopulation) * 100;
-    return nationalPrevalence;
-};
-
 const calculateNationalAverage = (getter: (r: RegionDetailData) => number | null | undefined): KeyIndicatorData => {
     const values = Object.values(regionsDetails).map(getter).filter((v): v is number => v !== null && v !== undefined);
-    const avg = values.reduce((s, v) => s + v, 0) / values.length;
+    const avg = values.length > 0 ? values.reduce((s, v) => s + v, 0) / values.length : 0;
     return {
         value: `${avg.toFixed(1)}%`,
         label: '', // will be set below
@@ -952,34 +950,15 @@ const calculateNationalAverage = (getter: (r: RegionDetailData) => number | null
     }
 }
 
-const nationalStuntingPrevalence = calculateWeightedNationalStunting();
-const previousNationalStuntingPrevalence = 24.1; // Plausible previous month's value (e.g., from SSGI 2022)
-const stuntingChange = nationalStuntingPrevalence - previousNationalStuntingPrevalence;
-
-const getChangeType = (change: number): 'increase' | 'decrease' | 'stable' => {
-    if (Math.abs(change) < 0.1) return 'stable';
-    if (change > 0) return 'increase';
-    return 'decrease';
-};
-
-// For stunting, lower is better, so a negative change corresponds to a 'decrease' changeType, which is good.
-const stuntingIndicator: KeyIndicatorData = {
-    value: `${nationalStuntingPrevalence.toFixed(1)}%`,
-    label: 'Prevalensi Stunting Nasional',
-    change: parseFloat(stuntingChange.toFixed(1)),
-    changeType: getChangeType(stuntingChange),
-    domain: 'Semua' // This is a general indicator
-};
-
 export const keyIndicatorsByDomain: Record<DomainFilter, KeyIndicatorData[]> = {
     'Semua': [
-        { ...stuntingIndicator, label: 'Prevalensi Stunting Nasional' },
         { ...calculateNationalAverage(r => r.domains.Pendidikan.metrics.find(m => m.label.includes('PAUD (0–6 th)'))?.value as number), label: 'Rata-rata Partisipasi PAUD Nasional' },
-        { ...calculateNationalAverage(r => r.domains.Perlindungan.metrics.find(m => m.label.includes('Akta'))?.value as number), label: 'Rata-rata Kepemilikan Akta Lahir' }
+        { ...calculateNationalAverage(r => r.domains.Perlindungan.metrics.find(m => m.label.includes('Akta'))?.value as number), label: 'Rata-rata Kepemilikan Akta Lahir' },
+        { ...calculateNationalAverage(r => r.domains.Gizi.metrics.find(m => m.label.includes('Wasting'))?.value as number), label: 'Rata-rata Gizi Buruk (Wasting)' },
     ],
     'Kesehatan': [
-        { ...stuntingIndicator, domain: 'Kesehatan' },
-        { ...calculateNationalAverage(r => r.domains.Kesehatan.metrics.find(m => m.label.includes('Imunisasi'))?.value as number), label: 'Cakupan Imunisasi' },
+        { ...calculateNationalAverage(r => r.domains.Kesehatan.metrics.find(m => m.label.includes('Stunting'))?.value as number), label: 'Prevalensi Stunting' },
+        { ...calculateNationalAverage(r => r.domains.Kesehatan.metrics.find(m => m.label.includes('Imunisasi'))?.value as number), label: 'Cakupan Imunisasi Dasar' },
         { ...calculateNationalAverage(r => r.domains.Kesehatan.metrics.find(m => m.label.includes('ANC'))?.value as number), label: 'Kunjungan ANC K4' },
     ],
     'Gizi': [
@@ -989,11 +968,8 @@ export const keyIndicatorsByDomain: Record<DomainFilter, KeyIndicatorData[]> = {
     'Pendidikan': [
         { ...calculateNationalAverage(r => r.domains.Pendidikan.metrics.find(m => m.label.includes('PAUD (0–6 th)'))?.value as number), label: 'Partisipasi PAUD (0–6 th)' },
         { ...calculateNationalAverage(r => r.domains.Pendidikan.metrics.find(m => m.label.includes('Sebelum SD'))?.value as number), label: 'Partisipasi 1 Th Sebelum SD' },
-        { ...calculateNationalAverage(r => r.domains.Pendidikan.metrics.find(m => m.label.includes('IDL'))?.value as number), label: 'Indeks Literasi Dini' }
     ],
-    'Pengasuhan': [
-        { ...calculateNationalAverage(r => r.domains.Pengasuhan.metrics.find(m => m.label.includes('Pengetahuan'))?.value as number), label: 'Pengetahuan Pola Asuh' },
-    ],
+    'Pengasuhan': [],
     'Perlindungan': [
         { ...calculateNationalAverage(r => r.domains.Perlindungan.metrics.find(m => m.label.includes('Akta'))?.value as number), label: 'Kepemilikan Akta Lahir' }
     ],
@@ -1004,9 +980,7 @@ export const keyIndicatorsByDomain: Record<DomainFilter, KeyIndicatorData[]> = {
         { ...calculateNationalAverage(r => r.domains.Lingkungan.metrics.find(m => m.label.includes('Air'))?.value as number), label: 'Akses Air Minum Layak' },
         { ...calculateNationalAverage(r => r.domains.Lingkungan.metrics.find(m => m.label.includes('Sanitasi'))?.value as number), label: 'Akses Sanitasi Layak' }
     ],
-    'Bencana': [
-        { ...calculateNationalAverage(r => r.domains.Bencana.metrics.find(m => m.label.includes('Total'))?.value as number), label: 'Total Kejadian Bencana' }
-    ],
+    'Bencana': [],
 };
 
 

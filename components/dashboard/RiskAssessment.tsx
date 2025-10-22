@@ -19,7 +19,7 @@ const NationalRiskOverview: React.FC<NationalRiskOverviewProps> = ({ data }) => 
     const sortedData = [...data].sort((a, b) => b.score - a.score).slice(0, 10);
     
     return (
-        <div className="bg-white p-6 rounded-lg shadow-sm h-full flex flex-col">
+        <div className="bg-white p-6 rounded-lg shadow-sm flex flex-col">
             <h3 className="text-lg font-bold text-slate-800 mb-2 flex items-center">
                 <ChartBarIcon className="w-6 h-6 mr-2" />
                 Top 10 High-Risk Provinces

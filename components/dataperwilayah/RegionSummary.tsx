@@ -1,9 +1,9 @@
 import React from 'react';
-import { RegionDetailData } from '../../types';
+import { RegionDetailData, KabupatenKotaDetailData } from '../../types';
 import { ChartBarIcon, UsersIcon, GlobeAltIcon, BellAlertIcon } from '../icons/Icons';
 
 interface RegionSummaryProps {
-    data: RegionDetailData;
+    data: RegionDetailData | KabupatenKotaDetailData;
     alertsCount?: number;
 }
 
@@ -42,9 +42,9 @@ const RegionSummary: React.FC<RegionSummaryProps> = ({ data, alertsCount }) => {
             />
             <StatCard 
                 icon={<UsersIcon className="w-8 h-8 text-indigo-500" />}
-                title="Populasi Anak"
+                title="Populasi Anak Usia Dini"
                 value={data.population.toLocaleString('id-ID')}
-                footer={<p>Estimasi populasi anak usia dini.</p>}
+                footer={<p>Estimasi populasi anak usia dini di wilayah.</p>}
             />
             <StatCard 
                 icon={<BellAlertIcon className="w-8 h-8 text-indigo-500" />}

@@ -80,11 +80,11 @@ const DataProcessing: React.FC = () => {
     return (
         <div className="space-y-6">
             <div>
-                <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center">
+                <h2 className="text-xl font-bold text-slate-800 flex items-center">
                     <WrenchScrewdriverIcon className="w-6 h-6 mr-3 text-indigo-500" />
                     Manajemen Integrasi Data
                 </h2>
-                <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                <p className="text-sm text-slate-500 mt-1">
                     Kelola dan unggah data dari berbagai kementerian dan instansi. Gunakan AI untuk membaca dan memvalidasi data secara otomatis.
                 </p>
             </div>
@@ -92,7 +92,7 @@ const DataProcessing: React.FC = () => {
             <div className="space-y-8">
                 {dataIntegrationSources.map(source => (
                     <div key={source.ministry}>
-                        <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200 border-b border-slate-200 dark:border-slate-700 pb-2 mb-4">{source.ministry}</h3>
+                        <h3 className="text-lg font-bold text-slate-800 border-b border-slate-200 pb-2 mb-4">{source.ministry}</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {source.requirements.map(req => (
                                 <DataIntegrationItem

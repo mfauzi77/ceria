@@ -1,5 +1,3 @@
-
-
 import React from 'react';
 
 export enum View {
@@ -17,7 +15,7 @@ export enum View {
     ResourceAllocation = "Resource Allocation",
     Reports = "Reports & Analytics",
     ParentDashboard = "Dashboard Orang Tua",
-    Data = "Data PAUD"
+    UploadData = "Upload Data"
 }
 
 export interface NavItem {
@@ -374,4 +372,33 @@ export interface DataValidationResult {
         value: string;
         description: string;
     }[];
+}
+
+// --- Types for Disaster and Environmental Data ---
+export interface GempaInfo {
+    DateTime: string;
+    Magnitude: string;
+    Wilayah: string;
+    Jam: string;
+    Kedalaman: string;
+    Potensi: string;
+}
+
+export interface GempaBMKG {
+    Infogempa: {
+        gempa: GempaInfo;
+    };
+}
+
+export interface DisasterData {
+    gempa: GempaBMKG | null;
+    bnpb: any[];
+    petaBencana: any[];
+}
+
+export interface AirQualityData {
+    aqi: number;
+    station: string;
+    level: 'Baik' | 'Sedang' | 'Tidak Sehat' | 'Sangat Tidak Sehat' | 'Berbahaya';
+    time: string;
 }

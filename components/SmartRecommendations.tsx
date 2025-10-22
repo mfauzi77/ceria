@@ -47,6 +47,7 @@ Jawaban Anda harus:
 - Jelas dan ringkas (maksimal 150 kata)
 - Menggunakan bahasa Indonesia formal, informatif, dan komunikatif
 - Merujuk ke data atau tren (jika tersedia)
+- Ditulis dalam paragraf yang rapi. Hindari penggunaan format markdown seperti heading (#, ##) atau bold (**).
 - Tidak bersifat spekulatif. Bila data tidak tersedia, katakan dengan sopan.`,
                 }
             });

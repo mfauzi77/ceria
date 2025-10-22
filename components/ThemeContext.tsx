@@ -1,16 +1,16 @@
 import React, { createContext, useState, useContext, useEffect, useMemo } from 'react';
 
-type Theme = 'light' | 'dark';
+// FIX: Add a specific type for the context value and define props for ThemeProvider to fix type errors.
+const ThemeContext = createContext<{ theme: string; toggleTheme: () => void; } | undefined>(undefined);
 
-interface ThemeContextType {
-  theme: Theme;
-  toggleTheme: () => void;
+// Define props for ThemeProvider
+interface ThemeProviderProps {
+  // FIX: Made children optional to resolve a confusing TypeScript error where the prop is not being correctly identified from JSX.
+  children?: React.ReactNode;
 }
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
-
-export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [theme, setTheme] = useState<Theme>(() => {
+export const ThemeProvider = ({ children }: ThemeProviderProps) => {
+  const [theme, setTheme] = useState(() => {
     if (typeof window === 'undefined') {
         return 'light';
     }
@@ -44,7 +44,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   );
 };
 
-export const useTheme = (): ThemeContextType => {
+export const useTheme = () => {
   const context = useContext(ThemeContext);
   if (context === undefined) {
     throw new Error('useTheme must be used within a ThemeProvider');

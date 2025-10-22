@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { DOMAIN_FILTER_ITEMS } from '../constants';
 import { allActiveAlerts, keyIndicatorsByDomain, regionsDetails } from '../services/mockData';
@@ -8,13 +7,30 @@ import KeyHealthIndicators from './dashboard/KeyHealthIndicators';
 import ActiveAlerts from './dashboard/ActiveAlerts';
 import ExecutiveBriefing from './dashboard/ExecutiveBriefing';
 import RecommendationModal from './dashboard/RecommendationModal';
-import { ActiveAlertData, DomainFilter, KeyIndicatorData, InterventionPlan, InterventionPriority, InterventionStatus } from '../types';
+import { ActiveAlertData, DomainFilter, KeyIndicatorData, InterventionPlan, InterventionPriority, InterventionStatus, Domain } from '../types';
+
+// Simple debounce hook to prevent excessive API calls
+function useDebounce<T>(value: T, delay: number): T {
+    const [debouncedValue, setDebouncedValue] = useState<T>(value);
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedValue(value);
+        }, delay);
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [value, delay]);
+    return debouncedValue;
+}
+
 
 interface DashboardProps {
     handleOpenInterventionModal: (initialData?: Partial<InterventionPlan>, navigate?: boolean) => void;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ handleOpenInterventionModal }) => {
+const Dashboard: React.FC<DashboardProps> = ({ 
+    handleOpenInterventionModal
+}) => {
     const [activeDomain, setActiveDomain] = useState<DomainFilter>('Semua');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedAlert, setSelectedAlert] = useState<ActiveAlertData | null>(null);
@@ -22,6 +38,8 @@ const Dashboard: React.FC<DashboardProps> = ({ handleOpenInterventionModal }) =>
     const [briefing, setBriefing] = useState<string | null>(null);
     const [isBriefingLoading, setIsBriefingLoading] = useState(true);
     const [briefingError, setBriefingError] = useState<string | null>(null);
+    
+    const debouncedActiveDomain = useDebounce(activeDomain, 500);
 
     const filteredIndicators = useMemo((): KeyIndicatorData[] => {
         return keyIndicatorsByDomain[activeDomain];
@@ -41,7 +59,7 @@ const Dashboard: React.FC<DashboardProps> = ({ handleOpenInterventionModal }) =>
         }
         return allRegionsData.map(r => ({
             name: r.name,
-            score: r.domains[activeDomain].riskScore
+            score: r.domains[activeDomain as Domain]?.riskScore || 0
         }));
     }, [activeDomain]);
 
@@ -52,8 +70,9 @@ const Dashboard: React.FC<DashboardProps> = ({ handleOpenInterventionModal }) =>
         try {
             const result = await getExecutiveBriefing(activeDomain, filteredIndicators, filteredAlerts);
             setBriefing(result);
-        } catch (err) {
-            setBriefingError('Gagal memuat ringkasan AI.');
+        } catch (err: any) {
+            setBriefingError(err.message || 'Gagal memuat ringkasan AI.');
+            console.error(err);
         } finally {
             setIsBriefingLoading(false);
         }
@@ -61,7 +80,7 @@ const Dashboard: React.FC<DashboardProps> = ({ handleOpenInterventionModal }) =>
 
     useEffect(() => {
         fetchBriefing();
-    }, [activeDomain]);
+    }, [debouncedActiveDomain]);
 
 
     const handleAnalyzeClick = (alert: ActiveAlertData) => {
@@ -117,15 +136,19 @@ const Dashboard: React.FC<DashboardProps> = ({ handleOpenInterventionModal }) =>
             />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-1 space-y-6">
-                   <NationalRiskOverview data={dynamicRegionalRiskScores} />
-                </div>
-                <div className="lg:col-span-2 space-y-6">
+                <div className="lg:col-span-2">
                     <KeyHealthIndicators data={filteredIndicators} domain={activeDomain} />
+                </div>
+                 <div className="lg:col-span-1">
+                    <NationalRiskOverview data={dynamicRegionalRiskScores} />
                 </div>
             </div>
             
-            <ActiveAlerts data={filteredAlerts} onAnalyze={handleAnalyzeClick} onCreatePlan={() => handleOpenInterventionModal({}, true)} />
+             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-3">
+                    <ActiveAlerts data={filteredAlerts} onAnalyze={handleAnalyzeClick} onCreatePlan={() => handleOpenInterventionModal({}, true)} />
+                </div>
+            </div>
             
             {selectedAlert && (
                  <RecommendationModal 

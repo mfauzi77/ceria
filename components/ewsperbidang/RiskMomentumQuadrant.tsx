@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { RegionPerformance } from '../../types';
 
@@ -58,8 +57,8 @@ const RiskMomentumQuadrant: React.FC<RiskMomentumQuadrantProps> = ({ regions, on
                     <rect x={padding} y={yCenterLine} width={xCenterLine - padding} height={height - padding - yCenterLine} fill={quadrantInfo[3].style.fill} />
                     <rect x={xCenterLine} y={yCenterLine} width={width - padding - xCenterLine} height={height - padding - yCenterLine} fill={quadrantInfo[4].style.fill} />
 
-                    <text x={xCenterLine + 10} y={padding + 20} className={`text-sm font-bold fill-current ${quadrantInfo[1].style.text}`}>{quadrantInfo[1].name}</text>
-                    <text x={xCenterLine + 10} y={padding + 38} className={`text-xs fill-current ${quadrantInfo[1].style.text}`}>{quadrantInfo[1].description}</text>
+                    <text x={width - padding - 10} y={padding + 20} textAnchor="end" className={`text-sm font-bold fill-current ${quadrantInfo[1].style.text}`}>{quadrantInfo[1].name}</text>
+                    <text x={width - padding - 10} y={padding + 38} textAnchor="end" className={`text-xs fill-current ${quadrantInfo[1].style.text}`}>{quadrantInfo[1].description}</text>
 
                     <text x={padding + 10} y={padding + 20} className={`text-sm font-bold fill-current ${quadrantInfo[2].style.text}`}>{quadrantInfo[2].name}</text>
                     <text x={padding + 10} y={padding + 38} className={`text-xs fill-current ${quadrantInfo[2].style.text}`}>{quadrantInfo[2].description}</text>
@@ -67,8 +66,8 @@ const RiskMomentumQuadrant: React.FC<RiskMomentumQuadrantProps> = ({ regions, on
                     <text x={padding + 10} y={height - padding - 38} className={`text-sm font-bold fill-current ${quadrantInfo[3].style.text}`}>{quadrantInfo[3].name}</text>
                     <text x={padding + 10} y={height - padding - 20} className={`text-xs fill-current ${quadrantInfo[3].style.text}`}>{quadrantInfo[3].description}</text>
 
-                    <text x={xCenterLine + 10} y={height - padding - 38} className={`text-sm font-bold fill-current ${quadrantInfo[4].style.text}`}>{quadrantInfo[4].name}</text>
-                    <text x={xCenterLine + 10} y={height - padding - 20} className={`text-xs fill-current ${quadrantInfo[4].style.text}`}>{quadrantInfo[4].description}</text>
+                    <text x={width - padding - 10} y={height - padding - 38} textAnchor="end" className={`text-sm font-bold fill-current ${quadrantInfo[4].style.text}`}>{quadrantInfo[4].name}</text>
+                    <text x={width - padding - 10} y={height - padding - 20} textAnchor="end" className={`text-xs fill-current ${quadrantInfo[4].style.text}`}>{quadrantInfo[4].description}</text>
 
                     <line x1={xCenterLine} y1={padding} x2={xCenterLine} y2={height - padding} className="stroke-slate-300" strokeWidth="1" strokeDasharray="3 3" />
                     <line x1={padding} y1={yCenterLine} x2={width - padding} y2={yCenterLine} className="stroke-slate-300" strokeWidth="1" strokeDasharray="3 3" />

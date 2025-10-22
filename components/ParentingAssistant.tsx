@@ -11,7 +11,7 @@ interface ParentingAssistantProps {
     onBack: () => void;
 }
 
-const ParentingAssistant: React.FC<ParentingAssistantProps> = ({ onBack }) => {
+export default function ParentingAssistant({ onBack }: ParentingAssistantProps) {
     const [chat, setChat] = useState<Chat | null>(null);
     const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
     const [userInput, setUserInput] = useState('');
@@ -48,9 +48,8 @@ Jika memungkinkan, sertakan contoh nyata dalam konteks kehidupan keluarga.
 Hindari topik di luar pengasuhan anak, seperti politik, agama, atau isu sosial yang tidak relevan.
 Jika ada pertanyaan di luar topik tersebut, tolak dengan sopan dan arahkan kembali ke tema pengasuhan anak.
 
-Tulis jawabannya tanpa format Markdown.
-Jangan gunakan tanda bintang (*) atau garis miring (/) untuk penekanan.
-Gunakan tanda strip (-) atau angka untuk daftar.
+Tulis jawabannya dalam paragraf yang rapi dan mudah dibaca. Jangan gunakan format Markdown seperti heading (#, ##), bold (**), atau miring (*, /).
+Gunakan tanda strip (-) atau angka untuk daftar jika diperlukan.
 
 Tujuan kamu adalah mendukung peran orang tua dalam membesarkan anak yang sehat, bahagia, dan berkembang optimal, melalui komunikasi yang penuh empati dan solusi yang bisa langsung diterapkan.`,
                 }
@@ -148,7 +147,7 @@ Tujuan kamu adalah mendukung peran orang tua dalam membesarkan anak yang sehat, 
                                 <HeartIcon className="w-5 h-5" />
                             </div>
                         )}
-                        <div className={`w-full max-w-xl p-4 ${msg.role === 'user' ? 'bg-indigo-600 text-white rounded-2xl rounded-br-none' : 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-slate-200 rounded-2xl rounded-bl-none'}`}>
+                        <div className={`w-full max-w-xl p-4 ${msg.role === 'user' ? 'bg-indigo-600 text-white rounded-2xl rounded-br-none' : 'bg-slate-200 text-slate-800 rounded-2xl rounded-bl-none'}`}>
                              {msg.content ? (
                                 <div className={`prose prose-sm max-w-none prose-p:my-2 prose-li:my-1 ${msg.role === 'user' ? 'prose-inverted-user' : ''}`} dangerouslySetInnerHTML={{ __html: msg.content.replace(/\n/g, '<br />') }} />
                              ) : (
@@ -205,5 +204,3 @@ Tujuan kamu adalah mendukung peran orang tua dalam membesarkan anak yang sehat, 
         </div>
     );
 };
-
-export default ParentingAssistant;
